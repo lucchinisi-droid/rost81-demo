@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ROST 81 — CRM Interno</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#c0392b; --red-dark:#96281b; --red-light:#f9eceb;
+  --amber:#e67e22; --amber-light:#fef5e7;
+  --green:#27ae60; --green-light:#eafaf1;
+  --blue:#2980b9; --blue-light:#eaf4fb;
+  --text:#1a1a1a; --text-muted:#6b7280; --text-hint:#9ca3af;
+  --bg:#f4f3f0; --surface:#ffffff;
+  --border:rgba(0,0,0,0.08); --border-med:rgba(0,0,0,0.13);
+  --radius:12px; --radius-sm:8px;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0 16px;position:fixed;top:0;left:0;bottom:0;z-index:10}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.logo-mark{width:36px;height:36px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
+.logo-text{font-size:15px;font-weight:600;color:var(--text);line-height:1.2}
+.logo-sub{font-size:10px;color:var(--text-muted);margin-top:1px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;position:relative}
+.nav-item:hover{color:var(--text);background:var(--bg)}
+.nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
+.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)}
+.sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
+.sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
+.main{margin-left:220px;flex:1}
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+.topbar-title{font-size:17px;font-weight:600}
+.topbar-date{font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.content{padding:24px 28px}
+.panel{display:none} .panel.active{display:block}
+.stat-row{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.stat-label{font-size:10px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.stat-val{font-size:26px;font-weight:600;color:var(--text);line-height:1}
+.stat-val.red{color:var(--red)} .stat-val.amber{color:var(--amber)} .stat-val.green{color:var(--green)} .stat-val.blue{color:var(--blue)} .stat-val.sm{font-size:18px}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.section-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em}
+.alert-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
+.alert-card{background:var(--surface);border-radius:var(--radius-sm);padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow);border-left:3px solid transparent}
+.alert-card.red{border-left-color:var(--red)} .alert-card.amber{border-left-color:var(--amber)}
+.alert-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.alert-dot.red{background:var(--red)} .alert-dot.amber{background:var(--amber)}
+.alert-info{flex:1} .alert-name{font-size:13px;font-weight:500} .alert-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.alert-days{font-size:12px;font-weight:600;flex-shrink:0}
+.alert-days.red{color:var(--red)} .alert-days.amber{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--radius-sm);font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border-med);background:transparent;color:var(--text);font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn:hover{background:var(--bg)} .btn:active{transform:scale(.97)}
+.btn-red{background:var(--red);color:#fff;border-color:var(--red)} .btn-red:hover{background:var(--red-dark)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-red{background:var(--red-light);color:#8b1a10} .badge-amber{background:var(--amber-light);color:#7d4a00}
+.badge-green{background:var(--green-light);color:#145a32} .badge-blue{background:var(--blue-light);color:#1a4f72}
+.badge-gray{background:var(--bg);color:var(--text-muted)}
+.table-wrap{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid var(--border);background:var(--bg)}
+td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
+.td-name{font-weight:500} .td-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.lucchini-row td{background:#f0faf4} .lucchini-row:hover td{background:#e6f7ed}
+.upload-zone{border:2px dashed var(--border-med);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--red);background:var(--red-light)}
+.upload-input{display:none}
+.doc-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.doc-item{background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
+.doc-icon{font-size:20px;flex-shrink:0} .doc-info{flex:1} .doc-name{font-size:13px;font-weight:500} .doc-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .3s}
+.client-detail{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:none;margin-top:14px}
+.client-detail.open{display:block}
+.detail-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--red);flex-shrink:0}
+.service-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.service-card{padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)}
+.service-name{font-size:12px;font-weight:500} .service-date{font-size:11px;color:var(--text-muted);margin-top:2px}
+.service-date.danger{color:var(--red)} .service-date.warn{color:var(--amber)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:100;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
+.toast.show{opacity:1;transform:translateY(0)} .toast.success{background:var(--green)} .toast.error{background:var(--red)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">R81</div>
+      <div><div class="logo-text">ROST 81</div><div class="logo-sub">CRM Interno</div></div>
+    </div>
+    <nav>
+      <div class="nav-item active" onclick="switchPanel('dashboard',this)"><span>⊞</span><span>Dashboard</span></div>
+      <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber">24</span></div>
+      <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge">3</span></div>
+      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber">5</span></div>
+      <div class="nav-item" onclick="switchPanel('documenti',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📤</span><span>Invia doc</span><span class="nav-badge green">LIVE</span></div>
+    </nav>
+    <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="page-title">Dashboard</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div id="panel-dashboard" class="panel active">
+        <div class="stat-row">
+          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val">24</div></div>
+          <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">3</div></div>
+          <div class="stat-card"><div class="stat-label">Entro 30gg</div><div class="stat-val amber">7</div></div>
+          <div class="stat-card"><div class="stat-label">In regola</div><div class="stat-val green">14</div></div>
+          <div class="stat-card"><div class="stat-label">Preventivi</div><div class="stat-val blue">5</div></div>
+          <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 8.400</div></div>
+        </div>
+        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div></div>
+        <div class="alert-list">
+          <div class="alert-card red"><div class="alert-dot red"></div><div class="alert-info"><div class="alert-name">Edilcantieri Srl — Estintori scaduti</div><div class="alert-sub">Manutenzione semestrale · 8 estintori</div></div><div class="alert-days red">SCADUTO</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
+          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Logistica Roma Srl — Corso antincendio</div><div class="alert-sub">12 dipendenti</div></div><div class="alert-days amber">+8 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
+          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Supermercato Vivo — DVR</div><div class="alert-sub">Revisione annuale</div></div><div class="alert-days amber">+14 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
+        </div>
+      </div>
+
+      <!-- CLIENTI -->
+      <div id="panel-clienti" class="panel">
+        <div class="section-head"><div class="section-title">Tutti i clienti</div><button class="btn">+ Nuovo cliente</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Settore</th><th>Servizi</th><th>Stato</th><th></th></tr></thead>
+            <tbody>
+              <tr class="lucchini-row">
+                <td><div class="td-name">🟢 Lucchini Simone</div><div class="td-sub">Demo Colloquio · connesso LIVE</div></td>
+                <td>Demo</td><td>DVR · Formazione</td>
+                <td><span class="badge badge-green">Attivo</span></td>
+                <td><button class="btn btn-sm btn-red" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤 Invia doc</button></td>
+              </tr>
+              <tr><td><div class="td-name">Edilcantieri Srl</div><div class="td-sub">Via Roma 12, Colleferro</div></td><td>Edilizia</td><td>DVR · Estintori · CSE</td><td><span class="badge badge-red">Critico</span></td><td><button class="btn btn-sm" onclick="toggleDetail('edilcantieri')">Scheda</button></td></tr>
+              <tr><td><div class="td-name">Logistica Roma Srl</div><div class="td-sub">Via Casilina 88, Roma</div></td><td>Logistica</td><td>DVR · Formazione · DPI</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm" onclick="toggleDetail('logistica')">Scheda</button></td></tr>
+              <tr><td><div class="td-name">Supermercato Vivo</div><div class="td-sub">Via Latina 4, Frosinone</div></td><td>GDO</td><td>DVR · Antincendio</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm">Scheda</button></td></tr>
+              <tr><td><div class="td-name">Hotel Belvedere</div><div class="td-sub">Via Prenestina 200, Roma</div></td><td>Hospitality</td><td>Antincendio · DVR</td><td><span class="badge badge-green">In regola</span></td><td><button class="btn btn-sm">Scheda</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="detail-edilcantieri" class="client-detail">
+          <div class="detail-top"><div class="avatar">EC</div><div style="flex:1"><div style="font-size:15px;font-weight:600">Edilcantieri Srl</div><div style="font-size:12px;color:var(--text-muted)">Cliente dal 2019 · Mario Rossi · 06 1234567</div></div><button class="btn btn-red btn-sm">✉ Reminder</button></div>
+          <div class="section-title">Servizi</div>
+          <div class="service-grid"><div class="service-card" style="border-color:#f5c4b3"><div class="service-name">🔥 Estintori</div><div class="service-date danger">⚠ Scaduto 01/04/2026</div></div><div class="service-card"><div class="service-name">📄 DVR cantiere</div><div class="service-date warn">Scade 30/06/2026</div></div><div class="service-card"><div class="service-name">🎓 Formazione CSE</div><div class="service-date">Validità 15/09/2026</div></div></div>
+        </div>
+        <div id="detail-logistica" class="client-detail">
+          <div class="detail-top"><div class="avatar">LR</div><div style="flex:1"><div style="font-size:15px;font-weight:600">Logistica Roma Srl</div><div style="font-size:12px;color:var(--text-muted)">Cliente dal 2021 · Luca Bianchi</div></div><button class="btn btn-red btn-sm">✉ Reminder</button></div>
+          <div class="section-title">Servizi</div>
+          <div class="service-grid"><div class="service-card" style="border-color:#fac775"><div class="service-name">🎓 Corso antincendio</div><div class="service-date warn">Scade 19/05/2026</div></div><div class="service-card"><div class="service-name">📄 DVR</div><div class="service-date">Validità 20/12/2026</div></div><div class="service-card"><div class="service-name">🔥 Estintori</div><div class="service-date">Prossima: ago 2026</div></div></div>
+        </div>
+      </div>
+
+      <!-- SCADENZE -->
+      <div id="panel-scadenze" class="panel">
+        <div class="section-head"><div class="section-title">Tutte le scadenze</div></div>
+        <div class="alert-list">
+          <div class="alert-card red"><div class="alert-dot red"></div><div class="alert-info"><div class="alert-name">Edilcantieri Srl — Estintori scaduti</div><div class="alert-sub">8 estintori</div></div><div class="alert-days red">SCADUTO</div><button class="btn btn-sm btn-red">✉</button></div>
+          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Logistica Roma Srl — Corso antincendio</div><div class="alert-sub">12 dipendenti</div></div><div class="alert-days amber">+8 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
+          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Supermercato Vivo — DVR</div></div><div class="alert-days amber">+14 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
+          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Hotel Belvedere — Sorveglianza sanitaria</div><div class="alert-sub">8 dipendenti</div></div><div class="alert-days amber">+22 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
+        </div>
+      </div>
+
+      <!-- PREVENTIVI -->
+      <div id="panel-preventivi" class="panel">
+        <div class="section-head"><div class="section-title">Preventivi</div><button class="btn btn-red" onclick="document.getElementById('nuovo-prev').style.display='block'">+ Nuovo</button></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>N°</th><th>Cliente</th><th>Oggetto</th><th>Importo</th><th>Data</th><th>Stato</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#024</td><td>Edilcantieri Srl</td><td>Manutenzione estintori</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 640</td><td style="font-size:12px;color:var(--text-muted)">08/05/2026</td><td><span class="badge badge-amber">Inviato</span></td></tr>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#023</td><td>Logistica Roma Srl</td><td>Corso antincendio</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 1.800</td><td style="font-size:12px;color:var(--text-muted)">06/05/2026</td><td><span class="badge badge-amber">Inviato</span></td></tr>
+              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#022</td><td>Hotel Belvedere</td><td>Piano evacuazione + DVR</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 2.400</td><td style="font-size:12px;color:var(--text-muted)">02/05/2026</td><td><span class="badge badge-green">Accettato</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="nuovo-prev" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Cliente</label><select style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"><option>Edilcantieri Srl</option><option>Logistica Roma Srl</option><option>Lucchini Simone</option><option>Hotel Belvedere</option></select></div>
+            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Oggetto</label><input type="text" placeholder="es. Corso antincendio" style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"></div>
+          </div>
+          <div style="display:flex;gap:8px"><button class="btn btn-red">✉ Invia</button><button class="btn">💾 Salva bozza</button><button class="btn" style="margin-left:auto;color:var(--red)" onclick="document.getElementById('nuovo-prev').style.display='none'">✕</button></div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTI LIVE -->
+      <div id="panel-documenti" class="panel">
+        <div style="background:var(--green-light);border:1px solid rgba(39,174,96,.25);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
+          <span style="font-size:22px">🟢</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#145a32">Connesso a Supabase — LIVE</div>
+            <div style="font-size:12px;color:var(--green);margin-top:1px">Il documento apparirà su iPhone in tempo reale</div>
+          </div>
+        </div>
+
+        <div style="background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px">
+          <div class="section-title" style="margin-bottom:14px">Invia documento → Lucchini Simone</div>
+
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Descrizione</label>
+            <input type="text" id="doc-descrizione" placeholder="es. DVR aggiornato 2026, Attestato corso antincendio..." style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none">
+          </div>
+
+          <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
+            <div style="font-size:36px;margin-bottom:10px">📎</div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:4px" id="upload-title">Clicca o trascina un file</div>
+            <div style="font-size:12px;color:var(--text-muted)" id="upload-sub">PDF, Word, Excel, immagini — max 10MB</div>
+          </div>
+          <input type="file" id="file-input" class="upload-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+
+          <div id="upload-progress" style="display:none;margin-top:12px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+              <span id="prog-filename" style="font-size:12px;font-weight:500;color:var(--text-muted)"></span>
+              <span id="prog-status" style="font-size:12px;color:var(--amber)">Caricamento...</span>
+            </div>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          </div>
+
+          <button class="btn btn-red" id="upload-btn" onclick="uploadDoc()" style="margin-top:14px;width:100%;justify-content:center;padding:11px;font-size:13px">
+            📤 Invia a Lucchini Simone
+          </button>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Documenti inviati</div>
+          <button class="btn btn-sm" onclick="loadDocs()">↻ Aggiorna</button>
+        </div>
+        <div id="doc-list" class="doc-list">
+          <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Caricamento...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+let clienteId=null, selectedFile=null;
+
+document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+async function getClienteId(){
+  if(clienteId) return clienteId;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?nome=eq.Lucchini%20Simone&select=id`,{headers:H});
+  const d=await r.json();
+  if(d&&d[0]){clienteId=d[0].id;return clienteId;}
+  return null;
+}
+
+document.getElementById('file-input').addEventListener('change',e=>{
+  selectedFile=e.target.files[0];
+  if(selectedFile){
+    document.getElementById('upload-title').textContent=selectedFile.name;
+    document.getElementById('upload-sub').textContent=(selectedFile.size/1024).toFixed(0)+' KB';
+    document.getElementById('upload-zone').style.borderColor='var(--green)';
+    document.getElementById('upload-zone').style.background='var(--green-light)';
+  }
+});
+
+const zone=document.getElementById('upload-zone');
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover')});
+zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
+zone.addEventListener('drop',e=>{
+  e.preventDefault();zone.classList.remove('dragover');
+  selectedFile=e.dataTransfer.files[0];
+  if(selectedFile){document.getElementById('upload-title').textContent=selectedFile.name;document.getElementById('upload-sub').textContent=(selectedFile.size/1024).toFixed(0)+' KB';}
+});
+
+async function uploadDoc(){
+  if(!selectedFile){showToast('Seleziona un file prima','error');return;}
+  const descr=document.getElementById('doc-descrizione').value||selectedFile.name;
+  const btn=document.getElementById('upload-btn');
+  btn.disabled=true;btn.textContent='Caricamento...';
+  document.getElementById('upload-progress').style.display='block';
+  document.getElementById('prog-filename').textContent=selectedFile.name;
+  document.getElementById('prog-status').textContent='Caricamento...';
+  document.getElementById('prog-status').style.color='var(--amber)';
+  let progInterval=setInterval(()=>{
+    const fill=document.getElementById('progress-fill');
+    const w=parseFloat(fill.style.width)||0;
+    if(w<85) fill.style.width=(w+Math.random()*12)+'%';
+  },200);
+  try{
+    const id=await getClienteId();
+    if(!id){throw new Error('Cliente non trovato. Hai eseguito lo script SQL?');}
+    const path=`lucchini-simone/${Date.now()}-${selectedFile.name.replace(/\s/g,'_')}`;
+    const upRes=await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`,{
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':selectedFile.type||'application/octet-stream'},
+      body:selectedFile
+    });
+    if(!upRes.ok){const t=await upRes.text();throw new Error('Storage: '+t);}
+    const url=`${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`;
+    const dbRes=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti`,{
+      method:'POST',
+      headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({cliente_id:id,nome_file:selectedFile.name,descrizione:descr,url:url})
+    });
+    if(!dbRes.ok){const t=await dbRes.text();throw new Error('Database: '+t);}
+    clearInterval(progInterval);
+    document.getElementById('progress-fill').style.width='100%';
+    document.getElementById('prog-status').textContent='✓ Inviato!';
+    document.getElementById('prog-status').style.color='var(--green)';
+    showToast('✓ Documento inviato! Visibile su iPhone ora.','success');
+    selectedFile=null;
+    document.getElementById('upload-title').textContent='Clicca o trascina un file';
+    document.getElementById('upload-sub').textContent='PDF, Word, Excel, immagini — max 10MB';
+    document.getElementById('upload-zone').style.borderColor='';
+    document.getElementById('upload-zone').style.background='';
+    document.getElementById('doc-descrizione').value='';
+    document.getElementById('file-input').value='';
+    loadDocs();
+  }catch(err){
+    clearInterval(progInterval);
+    document.getElementById('prog-status').textContent='✕ Errore';
+    document.getElementById('prog-status').style.color='var(--red)';
+    showToast('Errore: '+err.message,'error');
+  }
+  btn.disabled=false;btn.innerHTML='📤 Invia a Lucchini Simone';
+}
+
+async function loadDocs(){
+  const id=await getClienteId();
+  const list=document.getElementById('doc-list');
+  if(!id){list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red);font-size:13px">Cliente non trovato su Supabase</div>';return;}
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti?cliente_id=eq.${id}&order=created_at.desc&select=*`,{headers:H});
+  const docs=await r.json();
+  if(!docs||docs.length===0){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Nessun documento ancora inviato</div>';return;}
+  list.innerHTML=docs.map(d=>`
+    <div class="doc-item">
+      <div class="doc-icon">${icon(d.nome_file)}</div>
+      <div class="doc-info">
+        <div class="doc-name">${d.descrizione||d.nome_file}</div>
+        <div class="doc-meta">${d.nome_file} · ${new Date(d.created_at).toLocaleString('it-IT')}</div>
+      </div>
+      <a href="${d.url}" target="_blank" style="text-decoration:none"><button class="btn btn-sm">↓ Apri</button></a>
+    </div>
+  `).join('');
+}
+
+function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
+
+function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3500);}
+
+function switchPanel(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',documenti:'Invia documento'};
+  document.getElementById('page-title').textContent=labels[id]||id;
+  if(id==='documenti') loadDocs();
+}
+
+function toggleDetail(id){
+  const d=document.getElementById('detail-'+id);
+  const open=d.classList.contains('open');
+  document.querySelectorAll('.client-detail').forEach(x=>x.classList.remove('open'));
+  if(!open) d.classList.add('open');
+}
+</script>
+</body>
+</html>

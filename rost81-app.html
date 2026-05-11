@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ROST 81 — La mia sicurezza</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#c0392b; --red-dark:#96281b; --red-light:#fdf2f1;
+  --amber:#e67e22; --amber-light:#fef9f0;
+  --green:#27ae60; --green-light:#f0faf4;
+  --text:#111827; --text-muted:#6b7280; --text-hint:#9ca3af;
+  --bg:#f5f4f0; --surface:#ffffff;
+  --border:rgba(0,0,0,0.07); --border-med:rgba(0,0,0,0.12);
+  --radius:16px; --radius-sm:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max-width:390px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+.status-bar{background:var(--red);padding:12px 20px 8px;display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:500;color:rgba(255,255,255,0.9);font-family:'DM Mono',monospace}
+.header{background:var(--red);padding:4px 20px 24px;color:#fff}
+.header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.header-brand{display:flex;align-items:center;gap:8px}
+.header-logo{width:28px;height:28px;background:rgba(255,255,255,0.2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;letter-spacing:.04em}
+.header-brand-name{font-size:13px;font-weight:500;opacity:.9}
+.notif-wrap{position:relative}
+.header-notif{width:32px;height:32px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer}
+.notif-dot{position:absolute;top:4px;right:4px;width:9px;height:9px;background:#f1c40f;border-radius:50%;border:2px solid var(--red);display:none}
+.notif-dot.show{display:block}
+.header-greeting{font-size:13px;opacity:.75;margin-bottom:3px}
+.header-company{font-size:20px;font-weight:600;line-height:1.2;margin-bottom:16px}
+.header-pills{display:flex;gap:8px}
+.pill{flex:1;background:rgba(255,255,255,0.15);border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;transition:background .15s}
+.pill:active{background:rgba(255,255,255,0.25)}
+.pill-val{font-size:22px;font-weight:700}
+.pill-label{font-size:10px;opacity:.8;margin-top:2px;font-weight:400}
+.pill.hl{background:rgba(255,255,255,0.25)}
+.tab-bar{display:flex;background:var(--surface);border-bottom:1px solid var(--border);padding:0 4px;position:sticky;top:0;z-index:10}
+.tab-item{flex:1;padding:12px 4px;text-align:center;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;position:relative}
+.tab-item.active{color:var(--red);border-bottom-color:var(--red)}
+.tab-badge{position:absolute;top:6px;right:8px;width:8px;height:8px;background:var(--red);border-radius:50%;display:none}
+.tab-badge.show{display:block}
+.scroll-content{padding:16px}
+.tab-panel{display:none} .tab-panel.active{display:block}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;margin-top:4px}
+.section-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em}
+.scad-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border-left:4px solid transparent}
+.scad-card.danger{border-left-color:var(--red)} .scad-card.warn{border-left-color:var(--amber)} .scad-card.ok{border-left-color:var(--green)}
+.scad-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.scad-icon.danger{background:var(--red-light)} .scad-icon.warn{background:var(--amber-light)} .scad-icon.ok{background:var(--green-light)}
+.scad-body{flex:1;min-width:0}
+.scad-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scad-date{font-size:11px;color:var(--text-muted);margin-top:2px}
+.scad-badge{flex-shrink:0;padding:4px 9px;border-radius:20px;font-size:11px;font-weight:600}
+.scad-badge.danger{background:var(--red-light);color:#8b1a10} .scad-badge.warn{background:var(--amber-light);color:#7d4a00} .scad-badge.ok{background:var(--green-light);color:#145a32}
+.doc-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.doc-icon{width:38px;height:38px;background:var(--bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.doc-body{flex:1;min-width:0}
+.doc-name{font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
+.doc-new{font-size:10px;font-weight:600;color:#145a32;background:var(--green-light);padding:2px 7px;border-radius:20px;margin-left:6px}
+.doc-dl{width:34px;height:34px;border-radius:8px;border:1px solid var(--border-med);background:transparent;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:var(--text-muted);transition:all .15s;text-decoration:none}
+.doc-dl:active{background:var(--bg);transform:scale(.95)}
+.contact-card{background:var(--surface);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+.contact-top{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.contact-avatar{width:44px;height:44px;background:var(--red-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--red)}
+.contact-btns{display:flex;gap:8px}
+.cbtn{flex:1;padding:10px;border-radius:var(--radius-sm);border:1px solid var(--border-med);background:transparent;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:all .15s}
+.cbtn:active{background:var(--bg);transform:scale(.97)}
+.cbtn.primary{background:var(--red);color:#fff;border-color:var(--red)}
+.cbtn.primary:active{background:var(--red-dark)}
+.upsell{background:var(--surface);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:1px solid rgba(192,57,43,.15);cursor:pointer}
+.upsell-icon{width:40px;height:40px;border-radius:10px;background:var(--red-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.upsell-body{flex:1}
+.upsell-title{font-size:13px;font-weight:600;color:#8b1a10}
+.upsell-sub{font-size:11px;color:var(--red);margin-top:2px}
+.bottom-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:390px;background:var(--surface);border-top:1px solid var(--border);display:flex;padding:8px 0 20px;z-index:20}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0}
+.bnav-icon{font-size:22px;line-height:1}
+.bnav-label{font-size:10px;font-weight:500;color:var(--text-muted)}
+.bnav-item.active .bnav-label{color:var(--red)}
+.bnav-dot{width:4px;height:4px;background:var(--red);border-radius:50%;margin:0 auto;display:none}
+.bnav-dot.show{display:block}
+.pb{padding-bottom:90px}
+
+/* NUOVO DOC PULSE */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.new-pulse{animation:pulse 1.5s ease-in-out 3}
+
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green);background:var(--green-light);padding:3px 9px;border-radius:20px}
+.live-dot{width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite}
+</style>
+</head>
+<body>
+
+<div class="status-bar">
+  <span id="clock">9:41</span>
+  <span>●●●●  WiFi  🔋</span>
+</div>
+
+<div class="header">
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="header-logo">R81</div>
+      <div class="header-brand-name">ROST 81</div>
+    </div>
+    <div class="notif-wrap">
+      <div class="header-notif" id="notif-btn" onclick="switchTab('documenti')">🔔</div>
+      <div class="notif-dot" id="notif-dot"></div>
+    </div>
+  </div>
+  <div class="header-greeting">Buongiorno 👋</div>
+  <div class="header-company">Lucchini Simone</div>
+  <div class="header-pills">
+    <div class="pill hl" onclick="switchTab('scadenze')"><div class="pill-val">1</div><div class="pill-label">In scadenza</div></div>
+    <div class="pill" onclick="switchTab('scadenze')"><div class="pill-val">2</div><div class="pill-label">In regola</div></div>
+    <div class="pill" onclick="switchTab('documenti')"><div class="pill-val" id="doc-count">0</div><div class="pill-label">Documenti</div></div>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <div class="tab-item active" onclick="switchTab('home')">Home</div>
+  <div class="tab-item" onclick="switchTab('scadenze')">Scadenze</div>
+  <div class="tab-item" onclick="switchTab('documenti')" id="tab-doc-item">
+    Documenti
+    <div class="tab-badge" id="tab-doc-badge"></div>
+  </div>
+  <div class="tab-item" onclick="switchTab('contatti')">Contatti</div>
+</div>
+
+<div class="scroll-content pb">
+
+  <!-- HOME -->
+  <div id="tab-home" class="tab-panel active">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="section-title">Stato connessione</div>
+      <div class="live-badge"><div class="live-dot"></div>LIVE</div>
+    </div>
+
+    <div id="new-doc-alert" style="display:none" class="upsell new-pulse" onclick="switchTab('documenti')">
+      <div class="upsell-icon">📨</div>
+      <div class="upsell-body">
+        <div class="upsell-title">Nuovo documento ricevuto!</div>
+        <div class="upsell-sub" id="new-doc-name">Tocca per visualizzare →</div>
+      </div>
+    </div>
+
+    <div class="section-head"><div class="section-title">Le tue scadenze</div></div>
+    <div class="scad-card warn"><div class="scad-icon warn">🎓</div><div class="scad-body"><div class="scad-name">Corso antincendio</div><div class="scad-date">Scade 19/05/2026</div></div><div class="scad-badge warn">8 gg</div></div>
+    <div class="scad-card ok"><div class="scad-icon ok">📄</div><div class="scad-body"><div class="scad-name">DVR aggiornato</div><div class="scad-date">Valido fino 20/12/2026</div></div><div class="scad-badge ok">In regola</div></div>
+    <div class="scad-card ok"><div class="scad-icon ok">🔥</div><div class="scad-body"><div class="scad-name">Manutenzione estintori</div><div class="scad-date">Prossima: agosto 2026</div></div><div class="scad-badge ok">In regola</div></div>
+
+    <div class="section-head" style="margin-top:8px"><div class="section-title">Documenti recenti</div></div>
+    <div id="home-docs">
+      <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">In attesa di documenti...</div>
+    </div>
+  </div>
+
+  <!-- SCADENZE -->
+  <div id="tab-scadenze" class="tab-panel">
+    <div class="section-head"><div class="section-title">Tutte le scadenze</div></div>
+    <div class="scad-card warn"><div class="scad-icon warn">🎓</div><div class="scad-body"><div class="scad-name">Corso antincendio lavoratori</div><div class="scad-date">Scade il 19/05/2026</div></div><div class="scad-badge warn">8 giorni</div></div>
+    <div class="scad-card ok"><div class="scad-icon ok">📄</div><div class="scad-body"><div class="scad-name">DVR — Valutazione Rischi</div><div class="scad-date">Valido fino al 20/12/2026</div></div><div class="scad-badge ok">In regola</div></div>
+    <div class="scad-card ok"><div class="scad-icon ok">🔥</div><div class="scad-body"><div class="scad-name">Manutenzione estintori</div><div class="scad-date">Prossima revisione: agosto 2026</div></div><div class="scad-badge ok">In regola</div></div>
+    <div style="background:var(--red-light);border-radius:var(--radius);padding:14px 16px;margin-top:4px;border:1px solid rgba(192,57,43,.15)">
+      <div style="font-size:13px;font-weight:600;color:#8b1a10;margin-bottom:4px">🔔 Vuoi i reminder automatici?</div>
+      <div style="font-size:12px;color:var(--red);margin-bottom:10px">Ricevi notifiche 30 e 7 giorni prima di ogni scadenza</div>
+      <button style="background:var(--red);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:12px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer" onclick="switchTab('contatti')">Attiva con ROST 81 →</button>
+    </div>
+  </div>
+
+  <!-- DOCUMENTI -->
+  <div id="tab-documenti" class="tab-panel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="section-title">I tuoi documenti</div>
+      <div class="live-badge"><div class="live-dot"></div>aggiornamento automatico</div>
+    </div>
+    <div id="doc-list">
+      <div style="text-align:center;padding:32px 20px;color:var(--text-muted);font-size:13px">
+        <div style="font-size:32px;margin-bottom:10px">📭</div>
+        In attesa di documenti da ROST 81...
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTATTI -->
+  <div id="tab-contatti" class="tab-panel">
+    <div class="section-head"><div class="section-title">Il tuo referente</div></div>
+    <div class="contact-card">
+      <div class="contact-top">
+        <div class="contact-avatar">SG</div>
+        <div><div style="font-size:14px;font-weight:600">Ing. Stefano Gaudioso</div><div style="font-size:12px;color:var(--text-muted)">Responsabile tecnico · ROST 81</div></div>
+      </div>
+      <div class="contact-btns">
+        <button class="cbtn primary">📞 Chiama</button>
+        <button class="cbtn">✉ Email</button>
+        <button class="cbtn">💬 WhatsApp</button>
+      </div>
+    </div>
+    <div class="contact-card" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">📍 ROST 81 Srl</div>
+      <div style="font-size:12px;color:var(--text-muted);line-height:1.8">Via Giotto, n.2<br>00034 Colleferro (RM)<br>06 97234064 · info@rost81.it</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="cbtn" style="flex:none;padding:8px 14px">🗺 Mappa</button>
+        <div style="font-size:11px;color:var(--text-muted);display:flex;align-items:center">Lun–Ven 9:00–18:00</div>
+      </div>
+    </div>
+    <div class="contact-card" style="margin-top:8px">
+      <div style="font-size:13px;font-weight:500;margin-bottom:8px">Scrivi un messaggio</div>
+      <textarea placeholder="Scrivi al tuo referente..." style="width:100%;border:1px solid var(--border-med);border-radius:var(--radius-sm);padding:10px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--bg);outline:none;resize:none;height:80px"></textarea>
+      <button style="width:100%;margin-top:8px;background:var(--red);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px;font-size:13px;font-weight:500;font-family:'DM Sans',sans-serif;cursor:pointer">Invia messaggio</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="bottom-nav">
+  <div class="bnav-item active" id="bnav-home" onclick="switchTab('home')"><div class="bnav-icon">🏠</div><div class="bnav-label" style="color:var(--red)">Home</div></div>
+  <div class="bnav-item" id="bnav-scadenze" onclick="switchTab('scadenze')"><div class="bnav-icon">⏰</div><div class="bnav-label">Scadenze</div></div>
+  <div class="bnav-item" id="bnav-documenti" onclick="switchTab('documenti')"><div class="bnav-icon">📁</div><div class="bnav-label">Documenti</div><div class="bnav-dot" id="bnav-dot"></div></div>
+  <div class="bnav-item" id="bnav-contatti" onclick="switchTab('contatti')"><div class="bnav-icon">📞</div><div class="bnav-label">Contatti</div></div>
+</div>
+
+<script>
+const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY};
+const tabs=['home','scadenze','documenti','contatti'];
+let clienteId=null, knownDocs=new Set(), lastCount=0;
+
+// clock
+setInterval(()=>{
+  const n=new Date();
+  document.getElementById('clock').textContent=n.getHours()+':'+(n.getMinutes()<10?'0':'')+n.getMinutes();
+},1000);
+
+async function getClienteId(){
+  if(clienteId) return clienteId;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?nome=eq.Lucchini%20Simone&select=id`,{headers:H});
+  const d=await r.json();
+  if(d&&d[0]){clienteId=d[0].id;}
+  return clienteId;
+}
+
+function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
+
+function isNew(created_at){return(Date.now()-new Date(created_at).getTime())<120000;}
+
+async function pollDocs(){
+  const id=await getClienteId();
+  if(!id) return;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti?cliente_id=eq.${id}&order=created_at.desc&select=*`,{headers:H});
+  const docs=await r.json();
+  if(!docs||!Array.isArray(docs)) return;
+
+  // check nuovi
+  const newDocs=docs.filter(d=>!knownDocs.has(d.id)&&isNew(d.created_at));
+  docs.forEach(d=>knownDocs.add(d.id));
+
+  if(newDocs.length>0){
+    document.getElementById('notif-dot').classList.add('show');
+    document.getElementById('tab-doc-badge').classList.add('show');
+    document.getElementById('bnav-dot').classList.add('show');
+    document.getElementById('new-doc-alert').style.display='flex';
+    document.getElementById('new-doc-name').textContent=(newDocs[0].descrizione||newDocs[0].nome_file)+' — tocca per vedere →';
+  }
+
+  const count=docs.length;
+  document.getElementById('doc-count').textContent=count;
+
+  // render lista completa
+  const listHTML=docs.length===0
+    ?'<div style="text-align:center;padding:32px 20px;color:var(--text-muted);font-size:13px"><div style="font-size:32px;margin-bottom:10px">📭</div>In attesa di documenti da ROST 81...</div>'
+    :docs.map(d=>`
+      <div class="doc-card" style="${isNew(d.created_at)?'border:1px solid rgba(39,174,96,.3);background:#f8fef9':''}">
+        <div class="doc-icon">${icon(d.nome_file)}</div>
+        <div class="doc-body">
+          <div class="doc-name">${d.descrizione||d.nome_file}${isNew(d.created_at)?'<span class="doc-new">NUOVO</span>':''}</div>
+          <div class="doc-meta">${d.nome_file} · ${new Date(d.created_at).toLocaleString('it-IT')}</div>
+        </div>
+        <a href="${d.url}" target="_blank" class="doc-dl">↓</a>
+      </div>
+    `).join('');
+
+  document.getElementById('doc-list').innerHTML=listHTML;
+
+  // home preview (ultimi 2)
+  const homeHTML=docs.length===0
+    ?'<div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px">In attesa di documenti...</div>'
+    :docs.slice(0,2).map(d=>`
+      <div class="doc-card" style="${isNew(d.created_at)?'border:1px solid rgba(39,174,96,.3);background:#f8fef9':''}">
+        <div class="doc-icon">${icon(d.nome_file)}</div>
+        <div class="doc-body">
+          <div class="doc-name">${d.descrizione||d.nome_file}${isNew(d.created_at)?'<span class="doc-new">NUOVO</span>':''}</div>
+          <div class="doc-meta">${new Date(d.created_at).toLocaleString('it-IT')}</div>
+        </div>
+        <a href="${d.url}" target="_blank" class="doc-dl">↓</a>
+      </div>
+    `).join('');
+  document.getElementById('home-docs').innerHTML=homeHTML;
+}
+
+function switchTab(id){
+  tabs.forEach(t=>{
+    document.getElementById('tab-'+t).classList.remove('active');
+    const ti=document.getElementById('bnav-'+t);
+    if(ti){ti.classList.remove('active');const l=ti.querySelector('.bnav-label');if(l)l.style.color='';}
+  });
+  document.querySelectorAll('.tab-item').forEach((el,i)=>el.classList.toggle('active',tabs[i]===id));
+  document.getElementById('tab-'+id).classList.add('active');
+  const bn=document.getElementById('bnav-'+id);
+  if(bn){bn.classList.add('active');const l=bn.querySelector('.bnav-label');if(l)l.style.color='var(--red)';}
+  if(id==='documenti'){
+    document.getElementById('notif-dot').classList.remove('show');
+    document.getElementById('tab-doc-badge').classList.remove('show');
+    document.getElementById('bnav-dot').classList.remove('show');
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// avvia polling ogni 4 secondi
+pollDocs();
+setInterval(pollDocs, 4000);
+</script>
+</body>
+</html>

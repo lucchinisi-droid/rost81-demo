@@ -18,8 +18,18 @@
   --radius:12px; --radius-sm:8px;
   --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.04);
 }
+body.dark {
+  --text:#f0f0f0; --text-muted:#9ca3af; --text-hint:#6b7280;
+  --bg:#0f1117; --surface:#1a1d27;
+  --border:rgba(255,255,255,0.07); --border-med:rgba(255,255,255,0.12);
+  --shadow:0 1px 3px rgba(0,0,0,0.3),0 4px 16px rgba(0,0,0,0.2);
+  --red-light:#2a1210; --amber-light:#271a08; --green-light:#0d2016; --blue-light:#0d1a26;
+}
+.theme-toggle{width:36px;height:36px;border-radius:50%;border:1px solid var(--border-med);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .2s;flex-shrink:0}
+.theme-toggle:hover{background:var(--bg);transform:scale(1.1)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.nav-item,.tab,.pill,.stat-card,.mag-card,.alert-card,[onclick]{cursor:pointer}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%}
 .app{display:flex;min-height:100vh}
 .sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0 16px;position:fixed;top:0;left:0;bottom:0;z-index:10}
 .sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
@@ -68,7 +78,7 @@ th{text-align:left;padding:10px 14px;font-size:10px;font-weight:600;color:var(--
 td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
 tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .td-name{font-weight:500} .td-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
-.lucchini-row td{background:#f0faf4} .lucchini-row:hover td{background:#e6f7ed}
+.lucchini-row td{background:var(--green-light)} .lucchini-row:hover td{background:var(--green-light)}
 .upload-zone{border:2px dashed var(--border-med);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
 .upload-zone:hover,.upload-zone.dragover{border-color:var(--red);background:var(--red-light)}
 .upload-input{display:none}
@@ -85,6 +95,27 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .service-card{padding:10px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg)}
 .service-name{font-size:12px;font-weight:500} .service-date{font-size:11px;color:var(--text-muted);margin-top:2px}
 .service-date.danger{color:var(--red)} .service-date.warn{color:var(--amber)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.mag-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:20px}
+.mag-card{background:var(--surface);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);border-top:3px solid transparent}
+.mag-card.ok{border-top-color:var(--green)} .mag-card.warn{border-top-color:var(--amber)} .mag-card.danger{border-top-color:var(--red)}
+.mag-nome{font-size:13px;font-weight:600;margin-bottom:2px}
+.mag-cat{font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.mag-qty{font-size:28px;font-weight:700;line-height:1}
+.mag-qty.ok{color:var(--green)} .mag-qty.warn{color:var(--amber)} .mag-qty.danger{color:var(--red)}
+.mag-soglia{font-size:11px;color:var(--text-muted);margin-top:2px}
+.mag-actions{display:flex;gap:6px;margin-top:12px}
+.uscita-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:50;display:none;align-items:center;justify-content:center}
+.uscita-modal.open{display:flex}
+.nuovo-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:50;display:none;align-items:center;justify-content:center}
+.nuovo-modal.open{display:flex}
+.uscita-box{background:var(--surface);border-radius:var(--radius);padding:24px;width:380px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+.uscita-title{font-size:16px;font-weight:600;margin-bottom:4px}
+.uscita-sub{font-size:12px;color:var(--text-muted);margin-bottom:20px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none}
+.form-input:focus{border-color:var(--red)}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:100;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)} .toast.success{background:var(--green)} .toast.error{background:var(--red)}
 </style>
@@ -101,6 +132,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber">24</span></div>
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge">3</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber">5</span></div>
+      <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge" id="badge-scorte" style="display:none">!</span></div>
       <div class="nav-item" onclick="switchPanel('documenti',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📤</span><span>Invia doc</span><span class="nav-badge green">LIVE</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
@@ -109,12 +141,23 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
   <div class="main">
     <div class="topbar">
       <div class="topbar-title" id="page-title">Dashboard</div>
-      <div class="topbar-date" id="topbar-date"></div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="topbar-date" id="topbar-date"></div>
+        <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" title="Giorno/Notte">🌙</button>
+      </div>
     </div>
     <div class="content">
 
       <!-- DASHBOARD -->
       <div id="panel-dashboard" class="panel active">
+
+        <!-- ── SEZIONE CLIENTI ── -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:16px">◎</span>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Clienti & Scadenze</div>
+          <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
+        </div>
+
         <div class="stat-row">
           <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val">24</div></div>
           <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">3</div></div>
@@ -123,12 +166,59 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="stat-card"><div class="stat-label">Preventivi</div><div class="stat-val blue">5</div></div>
           <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 8.400</div></div>
         </div>
-        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div></div>
-        <div class="alert-list">
+
+        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div><button class="btn btn-sm" onclick="switchPanel('scadenze',document.querySelectorAll('.nav-item')[2])">Vedi tutte</button></div>
+        <div class="alert-list" style="margin-bottom:0">
           <div class="alert-card red"><div class="alert-dot red"></div><div class="alert-info"><div class="alert-name">Edilcantieri Srl — Estintori scaduti</div><div class="alert-sub">Manutenzione semestrale · 8 estintori</div></div><div class="alert-days red">SCADUTO</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
           <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Logistica Roma Srl — Corso antincendio</div><div class="alert-sub">12 dipendenti</div></div><div class="alert-days amber">+8 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
           <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Supermercato Vivo — DVR</div><div class="alert-sub">Revisione annuale</div></div><div class="alert-days amber">+14 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
         </div>
+
+        <!-- ── DIVISORE ── -->
+        <div style="margin:28px 0;height:1px;background:var(--border)"></div>
+
+        <!-- ── SEZIONE MAGAZZINO ── -->
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-size:16px">📦</span>
+          <div style="font-size:13px;font-weight:600;color:var(--text)">Magazzino</div>
+          <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
+          <button class="btn btn-sm" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">Vai al magazzino</button>
+        </div>
+
+        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+            <div class="stat-label">📦 Articoli totali</div>
+            <div class="stat-val" id="dash-mag-tot">—</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+            <div class="stat-label">🔴 In esaurimento</div>
+            <div class="stat-val red" id="dash-mag-danger">—</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+            <div class="stat-label">🟡 Sotto soglia</div>
+            <div class="stat-val amber" id="dash-mag-warn">—</div>
+          </div>
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+            <div class="stat-label">🟢 In regola</div>
+            <div class="stat-val green" id="dash-mag-ok">—</div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+          <div>
+            <div class="section-head"><div class="section-title">⚠ Prodotti in esaurimento</div></div>
+            <div id="dash-esaurimento">
+              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
+            </div>
+          </div>
+          <div>
+            <div class="section-head"><div class="section-title">📤 Ultime consegne</div></div>
+            <div id="dash-consegne">
+              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- CLIENTI -->
@@ -142,7 +232,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
                 <td><div class="td-name">🟢 Lucchini Simone</div><div class="td-sub">Demo Colloquio · connesso LIVE</div></td>
                 <td>Demo</td><td>DVR · Formazione</td>
                 <td><span class="badge badge-green">Attivo</span></td>
-                <td><button class="btn btn-sm btn-red" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤 Invia doc</button></td>
+                <td style="display:flex;gap:6px"><button class="btn btn-sm" onclick="toggleDetail('lucchini')">Scheda</button><button class="btn btn-sm btn-red" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤</button></td>
               </tr>
               <tr><td><div class="td-name">Edilcantieri Srl</div><div class="td-sub">Via Roma 12, Colleferro</div></td><td>Edilizia</td><td>DVR · Estintori · CSE</td><td><span class="badge badge-red">Critico</span></td><td><button class="btn btn-sm" onclick="toggleDetail('edilcantieri')">Scheda</button></td></tr>
               <tr><td><div class="td-name">Logistica Roma Srl</div><div class="td-sub">Via Casilina 88, Roma</div></td><td>Logistica</td><td>DVR · Formazione · DPI</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm" onclick="toggleDetail('logistica')">Scheda</button></td></tr>
@@ -151,6 +241,35 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             </tbody>
           </table>
         </div>
+        <!-- SCHEDA LUCCHINI LIVE -->
+        <div id="detail-lucchini" class="client-detail">
+          <div class="detail-top">
+            <div class="avatar green">LS</div>
+            <div style="flex:1">
+              <div style="font-size:15px;font-weight:600">Lucchini Simone</div>
+              <div style="font-size:12px;color:var(--text-muted)">Cliente demo · connesso LIVE · simone@email.it</div>
+            </div>
+            <button class="btn btn-red btn-sm" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤 Invia doc</button>
+            <button class="btn btn-sm" onclick="loadLucchiniDocs()" style="margin-left:6px">↻</button>
+          </div>
+          <div class="section-title" style="margin-bottom:10px">Servizi attivi</div>
+          <div class="service-grid" style="margin-bottom:16px">
+            <div class="service-card"><div class="service-name">📄 DVR</div><div class="service-date">Validità 20/12/2026</div></div>
+            <div class="service-card" style="border-color:#fac775"><div class="service-name">🎓 Corso antincendio</div><div class="service-date warn">Scade 19/05/2026</div></div>
+            <div class="service-card"><div class="service-name">🔥 Estintori</div><div class="service-date">Prossima: ago 2026</div></div>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <div class="section-title">Documenti inviati</div>
+            <div style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green)">
+              <div style="width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite"></div>
+              LIVE
+            </div>
+          </div>
+          <div id="lucchini-docs">
+            <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px">Caricamento...</div>
+          </div>
+        </div>
+
         <div id="detail-edilcantieri" class="client-detail">
           <div class="detail-top"><div class="avatar">EC</div><div style="flex:1"><div style="font-size:15px;font-weight:600">Edilcantieri Srl</div><div style="font-size:12px;color:var(--text-muted)">Cliente dal 2019 · Mario Rossi · 06 1234567</div></div><button class="btn btn-red btn-sm">✉ Reminder</button></div>
           <div class="section-title">Servizi</div>
@@ -196,6 +315,93 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
       </div>
 
+      <!-- MAGAZZINO -->
+      <div id="panel-magazzino" class="panel">
+        <div id="scorte-alert" style="display:none;background:var(--red-light);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:none;align-items:center;gap:10px">
+          <span style="font-size:18px">⚠️</span>
+          <div style="flex:1;font-size:13px;font-weight:500;color:#8b1a10" id="scorte-alert-text">Articoli sotto scorta minima</div>
+        </div>
+        <div class="section-head">
+          <div class="section-title">Giacenze magazzino</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-sm" onclick="loadMagazzino()">↻ Aggiorna</button>
+            <button class="btn btn-sm btn-red" onclick="document.getElementById('nuovo-modal').classList.add('open')">+ Articolo</button>
+          </div>
+        </div>
+        <div id="mag-grid" class="mag-grid">
+          <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Caricamento...</div>
+        </div>
+        <div class="section-head" style="margin-top:8px">
+          <div class="section-title">Ultimi movimenti</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Articolo</th><th>Cliente</th><th>Q.tà</th><th>Nota</th><th>Data</th></tr></thead>
+            <tbody id="mov-list"><tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Caricamento...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MODALE USCITA -->
+      <div class="uscita-modal" id="uscita-modal">
+        <div class="uscita-box">
+          <div class="uscita-title" id="uscita-nome">Uscita articolo</div>
+          <div class="uscita-sub">Registra materiale consegnato o utilizzato</div>
+          <input type="hidden" id="uscita-id">
+          <div class="form-group">
+            <label class="form-label">Cliente</label>
+            <select class="form-input" id="uscita-cliente">
+              <option value="">— Uso interno / campo —</option>
+              <option value="lucchini">Lucchini Simone</option>
+              <option value="edilcantieri">Edilcantieri Srl</option>
+              <option value="logistica">Logistica Roma Srl</option>
+              <option value="supermercato">Supermercato Vivo</option>
+              <option value="hotel">Hotel Belvedere</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Quantità in uscita</label>
+            <input type="number" class="form-input" id="uscita-qty" min="1" value="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nota (opzionale)</label>
+            <input type="text" class="form-input" id="uscita-nota" placeholder="es. Installazione presso sede cliente">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="registraUscita()">✓ Conferma uscita</button>
+            <button class="btn" onclick="document.getElementById('uscita-modal').classList.remove('open')">Annulla</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODALE NUOVO ARTICOLO -->
+      <div class="nuovo-modal" id="nuovo-modal">
+        <div class="uscita-box">
+          <div class="uscita-title">Nuovo articolo</div>
+          <div class="uscita-sub">Aggiungi un articolo al magazzino</div>
+          <div class="form-group">
+            <label class="form-label">Nome articolo</label>
+            <select class="form-input" id="n-nome-select" onchange="onNomeSelectChange(this)">
+              <option value="">— Seleziona articolo —</option>
+            </select>
+            <input type="text" class="form-input" id="n-nome-custom" placeholder="Nome nuovo articolo..." style="display:none;margin-top:8px">
+          </div>
+          <div class="form-group"><label class="form-label">Categoria</label>
+            <select class="form-input" id="n-cat">
+              <option>Estintori</option><option>Segnaletica</option><option>DPI</option><option>Impianti</option><option>Manutenzione</option><option>Altro</option>
+            </select>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:10px">
+            <div class="form-group"><label class="form-label">Quantità</label><input type="number" class="form-input" id="n-qty" min="0" value="0"></div>
+            <div class="form-group"><label class="form-label">Soglia minima</label><input type="number" class="form-input" id="n-soglia" min="0" value="5"></div>
+            <div class="form-group"><label class="form-label">Unità</label><input type="text" class="form-input" id="n-unita" value="pz"></div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaArticolo()">+ Aggiungi</button>
+            <button class="btn" onclick="document.getElementById('nuovo-modal').classList.remove('open')">Annulla</button>
+          </div>
+        </div>
+      </div>
       <!-- DOCUMENTI LIVE -->
       <div id="panel-documenti" class="panel">
         <div style="background:var(--green-light);border:1px solid rgba(39,174,96,.25);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
@@ -254,6 +460,17 @@ const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 let clienteId=null, selectedFile=null;
+
+function toggleTheme(){
+  const dark=document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
+  localStorage.setItem('rost81-theme',dark?'dark':'light');
+}
+// ripristina tema salvato
+if(localStorage.getItem('rost81-theme')==='dark'){
+  document.body.classList.add('dark');
+  document.getElementById('theme-btn').textContent='☀️';
+}
 
 document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
@@ -358,23 +575,257 @@ async function loadDocs(){
 
 function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
 
-function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show '+(type||'');setTimeout(()=>t.className='toast',3500);}
+// ---- MAGAZZINO ----
+let magazzino=[];
+let clientiMap={};
 
+async function loadClienteIds(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,nome`,{headers:H});
+  const d=await r.json();
+  if(d) d.forEach(c=>{ clientiMap[c.nome]=c.id; });
+}
+
+function statoQty(qty,soglia){
+  if(qty<=0) return 'danger';
+  if(qty<=soglia) return 'warn';
+  return 'ok';
+}
+
+function catIcon(cat){
+  const m={'Estintori':'🔥','Segnaletica':'🪧','DPI':'🦺','Impianti':'🔧','Manutenzione':'⚙️'};
+  return m[cat]||'📦';
+}
+
+async function loadMagazzino(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?order=categoria,nome&select=*`,{headers:H});
+  magazzino=await r.json();
+  if(!magazzino||!Array.isArray(magazzino)) return;
+
+  const sot=magazzino.filter(a=>a.quantita<=a.soglia_minima);
+  const badge=document.getElementById('badge-scorte');
+  const alert=document.getElementById('scorte-alert');
+  if(sot.length>0){
+    badge.style.display='flex'; badge.textContent=sot.length;
+    if(alert){ alert.style.display='flex'; document.getElementById('scorte-alert-text').textContent=`${sot.length} articol${sot.length>1?'i':'o'} sotto scorta minima`; }
+  } else {
+    badge.style.display='none';
+    if(alert) alert.style.display='none';
+  }
+
+  const grid=document.getElementById('mag-grid');
+  populateNomeSelect();
+  grid.innerHTML=magazzino.map(a=>{
+    const stato=statoQty(a.quantita,a.soglia_minima);
+    return `
+    <div class="mag-card ${stato}">
+      <div class="mag-cat">${catIcon(a.categoria)} ${a.categoria||'Altro'}</div>
+      <div class="mag-nome">${a.nome}</div>
+      <div class="mag-qty ${stato}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
+      <div class="mag-soglia">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div>
+      <div class="mag-actions">
+        <button class="btn btn-sm btn-red" style="flex:1;justify-content:center" onclick="apriUscita('${a.id}','${a.nome.replace(/'/g,"\\'")}',${a.quantita})">📤 Uscita</button>
+        <button class="btn btn-sm" onclick="eliminaArticolo('${a.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  loadMovimenti();
+}
+
+async function loadMovimenti(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_movimenti?order=created_at.desc&limit=10&select=*,rost81_magazzino(nome),rost81_clienti(nome)`,{headers:H});
+  const movs=await r.json();
+  const tbody=document.getElementById('mov-list');
+  if(!movs||movs.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Nessun movimento ancora</td></tr>';return;}
+  tbody.innerHTML=movs.map(m=>`
+    <tr>
+      <td style="font-weight:500">${m.rost81_magazzino?.nome||'—'}</td>
+      <td>${m.rost81_clienti?.nome||'Uso interno'}</td>
+      <td><span class="badge badge-red">-${m.quantita}</span></td>
+      <td style="color:var(--text-muted);font-size:12px">${m.nota||'—'}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${new Date(m.created_at).toLocaleString('it-IT')}</td>
+    </tr>
+  `).join('');
+}
+
+function apriUscita(id,nome,qtyAttuale){
+  document.getElementById('uscita-id').value=id;
+  document.getElementById('uscita-nome').textContent='Uscita: '+nome;
+  document.getElementById('uscita-qty').max=qtyAttuale;
+  document.getElementById('uscita-qty').value=1;
+  document.getElementById('uscita-nota').value='';
+  document.getElementById('uscita-cliente').value='';
+  document.getElementById('uscita-modal').classList.add('open');
+}
+
+async function registraUscita(){
+  const articoloId=document.getElementById('uscita-id').value;
+  const qty=parseInt(document.getElementById('uscita-qty').value)||1;
+  const nota=document.getElementById('uscita-nota').value;
+  const clienteNome=document.getElementById('uscita-cliente').options[document.getElementById('uscita-cliente').selectedIndex].text;
+  const clienteId=clientiMap[clienteNome]||null;
+
+  const art=magazzino.find(a=>a.id===articoloId);
+  if(!art) return;
+  if(qty>art.quantita){showToast('Quantità superiore alla giacenza','error');return;}
+
+  const nuovaQty=art.quantita-qty;
+
+  const [r1,r2]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${articoloId}`,{
+      method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({quantita:nuovaQty})
+    }),
+    fetch(`${SUPA_URL}/rest/v1/rost81_movimenti`,{
+      method:'POST',headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({articolo_id:articoloId,cliente_id:clienteId||null,quantita:qty,tipo:'uscita',nota:nota||null})
+    })
+  ]);
+
+  document.getElementById('uscita-modal').classList.remove('open');
+  if(r1.ok&&r2.ok){
+    showToast(`✓ Uscita registrata: -${qty} ${art.unita||'pz'}${clienteId?' → '+clienteNome:''}','success`);
+    loadMagazzino();
+  } else {
+    showToast('Errore durante la registrazione','error');
+  }
+}
+
+async function populateNomeSelect(){
+  const sel=document.getElementById('n-nome-select');
+  const nomi=[...new Set(magazzino.map(a=>a.nome))].sort();
+  sel.innerHTML='<option value="">— Seleziona articolo —</option>';
+  nomi.forEach(n=>{
+    const o=document.createElement('option');
+    o.value=n; o.textContent=n;
+    sel.appendChild(o);
+  });
+  const ins=document.createElement('option');
+  ins.value='__nuovo__'; ins.textContent='✏ Inserisci nuovo';
+  sel.appendChild(ins);
+}
+
+function onNomeSelectChange(sel){
+  const custom=document.getElementById('n-nome-custom');
+  custom.style.display=sel.value==='__nuovo__'?'block':'none';
+  if(sel.value==='__nuovo__') custom.focus();
+}
+
+async function salvaArticolo(){
+  const sel=document.getElementById('n-nome-select');
+  const custom=document.getElementById('n-nome-custom');
+  const nome=(sel.value==='__nuovo__'?custom.value:sel.value).trim();
+  if(!nome){showToast('Seleziona o inserisci il nome articolo','error');return;}
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino`,{
+    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({
+      nome:nome,
+      categoria:document.getElementById('n-cat').value,
+      quantita:parseInt(document.getElementById('n-qty').value)||0,
+      soglia_minima:parseInt(document.getElementById('n-soglia').value)||5,
+      unita:document.getElementById('n-unita').value||'pz'
+    })
+  });
+  document.getElementById('nuovo-modal').classList.remove('open');
+  sel.value=''; custom.value=''; custom.style.display='none';
+  if(r.ok){showToast('✓ Articolo aggiunto','success');loadMagazzino();}
+  else showToast('Errore salvataggio','error');
+}
+
+async function eliminaArticolo(id){
+  if(!confirm('Eliminare questo articolo dal magazzino?')) return;
+  await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${id}`,{method:'DELETE',headers:H});
+  showToast('Articolo eliminato','success');
+  loadMagazzino();
+}
+
+// avvia magazzino quando si apre il panel
 function switchPanel(id,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
-  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',documenti:'Invia documento'};
+  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',documenti:'Invia documento'};
   document.getElementById('page-title').textContent=labels[id]||id;
   if(id==='documenti') loadDocs();
+  if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
+  if(id==='dashboard') loadDashboardMagazzino();
 }
+
+loadClienteIds();
+
+async function loadDashboardMagazzino(){
+  const [rMag,rMov]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?order=quantita&select=*`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_movimenti?order=created_at.desc&limit=5&select=*,rost81_magazzino(nome,unita),rost81_clienti(nome)`,{headers:H})
+  ]);
+  const mag=await rMag.json();
+  const movs=await rMov.json();
+  if(mag&&Array.isArray(mag)){
+    const danger=mag.filter(a=>a.quantita<=0);
+    const warn=mag.filter(a=>a.quantita>0&&a.quantita<=a.soglia_minima);
+    const ok=mag.filter(a=>a.quantita>a.soglia_minima);
+    document.getElementById('dash-mag-tot').textContent=mag.length;
+    document.getElementById('dash-mag-danger').textContent=danger.length;
+    document.getElementById('dash-mag-warn').textContent=warn.length;
+    document.getElementById('dash-mag-ok').textContent=ok.length;
+    const critici=[...danger,...warn].slice(0,4);
+    const esEl=document.getElementById('dash-esaurimento');
+    if(critici.length===0){
+      esEl.innerHTML='<div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">✅</span><span style="font-size:13px;color:var(--green);font-weight:500">Tutti i prodotti sono in regola</span></div>';
+    } else {
+      esEl.innerHTML=critici.map(a=>{
+        const s=a.quantita<=0?'danger':a.quantita<=a.soglia_minima?'warn':'ok';
+        const col=s==='danger'?'var(--red)':s==='warn'?'var(--amber)':'var(--green)';
+        return `<div class="alert-card ${s}" style="margin-bottom:8px"><div class="alert-dot ${s}"></div><div class="alert-info"><div class="alert-name">${a.nome}</div><div class="alert-sub">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div></div><div style="font-size:14px;font-weight:700;color:${col}">${a.quantita} ${a.unita||'pz'}</div></div>`;
+      }).join('');
+    }
+  }
+  if(movs&&Array.isArray(movs)){
+    const consEl=document.getElementById('dash-consegne');
+    if(movs.length===0){
+      consEl.innerHTML='<div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;text-align:center;color:var(--text-muted);font-size:13px">Nessuna consegna ancora</div>';
+    } else {
+      consEl.innerHTML=movs.map(m=>`
+        <div class="doc-item" style="margin-bottom:8px"><div class="doc-icon">📦</div><div class="doc-info"><div class="doc-name">${m.rost81_magazzino?.nome||'—'}</div><div class="doc-meta">${m.rost81_clienti?.nome||'Uso interno'} · ${new Date(m.created_at).toLocaleString('it-IT')}</div></div><span class="badge badge-red">-${m.quantita} ${m.rost81_magazzino?.unita||'pz'}</span></div>
+      `).join('');
+    }
+  }
+}
+
+loadDashboardMagazzino();
 
 function toggleDetail(id){
   const d=document.getElementById('detail-'+id);
   const open=d.classList.contains('open');
   document.querySelectorAll('.client-detail').forEach(x=>x.classList.remove('open'));
-  if(!open) d.classList.add('open');
+  if(!open){
+    d.classList.add('open');
+    if(id==='lucchini') loadLucchiniDocs();
+  }
+}
+
+async function loadLucchiniDocs(){
+  const id=await getClienteId();
+  const container=document.getElementById('lucchini-docs');
+  if(!id){container.innerHTML='<div style="color:var(--red);font-size:13px;padding:12px">Cliente non trovato su Supabase</div>';return;}
+  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px">Caricamento...</div>';
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti?cliente_id=eq.${id}&order=created_at.desc&select=*`,{headers:H});
+  const docs=await r.json();
+  if(!docs||docs.length===0){
+    container.innerHTML='<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--bg);border-radius:var(--radius-sm)">Nessun documento inviato ancora</div>';
+    return;
+  }
+  container.innerHTML=docs.map(d=>`
+    <div class="doc-item">
+      <div class="doc-icon">${icon(d.nome_file)}</div>
+      <div class="doc-info">
+        <div class="doc-name">${d.descrizione||d.nome_file}</div>
+        <div class="doc-meta">${d.nome_file} · ${new Date(d.created_at).toLocaleString('it-IT')}</div>
+      </div>
+      <a href="${d.url}" target="_blank" style="text-decoration:none"><button class="btn btn-sm">↓ Apri</button></a>
+    </div>
+  `).join('');
 }
 </script>
 </body>

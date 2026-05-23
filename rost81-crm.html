@@ -79,14 +79,8 @@ td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:middle
 tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .td-name{font-weight:500} .td-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
 .lucchini-row td{background:var(--green-light)} .lucchini-row:hover td{background:var(--green-light)}
-.upload-zone{border:2px dashed var(--border-med);border-radius:var(--radius);padding:32px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg)}
-.upload-zone:hover,.upload-zone.dragover{border-color:var(--red);background:var(--red-light)}
-.upload-input{display:none}
-.doc-list{display:flex;flex-direction:column;gap:8px;margin-top:4px}
 .doc-item{background:var(--surface);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow)}
 .doc-icon{font-size:20px;flex-shrink:0} .doc-info{flex:1} .doc-name{font-size:13px;font-weight:500} .doc-meta{font-size:11px;color:var(--text-muted);margin-top:2px}
-.progress-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden}
-.progress-fill{height:100%;background:var(--red);border-radius:2px;transition:width .3s}
 .client-detail{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:none;margin-top:14px}
 .client-detail.open{display:block}
 .detail-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border)}
@@ -133,8 +127,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge">3</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber">5</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge" id="badge-scorte" style="display:none">!</span></div>
-      <div class="nav-item" onclick="switchPanel('documenti',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📤</span><span>Invia doc</span><span class="nav-badge green">LIVE</span></div>
-      <div class="nav-item" onclick="switchPanel('doclavoro',this)"><span>📋</span><span>Documenti di Lavoro</span></div>
+      <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
   </aside>
@@ -233,7 +226,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
                 <td><div class="td-name">🟢 Lucchini Simone</div><div class="td-sub">Demo Colloquio · connesso LIVE</div></td>
                 <td>Demo</td><td>DVR · Formazione</td>
                 <td><span class="badge badge-green">Attivo</span></td>
-                <td style="display:flex;gap:6px"><button class="btn btn-sm" onclick="toggleDetail('lucchini')">Scheda</button><button class="btn btn-sm btn-red" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤</button></td>
+                <td><button class="btn btn-sm" onclick="toggleDetail('lucchini')">Scheda</button></td>
               </tr>
               <tr><td><div class="td-name">Edilcantieri Srl</div><div class="td-sub">Via Roma 12, Colleferro</div></td><td>Edilizia</td><td>DVR · Estintori · CSE</td><td><span class="badge badge-red">Critico</span></td><td><button class="btn btn-sm" onclick="toggleDetail('edilcantieri')">Scheda</button></td></tr>
               <tr><td><div class="td-name">Logistica Roma Srl</div><div class="td-sub">Via Casilina 88, Roma</div></td><td>Logistica</td><td>DVR · Formazione · DPI</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm" onclick="toggleDetail('logistica')">Scheda</button></td></tr>
@@ -250,8 +243,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
               <div style="font-size:15px;font-weight:600">Lucchini Simone</div>
               <div style="font-size:12px;color:var(--text-muted)">Cliente demo · connesso LIVE · simone@email.it</div>
             </div>
-            <button class="btn btn-red btn-sm" onclick="switchPanel('documenti',document.querySelectorAll('.nav-item')[4])">📤 Invia doc</button>
-            <button class="btn btn-sm" onclick="loadLucchiniDocs()" style="margin-left:6px">↻</button>
+            <button class="btn btn-sm" onclick="loadLucchiniDocs()">↻ Aggiorna doc</button>
           </div>
           <div class="section-title" style="margin-bottom:10px">Servizi attivi</div>
           <div class="service-grid" style="margin-bottom:16px">
@@ -404,52 +396,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
       </div>
       <!-- DOCUMENTI LIVE -->
-      <div id="panel-documenti" class="panel">
-        <div style="background:var(--green-light);border:1px solid rgba(39,174,96,.25);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px;display:flex;align-items:center;gap:12px">
-          <span style="font-size:22px">🟢</span>
-          <div>
-            <div style="font-size:13px;font-weight:600;color:#145a32">Connesso a Supabase — LIVE</div>
-            <div style="font-size:12px;color:var(--green);margin-top:1px">Il documento apparirà su iPhone in tempo reale</div>
-          </div>
-        </div>
-
-        <div style="background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:20px">
-          <div class="section-title" style="margin-bottom:14px">Invia documento → Lucchini Simone</div>
-
-          <div style="margin-bottom:14px">
-            <label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Descrizione</label>
-            <input type="text" id="doc-descrizione" placeholder="es. DVR aggiornato 2026, Attestato corso antincendio..." style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none">
-          </div>
-
-          <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="upload-zone">
-            <div style="font-size:36px;margin-bottom:10px">📎</div>
-            <div style="font-size:14px;font-weight:500;margin-bottom:4px" id="upload-title">Clicca o trascina un file</div>
-            <div style="font-size:12px;color:var(--text-muted)" id="upload-sub">PDF, Word, Excel, immagini — max 10MB</div>
-          </div>
-          <input type="file" id="file-input" class="upload-input" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
-
-          <div id="upload-progress" style="display:none;margin-top:12px">
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
-              <span id="prog-filename" style="font-size:12px;font-weight:500;color:var(--text-muted)"></span>
-              <span id="prog-status" style="font-size:12px;color:var(--amber)">Caricamento...</span>
-            </div>
-            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
-          </div>
-
-          <button class="btn btn-red" id="upload-btn" onclick="uploadDoc()" style="margin-top:14px;width:100%;justify-content:center;padding:11px;font-size:13px">
-            📤 Invia a Lucchini Simone
-          </button>
-        </div>
-
-        <div class="section-head">
-          <div class="section-title">Documenti inviati</div>
-          <button class="btn btn-sm" onclick="loadDocs()">↻ Aggiorna</button>
-        </div>
-        <div id="doc-list" class="doc-list">
-          <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Caricamento...</div>
-        </div>
-      </div>
-
       <div id="panel-doclavoro" class="panel">
         <div style="background:var(--surface);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)">
           <div class="section-title" style="margin-bottom:8px">📋 Documenti di Lavoro</div>
@@ -467,7 +413,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
-let clienteId=null, selectedFile=null;
+let clienteId=null;
 
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
@@ -490,96 +436,6 @@ async function getClienteId(){
   return null;
 }
 
-document.getElementById('file-input').addEventListener('change',e=>{
-  selectedFile=e.target.files[0];
-  if(selectedFile){
-    document.getElementById('upload-title').textContent=selectedFile.name;
-    document.getElementById('upload-sub').textContent=(selectedFile.size/1024).toFixed(0)+' KB';
-    document.getElementById('upload-zone').style.borderColor='var(--green)';
-    document.getElementById('upload-zone').style.background='var(--green-light)';
-  }
-});
-
-const zone=document.getElementById('upload-zone');
-zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('dragover')});
-zone.addEventListener('dragleave',()=>zone.classList.remove('dragover'));
-zone.addEventListener('drop',e=>{
-  e.preventDefault();zone.classList.remove('dragover');
-  selectedFile=e.dataTransfer.files[0];
-  if(selectedFile){document.getElementById('upload-title').textContent=selectedFile.name;document.getElementById('upload-sub').textContent=(selectedFile.size/1024).toFixed(0)+' KB';}
-});
-
-async function uploadDoc(){
-  if(!selectedFile){showToast('Seleziona un file prima','error');return;}
-  const descr=document.getElementById('doc-descrizione').value||selectedFile.name;
-  const btn=document.getElementById('upload-btn');
-  btn.disabled=true;btn.textContent='Caricamento...';
-  document.getElementById('upload-progress').style.display='block';
-  document.getElementById('prog-filename').textContent=selectedFile.name;
-  document.getElementById('prog-status').textContent='Caricamento...';
-  document.getElementById('prog-status').style.color='var(--amber)';
-  let progInterval=setInterval(()=>{
-    const fill=document.getElementById('progress-fill');
-    const w=parseFloat(fill.style.width)||0;
-    if(w<85) fill.style.width=(w+Math.random()*12)+'%';
-  },200);
-  try{
-    const id=await getClienteId();
-    if(!id){throw new Error('Cliente non trovato. Hai eseguito lo script SQL?');}
-    const path=`lucchini-simone/${Date.now()}-${selectedFile.name.replace(/\s/g,'_')}`;
-    const upRes=await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`,{
-      method:'POST',
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':selectedFile.type||'application/octet-stream'},
-      body:selectedFile
-    });
-    if(!upRes.ok){const t=await upRes.text();throw new Error('Storage: '+t);}
-    const url=`${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`;
-    const dbRes=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti`,{
-      method:'POST',
-      headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify({cliente_id:id,nome_file:selectedFile.name,descrizione:descr,url:url})
-    });
-    if(!dbRes.ok){const t=await dbRes.text();throw new Error('Database: '+t);}
-    clearInterval(progInterval);
-    document.getElementById('progress-fill').style.width='100%';
-    document.getElementById('prog-status').textContent='✓ Inviato!';
-    document.getElementById('prog-status').style.color='var(--green)';
-    showToast('✓ Documento inviato! Visibile su iPhone ora.','success');
-    selectedFile=null;
-    document.getElementById('upload-title').textContent='Clicca o trascina un file';
-    document.getElementById('upload-sub').textContent='PDF, Word, Excel, immagini — max 10MB';
-    document.getElementById('upload-zone').style.borderColor='';
-    document.getElementById('upload-zone').style.background='';
-    document.getElementById('doc-descrizione').value='';
-    document.getElementById('file-input').value='';
-    loadDocs();
-  }catch(err){
-    clearInterval(progInterval);
-    document.getElementById('prog-status').textContent='✕ Errore';
-    document.getElementById('prog-status').style.color='var(--red)';
-    showToast('Errore: '+err.message,'error');
-  }
-  btn.disabled=false;btn.innerHTML='📤 Invia a Lucchini Simone';
-}
-
-async function loadDocs(){
-  const id=await getClienteId();
-  const list=document.getElementById('doc-list');
-  if(!id){list.innerHTML='<div style="text-align:center;padding:20px;color:var(--red);font-size:13px">Cliente non trovato su Supabase</div>';return;}
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti?cliente_id=eq.${id}&order=created_at.desc&select=*`,{headers:H});
-  const docs=await r.json();
-  if(!docs||docs.length===0){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Nessun documento ancora inviato</div>';return;}
-  list.innerHTML=docs.map(d=>`
-    <div class="doc-item">
-      <div class="doc-icon">${icon(d.nome_file)}</div>
-      <div class="doc-info">
-        <div class="doc-name">${d.descrizione||d.nome_file}</div>
-        <div class="doc-meta">${d.nome_file} · ${new Date(d.created_at).toLocaleString('it-IT')}</div>
-      </div>
-      <a href="${d.url}" target="_blank" style="text-decoration:none"><button class="btn btn-sm">↓ Apri</button></a>
-    </div>
-  `).join('');
-}
 
 function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
 
@@ -753,9 +609,8 @@ function switchPanel(id,el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
-  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',documenti:'Invia documento',doclavoro:'Documenti di Lavoro'};
+  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro'};
   document.getElementById('page-title').textContent=labels[id]||id;
-  if(id==='documenti') loadDocs();
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
   if(id==='dashboard') loadDashboardMagazzino();
 }

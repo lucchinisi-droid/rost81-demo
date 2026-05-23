@@ -123,9 +123,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     </div>
     <nav>
       <div class="nav-item active" onclick="switchPanel('dashboard',this)"><span>⊞</span><span>Dashboard</span></div>
-      <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span></div>
-      <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span></div>
-      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span></div>
+      <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
+      <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
+      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber" id="badge-preventivi">0</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge" id="badge-scorte" style="display:none">!</span></div>
       <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
     </nav>
@@ -384,6 +384,15 @@ function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(
 let magazzino=[];
 let clientiMap={};
 
+async function loadSidebarBadges(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id`,{headers:H});
+  const d=await r.json();
+  const n=Array.isArray(d)?d.length:0;
+  document.getElementById('badge-clienti').textContent=n;
+  document.getElementById('badge-scadenze').textContent=0;
+  document.getElementById('badge-preventivi').textContent=0;
+}
+
 async function loadClienteIds(){
   const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?order=nome&select=id,nome`,{headers:H});
   const d=await r.json();
@@ -604,6 +613,7 @@ async function loadDashboardMagazzino(){
 }
 
 loadDashboardMagazzino();
+loadSidebarBadges();
 
 </script>
 </body>

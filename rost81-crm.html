@@ -123,9 +123,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     </div>
     <nav>
       <div class="nav-item active" onclick="switchPanel('dashboard',this)"><span>⊞</span><span>Dashboard</span></div>
-      <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber">24</span></div>
-      <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge">3</span></div>
-      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber">5</span></div>
+      <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span></div>
+      <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span></div>
+      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge" id="badge-scorte" style="display:none">!</span></div>
       <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
     </nav>
@@ -153,19 +153,17 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
 
         <div class="stat-row">
-          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val">24</div></div>
-          <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">3</div></div>
-          <div class="stat-card"><div class="stat-label">Entro 30gg</div><div class="stat-val amber">7</div></div>
-          <div class="stat-card"><div class="stat-label">In regola</div><div class="stat-val green">14</div></div>
-          <div class="stat-card"><div class="stat-label">Preventivi</div><div class="stat-val blue">5</div></div>
-          <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 8.400</div></div>
+          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val">0</div></div>
+          <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">0</div></div>
+          <div class="stat-card"><div class="stat-label">Entro 30gg</div><div class="stat-val amber">0</div></div>
+          <div class="stat-card"><div class="stat-label">In regola</div><div class="stat-val green">0</div></div>
+          <div class="stat-card"><div class="stat-label">Preventivi</div><div class="stat-val blue">0</div></div>
+          <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 0</div></div>
         </div>
 
         <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div><button class="btn btn-sm" onclick="switchPanel('scadenze',document.querySelectorAll('.nav-item')[2])">Vedi tutte</button></div>
         <div class="alert-list" style="margin-bottom:0">
-          <div class="alert-card red"><div class="alert-dot red"></div><div class="alert-info"><div class="alert-name">Edilcantieri Srl — Estintori scaduti</div><div class="alert-sub">Manutenzione semestrale · 8 estintori</div></div><div class="alert-days red">SCADUTO</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
-          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Logistica Roma Srl — Corso antincendio</div><div class="alert-sub">12 dipendenti</div></div><div class="alert-days amber">+8 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
-          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Supermercato Vivo — DVR</div><div class="alert-sub">Revisione annuale</div></div><div class="alert-days amber">+14 giorni</div><button class="btn btn-sm btn-red">✉ Reminder</button></div>
+          <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Nessuna scadenza urgente</div>
         </div>
 
         <!-- ── DIVISORE ── -->
@@ -221,57 +219,10 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         <div class="table-wrap">
           <table>
             <thead><tr><th>Cliente</th><th>Settore</th><th>Servizi</th><th>Stato</th><th></th></tr></thead>
-            <tbody>
-              <tr class="lucchini-row">
-                <td><div class="td-name">🟢 Lucchini Simone</div><div class="td-sub">Demo Colloquio · connesso LIVE</div></td>
-                <td>Demo</td><td>DVR · Formazione</td>
-                <td><span class="badge badge-green">Attivo</span></td>
-                <td><button class="btn btn-sm" onclick="toggleDetail('lucchini')">Scheda</button></td>
-              </tr>
-              <tr><td><div class="td-name">Edilcantieri Srl</div><div class="td-sub">Via Roma 12, Colleferro</div></td><td>Edilizia</td><td>DVR · Estintori · CSE</td><td><span class="badge badge-red">Critico</span></td><td><button class="btn btn-sm" onclick="toggleDetail('edilcantieri')">Scheda</button></td></tr>
-              <tr><td><div class="td-name">Logistica Roma Srl</div><div class="td-sub">Via Casilina 88, Roma</div></td><td>Logistica</td><td>DVR · Formazione · DPI</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm" onclick="toggleDetail('logistica')">Scheda</button></td></tr>
-              <tr><td><div class="td-name">Supermercato Vivo</div><div class="td-sub">Via Latina 4, Frosinone</div></td><td>GDO</td><td>DVR · Antincendio</td><td><span class="badge badge-amber">In scadenza</span></td><td><button class="btn btn-sm">Scheda</button></td></tr>
-              <tr><td><div class="td-name">Hotel Belvedere</div><div class="td-sub">Via Prenestina 200, Roma</div></td><td>Hospitality</td><td>Antincendio · DVR</td><td><span class="badge badge-green">In regola</span></td><td><button class="btn btn-sm">Scheda</button></td></tr>
+            <tbody id="clienti-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente ancora inserito</td></tr>
             </tbody>
           </table>
-        </div>
-        <!-- SCHEDA LUCCHINI LIVE -->
-        <div id="detail-lucchini" class="client-detail">
-          <div class="detail-top">
-            <div class="avatar green">LS</div>
-            <div style="flex:1">
-              <div style="font-size:15px;font-weight:600">Lucchini Simone</div>
-              <div style="font-size:12px;color:var(--text-muted)">Cliente demo · connesso LIVE · simone@email.it</div>
-            </div>
-            <button class="btn btn-sm" onclick="loadLucchiniDocs()">↻ Aggiorna doc</button>
-          </div>
-          <div class="section-title" style="margin-bottom:10px">Servizi attivi</div>
-          <div class="service-grid" style="margin-bottom:16px">
-            <div class="service-card"><div class="service-name">📄 DVR</div><div class="service-date">Validità 20/12/2026</div></div>
-            <div class="service-card" style="border-color:#fac775"><div class="service-name">🎓 Corso antincendio</div><div class="service-date warn">Scade 19/05/2026</div></div>
-            <div class="service-card"><div class="service-name">🔥 Estintori</div><div class="service-date">Prossima: ago 2026</div></div>
-          </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <div class="section-title">Documenti inviati</div>
-            <div style="display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--green)">
-              <div style="width:6px;height:6px;background:var(--green);border-radius:50%;animation:pulse 1.5s infinite"></div>
-              LIVE
-            </div>
-          </div>
-          <div id="lucchini-docs">
-            <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px">Caricamento...</div>
-          </div>
-        </div>
-
-        <div id="detail-edilcantieri" class="client-detail">
-          <div class="detail-top"><div class="avatar">EC</div><div style="flex:1"><div style="font-size:15px;font-weight:600">Edilcantieri Srl</div><div style="font-size:12px;color:var(--text-muted)">Cliente dal 2019 · Mario Rossi · 06 1234567</div></div><button class="btn btn-red btn-sm">✉ Reminder</button></div>
-          <div class="section-title">Servizi</div>
-          <div class="service-grid"><div class="service-card" style="border-color:#f5c4b3"><div class="service-name">🔥 Estintori</div><div class="service-date danger">⚠ Scaduto 01/04/2026</div></div><div class="service-card"><div class="service-name">📄 DVR cantiere</div><div class="service-date warn">Scade 30/06/2026</div></div><div class="service-card"><div class="service-name">🎓 Formazione CSE</div><div class="service-date">Validità 15/09/2026</div></div></div>
-        </div>
-        <div id="detail-logistica" class="client-detail">
-          <div class="detail-top"><div class="avatar">LR</div><div style="flex:1"><div style="font-size:15px;font-weight:600">Logistica Roma Srl</div><div style="font-size:12px;color:var(--text-muted)">Cliente dal 2021 · Luca Bianchi</div></div><button class="btn btn-red btn-sm">✉ Reminder</button></div>
-          <div class="section-title">Servizi</div>
-          <div class="service-grid"><div class="service-card" style="border-color:#fac775"><div class="service-name">🎓 Corso antincendio</div><div class="service-date warn">Scade 19/05/2026</div></div><div class="service-card"><div class="service-name">📄 DVR</div><div class="service-date">Validità 20/12/2026</div></div><div class="service-card"><div class="service-name">🔥 Estintori</div><div class="service-date">Prossima: ago 2026</div></div></div>
         </div>
       </div>
 
@@ -279,10 +230,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div id="panel-scadenze" class="panel">
         <div class="section-head"><div class="section-title">Tutte le scadenze</div></div>
         <div class="alert-list">
-          <div class="alert-card red"><div class="alert-dot red"></div><div class="alert-info"><div class="alert-name">Edilcantieri Srl — Estintori scaduti</div><div class="alert-sub">8 estintori</div></div><div class="alert-days red">SCADUTO</div><button class="btn btn-sm btn-red">✉</button></div>
-          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Logistica Roma Srl — Corso antincendio</div><div class="alert-sub">12 dipendenti</div></div><div class="alert-days amber">+8 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
-          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Supermercato Vivo — DVR</div></div><div class="alert-days amber">+14 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
-          <div class="alert-card amber"><div class="alert-dot amber"></div><div class="alert-info"><div class="alert-name">Hotel Belvedere — Sorveglianza sanitaria</div><div class="alert-sub">8 dipendenti</div></div><div class="alert-days amber">+22 giorni</div><button class="btn btn-sm btn-red">✉</button></div>
+          <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Nessuna scadenza registrata</div>
         </div>
       </div>
 
@@ -292,16 +240,14 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         <div class="table-wrap">
           <table>
             <thead><tr><th>N°</th><th>Cliente</th><th>Oggetto</th><th>Importo</th><th>Data</th><th>Stato</th></tr></thead>
-            <tbody>
-              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#024</td><td>Edilcantieri Srl</td><td>Manutenzione estintori</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 640</td><td style="font-size:12px;color:var(--text-muted)">08/05/2026</td><td><span class="badge badge-amber">Inviato</span></td></tr>
-              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#023</td><td>Logistica Roma Srl</td><td>Corso antincendio</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 1.800</td><td style="font-size:12px;color:var(--text-muted)">06/05/2026</td><td><span class="badge badge-amber">Inviato</span></td></tr>
-              <tr><td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">#022</td><td>Hotel Belvedere</td><td>Piano evacuazione + DVR</td><td style="font-family:'DM Mono',monospace;font-weight:500">€ 2.400</td><td style="font-size:12px;color:var(--text-muted)">02/05/2026</td><td><span class="badge badge-green">Accettato</span></td></tr>
+            <tbody id="preventivi-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun preventivo ancora inserito</td></tr>
             </tbody>
           </table>
         </div>
         <div id="nuovo-prev" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)">
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Cliente</label><select style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"><option>Edilcantieri Srl</option><option>Logistica Roma Srl</option><option>Lucchini Simone</option><option>Hotel Belvedere</option></select></div>
+            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Cliente</label><select id="prev-cliente" style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"><option value="">— seleziona cliente —</option></select></div>
             <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Oggetto</label><input type="text" placeholder="es. Corso antincendio" style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"></div>
           </div>
           <div style="display:flex;gap:8px"><button class="btn btn-red">✉ Invia</button><button class="btn">💾 Salva bozza</button><button class="btn" style="margin-left:auto;color:var(--red)" onclick="document.getElementById('nuovo-prev').style.display='none'">✕</button></div>
@@ -345,11 +291,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <label class="form-label">Cliente</label>
             <select class="form-input" id="uscita-cliente">
               <option value="">— Uso interno / campo —</option>
-              <option value="lucchini">Lucchini Simone</option>
-              <option value="edilcantieri">Edilcantieri Srl</option>
-              <option value="logistica">Logistica Roma Srl</option>
-              <option value="supermercato">Supermercato Vivo</option>
-              <option value="hotel">Hotel Belvedere</option>
             </select>
           </div>
           <div class="form-group">
@@ -424,8 +365,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
-let clienteId=null;
-
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
@@ -439,15 +378,6 @@ if(localStorage.getItem('rost81-theme')==='dark'){
 
 document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-async function getClienteId(){
-  if(clienteId) return clienteId;
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?nome=eq.Lucchini%20Simone&select=id`,{headers:H});
-  const d=await r.json();
-  if(d&&d[0]){clienteId=d[0].id;return clienteId;}
-  return null;
-}
-
-
 function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
 
 // ---- MAGAZZINO ----
@@ -455,9 +385,15 @@ let magazzino=[];
 let clientiMap={};
 
 async function loadClienteIds(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,nome`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?order=nome&select=id,nome`,{headers:H});
   const d=await r.json();
-  if(d) d.forEach(c=>{ clientiMap[c.nome]=c.id; });
+  if(!d||!Array.isArray(d)) return;
+  d.forEach(c=>{ clientiMap[c.nome]=c.id; });
+  const opts=d.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('');
+  const selUscita=document.getElementById('uscita-cliente');
+  const selPrev=document.getElementById('prev-cliente');
+  if(selUscita) selUscita.innerHTML='<option value="">— Uso interno / campo —</option>'+opts;
+  if(selPrev) selPrev.innerHTML='<option value="">— seleziona cliente —</option>'+opts;
 }
 
 function statoQty(qty,soglia){
@@ -669,38 +605,6 @@ async function loadDashboardMagazzino(){
 
 loadDashboardMagazzino();
 
-function toggleDetail(id){
-  const d=document.getElementById('detail-'+id);
-  const open=d.classList.contains('open');
-  document.querySelectorAll('.client-detail').forEach(x=>x.classList.remove('open'));
-  if(!open){
-    d.classList.add('open');
-    if(id==='lucchini') loadLucchiniDocs();
-  }
-}
-
-async function loadLucchiniDocs(){
-  const id=await getClienteId();
-  const container=document.getElementById('lucchini-docs');
-  if(!id){container.innerHTML='<div style="color:var(--red);font-size:13px;padding:12px">Cliente non trovato su Supabase</div>';return;}
-  container.innerHTML='<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px">Caricamento...</div>';
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_documenti?cliente_id=eq.${id}&order=created_at.desc&select=*`,{headers:H});
-  const docs=await r.json();
-  if(!docs||docs.length===0){
-    container.innerHTML='<div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--bg);border-radius:var(--radius-sm)">Nessun documento inviato ancora</div>';
-    return;
-  }
-  container.innerHTML=docs.map(d=>`
-    <div class="doc-item">
-      <div class="doc-icon">${icon(d.nome_file)}</div>
-      <div class="doc-info">
-        <div class="doc-name">${d.descrizione||d.nome_file}</div>
-        <div class="doc-meta">${d.nome_file} · ${new Date(d.created_at).toLocaleString('it-IT')}</div>
-      </div>
-      <a href="${d.url}" target="_blank" style="text-decoration:none"><button class="btn btn-sm">↓ Apri</button></a>
-    </div>
-  `).join('');
-}
 </script>
 </body>
 </html>

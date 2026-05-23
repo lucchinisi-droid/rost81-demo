@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROST81 – Documento di Manutenzione</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+  :root {
+    --red: #c0392b;
+    --dark: #1a1a1a;
+    --mid: #444;
+    --light: #f5f5f3;
+    --border: #ddd;
+    --accent: #e8e0d5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--light);
+    color: var(--dark);
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  @media print {
+    .no-print { display: none !important; }
+    body { background: white; font-size: 12px; }
+    .page { box-shadow: none; max-width: 100%; margin: 0; padding: 20px; }
+    .section { break-inside: avoid; }
+  }
+
+  .wrapper {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .page {
+    background: white;
+    box-shadow: 0 2px 20px rgba(0,0,0,.08);
+    padding: 32px;
+    margin-bottom: 20px;
+  }
+
+  .header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--red);
+    padding-bottom: 16px;
+    margin-bottom: 20px;
+  }
+
+  .logo-area h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: -1px;
+    color: var(--red);
+  }
+
+  .logo-area p {
+    font-size: 11px;
+    color: var(--mid);
+    margin-top: 2px;
+  }
+
+  .header-right {
+    text-align: right;
+    font-size: 12px;
+    color: var(--mid);
+  }
+
+  .doc-title {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin: 16px 0;
+    padding: 10px;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    color: var(--dark);
+  }
+
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: var(--mid);
+  }
+
+  input[type="text"],
+  input[type="date"],
+  input[type="number"],
+  select,
+  textarea {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 7px 10px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--dark);
+    background: white;
+    width: 100%;
+    outline: none;
+    transition: border-color .15s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--red);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+
+  .section {
+    margin-bottom: 24px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--red);
+    border-bottom: 1px solid var(--accent);
+    padding-bottom: 6px;
+    margin-bottom: 14px;
+  }
+
+  /* checklist */
+  .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .check-row {
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 120px;
+    gap: 8px;
+    align-items: center;
+    padding: 7px 10px;
+    background: #fafaf8;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    font-size: 13px;
+  }
+
+  .check-row:nth-child(even) { background: white; }
+
+  .check-row-head {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--mid);
+    padding: 4px 10px;
+    display: grid;
+    grid-template-columns: 1fr 80px 80px 120px;
+    gap: 8px;
+  }
+
+  .check-row select {
+    padding: 4px 6px;
+    font-size: 12px;
+  }
+
+  .check-row input[type="text"] {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+
+  /* firma */
+  .firma-box {
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    height: 70px;
+    background: #fafaf8;
+    display: flex;
+    align-items: flex-end;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: var(--mid);
+  }
+
+  /* print button */
+  .print-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: white;
+    color: var(--dark);
+    transition: all .15s;
+  }
+
+  .btn:hover { background: var(--accent); }
+
+  .btn-red {
+    background: var(--red);
+    color: white;
+    border-color: var(--red);
+  }
+
+  .btn-red:hover { background: #a93226; }
+
+  /* numero doc */
+  .doc-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: var(--accent);
+    padding: 3px 8px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 4px;
+  }
+
+  .esito-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .esito-ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+  .esito-ko { background: #fbe9e7; color: var(--red); border: 1px solid #ef9a9a; }
+  .esito-parz { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+  <!-- toolbar stampa -->
+  <div class="print-bar no-print">
+    <button class="btn" onclick="window.history.back()">← Torna al CRM</button>
+    <button class="btn btn-red" onclick="window.print()">🖨 Stampa / PDF</button>
+  </div>
+
+  <div class="page">
+
+    <!-- INTESTAZIONE -->
+    <div class="header">
+      <div class="logo-area">
+        <h1>ROST 81</h1>
+        <p>Sicurezza sul lavoro · HSE · Antincendio · Formazione</p>
+        <p>Via Giotto 2 — 00034 Colleferro (RM) · P.IVA 10524751004</p>
+        <p>Tel. 06 97234064 · info@rost81.it</p>
+      </div>
+      <div class="header-right">
+        <div class="doc-num" id="doc-num">MAN-2026-001</div>
+        <div>Data: <input type="date" id="data-doc" style="border:none;font-size:12px;color:var(--mid);width:130px" /></div>
+        <div style="margin-top:4px">Pag. 1 di 1</div>
+      </div>
+    </div>
+
+    <div class="doc-title">Rapporto di Manutenzione</div>
+
+    <!-- SEZIONE 1: CLIENTE -->
+    <div class="section">
+      <div class="section-title">1. Dati Cliente</div>
+      <div class="row-2">
+        <div class="field"><label>Ragione sociale / Cliente</label><input type="text" id="cliente" placeholder="es. Edilcantieri Srl"></div>
+        <div class="field"><label>Sede / Cantiere</label><input type="text" id="sede" placeholder="es. Via Roma 12, Colleferro"></div>
+      </div>
+      <div class="row-3">
+        <div class="field"><label>Referente</label><input type="text" id="referente" placeholder="Nome cognome"></div>
+        <div class="field"><label>Telefono</label><input type="text" id="tel" placeholder="es. 06 1234567"></div>
+        <div class="field"><label>Email</label><input type="text" id="email" placeholder="es. ufficio@azienda.it"></div>
+      </div>
+    </div>
+
+    <!-- SEZIONE 2: INTERVENTO -->
+    <div class="section">
+      <div class="section-title">2. Dati Intervento</div>
+      <div class="row-3">
+        <div class="field">
+          <label>Tipo intervento</label>
+          <select id="tipo">
+            <option value="">— seleziona —</option>
+            <option>Manutenzione programmata</option>
+            <option>Manutenzione straordinaria</option>
+            <option>Verifica periodica</option>
+            <option>Collaudo</option>
+            <option>Sostituzione componenti</option>
+            <option>Ricarica estintori</option>
+          </select>
+        </div>
+        <div class="field"><label>Data intervento</label><input type="date" id="data-int"></div>
+        <div class="field"><label>Tecnico esecutore</label><input type="text" id="tecnico" placeholder="Nome cognome"></div>
+      </div>
+      <div class="field" style="margin-bottom:12px">
+        <label>Descrizione intervento</label>
+        <textarea id="descr" placeholder="Descrivi brevemente l'intervento eseguito..."></textarea>
+      </div>
+    </div>
+
+    <!-- SEZIONE 3: CHECKLIST -->
+    <div class="section">
+      <div class="section-title">3. Checklist Verifiche</div>
+      <div class="checklist">
+        <div class="check-row-head">
+          <span>Voce</span><span>Esito</span><span>Conformità</span><span>Note</span>
+        </div>
+
+        <div class="check-row">
+          <span>Estintori — stato fisico e pressione</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Estintori — scadenza revisione</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Idranti / naspi — funzionamento</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Segnaletica emergenza — presenza e leggibilità</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Vie di esodo — sgombre e praticabili</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Illuminazione di emergenza</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>DPI — presenza e stato</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+
+        <div class="check-row">
+          <span>Documentazione (DVR, registri) — aggiornata</span>
+          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
+          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+          <input type="text" placeholder="note...">
+        </div>
+      </div>
+    </div>
+
+    <!-- SEZIONE 4: MATERIALI -->
+    <div class="section">
+      <div class="section-title">4. Materiali Utilizzati / Sostituiti</div>
+      <div class="field">
+        <textarea id="materiali" placeholder="es. Sostituzione manometro estintore CO2 5kg (n° 2 pz) · Ricarica polvere estintore 6kg (n° 1 pz) · Cartello uscita emergenza (n° 3 pz)" style="min-height:70px"></textarea>
+      </div>
+    </div>
+
+    <!-- SEZIONE 5: ESITO -->
+    <div class="section">
+      <div class="section-title">5. Esito Complessivo</div>
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
+          <input type="radio" name="esito" value="ok"> <span class="esito-badge esito-ok">✓ Conforme</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
+          <input type="radio" name="esito" value="parz"> <span class="esito-badge esito-parz">⚠ Parzialmente conforme</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
+          <input type="radio" name="esito" value="ko"> <span class="esito-badge esito-ko">✕ Non conforme</span>
+        </label>
+      </div>
+      <div class="field" style="margin-top:12px">
+        <label>Osservazioni / Prescrizioni</label>
+        <textarea id="note-esito" placeholder="Indicare eventuali non conformità rilevate, azioni correttive richieste o prossimi interventi raccomandati..."></textarea>
+      </div>
+      <div class="field" style="margin-top:10px">
+        <label>Prossima verifica prevista</label>
+        <input type="date" id="prossima" style="max-width:200px">
+      </div>
+    </div>
+
+    <!-- SEZIONE 6: FIRME -->
+    <div class="section">
+      <div class="section-title">6. Firme</div>
+      <div class="row-2">
+        <div class="field">
+          <label>Tecnico ROST 81</label>
+          <div class="firma-box">Firma _________________________</div>
+          <div style="font-size:11px;color:var(--mid);margin-top:4px" id="firma-tecnico-nome"></div>
+        </div>
+        <div class="field">
+          <label>Cliente / Responsabile</label>
+          <div class="firma-box">Firma _________________________</div>
+          <div style="font-size:11px;color:var(--mid);margin-top:4px" id="firma-cliente-nome"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-size:10px;color:var(--mid)">
+      <span>ROST 81 Srl — Via Giotto 2, 00034 Colleferro (RM) — P.IVA 10524751004</span>
+      <span>Documento generato il <span id="footer-date"></span></span>
+    </div>
+
+  </div><!-- /page -->
+</div><!-- /wrapper -->
+
+<script>
+  // data di oggi
+  const oggi = new Date().toISOString().split('T')[0];
+  document.getElementById('data-doc').value = oggi;
+  document.getElementById('data-int').value = oggi;
+  document.getElementById('footer-date').textContent = new Date().toLocaleDateString('it-IT');
+
+  // numero documento progressivo (localStorage)
+  const key = 'rost81-man-counter';
+  let n = parseInt(localStorage.getItem(key) || '0') + 1;
+  localStorage.setItem(key, n);
+  document.getElementById('doc-num').textContent = 'MAN-' + new Date().getFullYear() + '-' + String(n).padStart(3,'0');
+
+  // aggiorna nome tecnico e cliente nelle firme
+  document.getElementById('tecnico').addEventListener('input', e => {
+    document.getElementById('firma-tecnico-nome').textContent = e.target.value;
+  });
+  document.getElementById('cliente').addEventListener('input', e => {
+    document.getElementById('firma-cliente-nome').textContent = e.target.value;
+  });
+</script>
+</body>
+</html>

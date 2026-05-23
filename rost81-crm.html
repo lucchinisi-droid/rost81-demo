@@ -126,7 +126,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
-      <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge green" id="badge-scorte" style="display:none">!</span></div>
+      <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge green" id="badge-scorte">0</span></div>
       <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
@@ -424,11 +424,10 @@ async function loadMagazzino(){
   const sot=magazzino.filter(a=>a.quantita<=a.soglia_minima);
   const badge=document.getElementById('badge-scorte');
   const alert=document.getElementById('scorte-alert');
+  badge.textContent=magazzino.length;
   if(sot.length>0){
-    badge.style.display='flex'; badge.textContent=sot.length;
     if(alert){ alert.style.display='flex'; document.getElementById('scorte-alert-text').textContent=`${sot.length} articol${sot.length>1?'i':'o'} sotto scorta minima`; }
   } else {
-    badge.style.display='none';
     if(alert) alert.style.display='none';
   }
 

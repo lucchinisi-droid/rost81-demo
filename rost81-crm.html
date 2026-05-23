@@ -40,7 +40,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-item:hover{color:var(--text);background:var(--bg)}
 .nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
-.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)}
+.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf}
 .sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
 .sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
 .main{margin-left:220px;flex:1}
@@ -125,8 +125,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item active" onclick="switchPanel('dashboard',this)"><span>⊞</span><span>Dashboard</span></div>
       <div class="nav-item" onclick="switchPanel('clienti',this)"><span>◎</span><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><span>◷</span><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
-      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge amber" id="badge-preventivi">0</span></div>
-      <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge" id="badge-scorte" style="display:none">!</span></div>
+      <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
+      <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge green" id="badge-scorte" style="display:none">!</span></div>
       <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>

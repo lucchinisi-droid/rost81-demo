@@ -224,6 +224,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
               <button class="btn btn-sm sort-btn active" id="sort-n"    onclick="setSortKey('n')">N</button>
               <button class="btn btn-sm sort-btn"        id="sort-cod"  onclick="setSortKey('cod')">COD</button>
               <button class="btn btn-sm sort-btn"        id="sort-nome" onclick="setSortKey('nome')">Cliente</button>
+              <button class="btn btn-sm" id="filter-debitori" onclick="toggleDebitori()" style="margin-left:6px;border-color:var(--amber);color:var(--amber)">⚠ Debitori</button>
             </div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
@@ -476,6 +477,22 @@ async function loadSidebarBadges(){
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
 let _clientiData=[];
 let _sortKey='n';
+let _filterDebitori=false;
+
+function toggleDebitori(){
+  _filterDebitori=!_filterDebitori;
+  const btn=document.getElementById('filter-debitori');
+  if(_filterDebitori){
+    btn.style.background='var(--amber)';
+    btn.style.color='#fff';
+    btn.style.borderColor='var(--amber)';
+  } else {
+    btn.style.background='';
+    btn.style.color='var(--amber)';
+    btn.style.borderColor='var(--amber)';
+  }
+  applyFilterAndSort();
+}
 
 function setSortKey(key){
   _sortKey=key;
@@ -502,6 +519,7 @@ function sortedData(data){
 function applyFilterAndSort(){
   const q=(document.getElementById('clienti-search')?.value||'').toLowerCase();
   let data=_clientiData;
+  if(_filterDebitori) data=data.filter(c=>c.note&&c.note.toUpperCase().includes('DEBITORE'));
   if(q) data=data.filter(c=>
     (c.nome||'').toLowerCase().includes(q)||
     (c.citta||'').toLowerCase().includes(q)||

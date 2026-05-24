@@ -230,8 +230,49 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div style="display:flex;gap:8px;align-items:center">
             <input type="text" id="clienti-search" placeholder="🔍 Cerca cliente…" oninput="applyFilterAndSort()" style="padding:6px 10px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;width:180px">
             <button class="btn btn-sm" onclick="loadClienti()">↻</button>
+            <button class="btn btn-red btn-sm" onclick="toggleFormNuovoCliente()">+ Nuovo cliente</button>
           </div>
         </div>
+
+        <!-- FORM NUOVO CLIENTE -->
+        <div id="form-nuovo-cliente" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:16px">Nuovo cliente</div>
+
+          <div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="form-group"><label class="form-label">N</label><input type="number" class="form-input" id="nc-n" placeholder="32"></div>
+            <div class="form-group"><label class="form-label">Codice</label><input type="text" class="form-input" id="nc-cod" placeholder="COD-001"></div>
+            <div class="form-group"><label class="form-label">Ragione sociale *</label><input type="text" class="form-input" id="nc-nome" placeholder="Mario Rossi Srl"></div>
+            <div class="form-group"><label class="form-label">P.IVA</label><input type="text" class="form-input" id="nc-piva" placeholder="IT12345678901"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="form-group"><label class="form-label">Codice fiscale</label><input type="text" class="form-input" id="nc-cf" placeholder="RSSMRA80A01H501Z"></div>
+            <div class="form-group"><label class="form-label">Città</label><input type="text" class="form-input" id="nc-citta" placeholder="Roma"></div>
+            <div class="form-group"><label class="form-label">Provincia</label><input type="text" class="form-input" id="nc-prov" placeholder="RM" maxlength="2" style="text-transform:uppercase"></div>
+            <div class="form-group"><label class="form-label">Telefono</label><input type="text" class="form-input" id="nc-tel" placeholder="06 1234567"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="nc-email" placeholder="cliente@email.it"></div>
+            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="nc-note" placeholder="es. DEBITORE - importo"></div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:16px">
+            <label class="form-label" style="margin-bottom:8px">Mesi intervento</label>
+            <div style="display:flex;flex-wrap:wrap;gap:6px" id="nc-mesi-wrap">
+              ${['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'].map((m,i)=>`
+                <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;padding:4px 10px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s" id="label-m-${i+1}">
+                  <input type="checkbox" value="${i+1}" onchange="highlightMese(${i+1},this.checked)" style="display:none"> ${m}
+                </label>`).join('')}
+            </div>
+          </div>
+
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-red" style="flex:1;justify-content:center" id="btn-salva-cliente" onclick="salvaNuovoCliente()">✓ Salva cliente</button>
+            <button class="btn" onclick="toggleFormNuovoCliente()">Annulla</button>
+          </div>
+        </div>
+
         <div class="table-wrap">
           <table>
             <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Prov.</th><th>Interventi</th><th>Note</th></tr></thead>
@@ -534,6 +575,62 @@ async function loadClienti(){
   const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
   _clientiData=await r.json();
   applyFilterAndSort();
+}
+
+function toggleFormNuovoCliente(){
+  const f=document.getElementById('form-nuovo-cliente');
+  f.style.display=f.style.display==='none'?'block':'none';
+}
+
+function highlightMese(n,checked){
+  const lbl=document.getElementById('label-m-'+n);
+  if(checked){lbl.style.background='var(--red)';lbl.style.color='#fff';lbl.style.borderColor='var(--red)';}
+  else{lbl.style.background='';lbl.style.color='';lbl.style.borderColor='';}
+}
+
+async function salvaNuovoCliente(){
+  const nome=document.getElementById('nc-nome').value.trim();
+  if(!nome){showToast('Ragione sociale obbligatoria','error');return;}
+  const btn=document.getElementById('btn-salva-cliente');
+  btn.disabled=true;btn.textContent='Salvataggio…';
+  try{
+    // 1. inserisci cliente
+    const body={
+      nome,
+      codice:document.getElementById('nc-cod').value.trim()||null,
+      partita_iva:document.getElementById('nc-piva').value.trim()||null,
+      codice_fiscale:document.getElementById('nc-cf').value.trim()||null,
+      citta:document.getElementById('nc-citta').value.trim()||null,
+      provincia:(document.getElementById('nc-prov').value.trim().toUpperCase())||null,
+      email:document.getElementById('nc-email').value.trim()||null,
+      telefono:document.getElementById('nc-tel').value.trim()||null,
+      note:document.getElementById('nc-note').value.trim()||null,
+    };
+    const nVal=document.getElementById('nc-n').value;
+    if(nVal) body.numero_n=parseInt(nVal);
+    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti`,{
+      method:'POST',headers:{...H,'Prefer':'return=representation'},
+      body:JSON.stringify(body)
+    });
+    const data=await r.json();
+    const clienteId=Array.isArray(data)?data[0]?.id:data?.id;
+    if(!clienteId){showToast('Errore salvataggio cliente','error');return;}
+    // 2. salva mesi intervento
+    const mesi=[...document.querySelectorAll('#nc-mesi-wrap input:checked')].map(cb=>parseInt(cb.value));
+    if(mesi.length>0){
+      await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto`,{
+        method:'POST',headers:{...H,'Prefer':'return=minimal'},
+        body:JSON.stringify({cliente_id:clienteId,mesi})
+      });
+    }
+    showToast(`✓ ${nome} aggiunto`,'success');
+    // reset form
+    ['nc-n','nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-note'].forEach(id=>document.getElementById(id).value='');
+    document.querySelectorAll('#nc-mesi-wrap input').forEach(cb=>{cb.checked=false;highlightMese(cb.value,false);});
+    document.getElementById('form-nuovo-cliente').style.display='none';
+    loadClienti();
+  }catch(e){showToast('Errore: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='✓ Salva cliente';}
 }
 
 function renderClienti(data){

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a1a">
+<title>ROST 81 — App Manutentore</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#c0392b; --red-light:#fde8e6;
+  --dark:#1a1a1a; --mid:#555; --muted:#888;
+  --border:#e5e5e3; --bg:#f0f0ee; --surface:#fff;
+  --green:#27ae60; --green-light:#eaf7ef;
+  --amber:#e67e22; --amber-light:#fef3e2;
+  --nav-h:64px;
+  --safe-b:env(safe-area-inset-bottom,0px);
+  --safe-t:env(safe-area-inset-top,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size:15px;color:var(--dark);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+/* ── SCREENS ── */
+.screen{position:fixed;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.screen.active{display:flex}
+
+/* ── SCROLL AREA ── */
+.scroll-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll-pad{padding-bottom:calc(var(--nav-h) + var(--safe-b) + 20px)}
+
+/* ── APP HEADER ── */
+.app-header{background:var(--dark);color:#fff;padding:0 16px;height:56px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:var(--safe-t)}
+.header-logo{font-family:'DM Mono',monospace;font-size:19px;font-weight:500;color:var(--red);letter-spacing:-.5px}
+.header-sub{font-size:11px;color:rgba(255,255,255,.45);margin-top:1px}
+.header-badge{background:rgba(255,255,255,.1);color:#fff;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;white-space:nowrap}
+
+/* ── BOTTOM NAV ── */
+#bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nav-h) + var(--safe-b));background:var(--surface);border-top:1px solid var(--border);display:none;z-index:20}
+#bottom-nav.vis{display:flex}
+.nav-tabs{display:flex;height:var(--nav-h);width:100%}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.3px;-webkit-user-select:none;user-select:none}
+.nav-tab.act{color:var(--red)}
+.nav-tab .ni{font-size:22px;line-height:1}
+.nav-tab:active{background:var(--bg)}
+
+/* ── LOGIN ── */
+#screen-login{background:var(--dark);align-items:center;justify-content:center;padding:32px 24px}
+.login-box{width:100%;max-width:360px}
+.login-logo{font-family:'DM Mono',monospace;font-size:38px;font-weight:500;color:var(--red);letter-spacing:-1px;margin-bottom:4px}
+.login-tagline{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:44px;letter-spacing:.5px}
+.login-lbl{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:7px}
+.login-inp{width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:#fff;font-family:inherit;font-size:16px;padding:15px 16px;outline:none;transition:border-color .15s;margin-bottom:14px}
+.login-inp:focus{border-color:var(--red)}
+.login-btn{width:100%;background:var(--red);color:#fff;border:none;border-radius:12px;font-family:inherit;font-size:16px;font-weight:700;padding:16px;margin-top:4px;cursor:pointer;transition:opacity .15s;letter-spacing:.3px}
+.login-btn:active{opacity:.85}
+.login-btn:disabled{opacity:.45}
+.login-err{color:#ff6b6b;font-size:13px;margin-top:14px;text-align:center;min-height:18px;line-height:1.4}
+
+/* ── MONTH NAV ── */
+.month-nav{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.month-label{font-size:18px;font-weight:700}
+.month-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.month-arrow{background:none;border:1.5px solid var(--border);border-radius:10px;padding:9px 16px;font-size:17px;cursor:pointer;color:var(--dark);line-height:1;font-family:inherit}
+.month-arrow:active{background:var(--bg)}
+.month-arrow.hidden{visibility:hidden}
+
+/* ── CLIENT CARD ── */
+.client-list{padding:12px;display:flex;flex-direction:column;gap:8px}
+.client-card{background:var(--surface);border-radius:14px;padding:14px 16px;display:flex;align-items:center;gap:14px;box-shadow:0 1px 4px rgba(0,0,0,.06);transition:opacity .2s,transform .1s;border:1.5px solid transparent}
+.client-card:active{transform:scale(.985)}
+.client-card.visitato{opacity:.38}
+.client-card.debitore{border-color:var(--red)}
+.led{width:24px;height:24px;border-radius:50%;flex-shrink:0;cursor:pointer;transition:all .2s}
+.led.on{background:var(--green);box-shadow:0 0 10px rgba(39,174,96,.6)}
+.led.off{border:2.5px solid #ccc;background:transparent}
+.card-body{flex:1;min-width:0;cursor:pointer}
+.card-nome{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.client-card.debitore .card-nome{color:var(--red)}
+.card-meta{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-n{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);flex-shrink:0}
+.bdg-deb{background:var(--red-light);color:#8b1a10;font-size:9px;font-weight:800;padding:2px 5px;border-radius:4px;letter-spacing:.3px;margin-left:5px;vertical-align:middle;display:inline-block}
+.bdg-profilo{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase}
+.bdg-junior{background:#e3f2fd;color:#1565c0}
+.bdg-senior{background:var(--amber-light);color:#7d4a00}
+.bdg-master{background:#f3e5f5;color:#6a1b9a}
+
+/* ── BOTTOM SHEET ── */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:30;display:none;backdrop-filter:blur(2px)}
+.sheet-overlay.open{display:block}
+.bottom-sheet{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-radius:22px 22px 0 0;z-index:31;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);max-height:88vh;overflow-y:auto;padding-bottom:calc(20px + var(--safe-b))}
+.bottom-sheet.open{transform:translateY(0)}
+.sheet-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:12px auto 0}
+.sheet-hdr{padding:16px 20px;border-bottom:1px solid var(--border);margin-bottom:4px}
+.sheet-title{font-size:19px;font-weight:700}
+.sheet-sub{font-size:13px;color:var(--muted);margin-top:3px}
+.info-row{display:flex;justify-content:space-between;align-items:center;padding:11px 20px;border-bottom:1px solid var(--border)}
+.info-lbl{font-size:13px;color:var(--muted)}
+.info-val{font-size:14px;font-weight:500;text-align:right;max-width:58%}
+.sheet-actions{padding:16px 20px;display:flex;flex-direction:column;gap:10px}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 20px;border-radius:14px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s,transform .1s;letter-spacing:.2px}
+.btn:active{opacity:.82;transform:scale(.97)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-green{background:var(--green);color:#fff}
+.btn-red{background:var(--red);color:#fff}
+.btn-dark{background:var(--dark);color:#fff}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--dark)}
+.btn-amber{background:var(--amber);color:#fff}
+.btn-sm{padding:9px 14px;font-size:13px;border-radius:10px}
+
+/* ── TOP BAR FORM ── */
+.form-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;flex-shrink:0;position:sticky;top:0;z-index:10}
+.back-btn{background:var(--bg);border:none;border-radius:10px;padding:9px 14px;font-size:14px;cursor:pointer;font-family:inherit;font-weight:600;color:var(--dark)}
+.back-btn:active{opacity:.7}
+.form-bar-title{font-size:16px;font-weight:700;flex:1}
+.save-btn{background:var(--red);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:.2px}
+.save-btn:active{opacity:.82}
+
+/* ── FORM FIELDS ── */
+.form-pad{padding:14px}
+.form-sec{background:var(--surface);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.form-sec-title{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.f-field{margin-bottom:13px}
+.f-field:last-child{margin-bottom:0}
+.f-lbl{display:block;font-size:12px;font-weight:600;color:var(--mid);margin-bottom:6px;letter-spacing:.3px}
+.f-inp,.f-sel,.f-ta{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:16px;padding:12px 14px;color:var(--dark);outline:none;transition:border-color .15s;-webkit-appearance:none;appearance:none}
+.f-inp:focus,.f-sel:focus,.f-ta:focus{border-color:var(--red);background:#fff}
+.f-ta{min-height:80px;resize:vertical}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f-inp[readonly]{color:var(--muted)}
+
+/* ── CHECKLIST CARDS ── */
+.ck-card{background:var(--bg);border-radius:12px;padding:14px;margin-bottom:10px}
+.ck-card:last-child{margin-bottom:0}
+.ck-voce{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.35}
+.ck-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ck-sel{background:#fff;border:1px solid var(--border);border-radius:9px;font-family:inherit;font-size:14px;padding:9px 10px;color:var(--dark);outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;width:100%}
+.ck-note{width:100%;background:#fff;border:1px solid var(--border);border-radius:9px;font-family:inherit;font-size:14px;padding:9px 10px;color:var(--dark);outline:none}
+
+/* ── ESITO COMPLESSIVO ── */
+.esito-grp{display:flex;gap:8px}
+.esito-opt{flex:1}
+.esito-opt input[type="radio"]{display:none}
+.esito-opt label{display:flex;align-items:center;justify-content:center;padding:11px 6px;border-radius:12px;border:2px solid var(--border);font-size:12px;font-weight:700;cursor:pointer;text-align:center;line-height:1.3;transition:all .15s}
+.esito-opt input:checked + label.e-ok{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.esito-opt input:checked + label.e-parz{background:var(--amber-light);border-color:var(--amber);color:var(--amber)}
+.esito-opt input:checked + label.e-ko{background:var(--red-light);border-color:var(--red);color:var(--red)}
+
+/* ── DDT ROWS ── */
+.ddt-row{display:flex;gap:7px;align-items:center;margin-bottom:8px}
+.ddt-row .ddt-nome{flex:2}
+.ddt-row .ddt-qty{flex:1;min-width:0}
+.ddt-row .ddt-unit{flex:1;min-width:0}
+.ddt-del{background:var(--red-light);border:none;border-radius:9px;color:var(--red);font-size:18px;padding:10px 13px;cursor:pointer;flex-shrink:0;line-height:1;font-family:inherit}
+.ddt-del:active{opacity:.7}
+
+/* ── TOAST ── */
+#toast{position:fixed;bottom:calc(var(--nav-h) + 16px + var(--safe-b));left:50%;transform:translateX(-50%) translateY(16px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:100;opacity:0;transition:all .25s;pointer-events:none;max-width:88vw;text-align:center;white-space:normal;line-height:1.4}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast.success{background:var(--green)}
+#toast.error{background:var(--red)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:60px 24px;color:var(--muted)}
+.empty-icon{font-size:48px;margin-bottom:12px}
+.empty-title{font-size:15px;font-weight:600}
+.empty-sub{font-size:13px;margin-top:6px;line-height:1.5}
+
+/* ── PROFILO ── */
+.prof-card{background:var(--surface);border-radius:18px;padding:28px 24px;margin:16px;box-shadow:0 1px 4px rgba(0,0,0,.06);text-align:center}
+.prof-avatar{width:76px;height:76px;border-radius:50%;background:var(--dark);color:#fff;font-size:30px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.prof-nome{font-size:20px;font-weight:700;margin-bottom:5px}
+.prof-email{font-size:13px;color:var(--muted);margin-bottom:18px}
+.prof-version{font-size:11px;color:#ccc;margin-top:8px}
+
+/* ── RESPONSIVE ── */
+@media(min-width:600px){
+  .client-list,.form-pad{max-width:580px;margin-left:auto;margin-right:auto}
+  #screen-login{background:var(--dark)}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="screen-login" class="screen active">
+  <div class="login-box">
+    <div class="login-logo">ROST 81</div>
+    <div class="login-tagline">App Manutentore — Accesso operatori</div>
+    <label class="login-lbl">Email</label>
+    <input type="email" id="l-email" class="login-inp" placeholder="nome@email.it" autocomplete="email" inputmode="email">
+    <label class="login-lbl">Password</label>
+    <input type="password" id="l-pwd" class="login-inp" placeholder="••••••••" autocomplete="current-password">
+    <button class="login-btn" id="l-btn" onclick="doLogin()">Accedi</button>
+    <div class="login-err" id="l-err"></div>
+  </div>
+</div>
+
+<!-- ══ HOME ══ -->
+<div id="screen-home" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="header-logo">ROST 81</div>
+      <div class="header-sub" id="h-sub">App Manutentore</div>
+    </div>
+    <div class="header-badge" id="h-badge"></div>
+  </div>
+  <div class="month-nav">
+    <button class="month-arrow hidden" id="btn-prev" onclick="navMese(-1)">‹</button>
+    <div style="text-align:center">
+      <div class="month-label" id="m-label">—</div>
+      <div class="month-sub" id="m-count"></div>
+    </div>
+    <button class="month-arrow hidden" id="btn-next" onclick="navMese(+1)">›</button>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+      <div id="client-list" class="client-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RAPPORTO ══ -->
+<div id="screen-rapporto" class="screen">
+  <div class="form-bar">
+    <button class="back-btn" onclick="goHome()">← Indietro</button>
+    <div class="form-bar-title">Rapporto Manutenzione</div>
+    <button class="save-btn" onclick="saveRapporto()">Salva</button>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+    <div class="form-pad">
+
+      <!-- 1. Documento -->
+      <div class="form-sec">
+        <div class="form-sec-title">1 — Documento</div>
+        <div class="f-row">
+          <div class="f-field"><label class="f-lbl">N° documento</label><input type="text" class="f-inp" id="r-num" readonly style="font-family:'DM Mono',monospace;font-size:14px"></div>
+          <div class="f-field"><label class="f-lbl">Data intervento</label><input type="date" class="f-inp" id="r-data"></div>
+        </div>
+      </div>
+
+      <!-- 2. Cliente -->
+      <div class="form-sec">
+        <div class="form-sec-title">2 — Dati Cliente</div>
+        <div class="f-field"><label class="f-lbl">Ragione sociale</label><input type="text" class="f-inp" id="r-cliente" readonly></div>
+        <div class="f-row">
+          <div class="f-field"><label class="f-lbl">Referente</label><input type="text" class="f-inp" id="r-referente"></div>
+          <div class="f-field"><label class="f-lbl">Telefono</label><input type="tel" class="f-inp" id="r-tel" inputmode="tel"></div>
+        </div>
+        <div class="f-field"><label class="f-lbl">Sede / Cantiere</label><input type="text" class="f-inp" id="r-sede"></div>
+      </div>
+
+      <!-- 3. Intervento -->
+      <div class="form-sec">
+        <div class="form-sec-title">3 — Intervento</div>
+        <div class="f-field">
+          <label class="f-lbl">Tipo intervento</label>
+          <select class="f-sel" id="r-tipo">
+            <option value="">— seleziona —</option>
+            <option>Manutenzione programmata</option>
+            <option>Manutenzione straordinaria</option>
+            <option>Verifica periodica</option>
+            <option>Collaudo</option>
+            <option>Sostituzione componenti</option>
+            <option>Ricarica estintori</option>
+          </select>
+        </div>
+        <div class="f-field"><label class="f-lbl">Tecnico esecutore</label><input type="text" class="f-inp" id="r-tecnico" readonly></div>
+        <div class="f-field"><label class="f-lbl">Descrizione intervento</label><textarea class="f-ta" id="r-descr" placeholder="Descrivi brevemente i lavori eseguiti…"></textarea></div>
+      </div>
+
+      <!-- 4. Checklist -->
+      <div class="form-sec">
+        <div class="form-sec-title">4 — Checklist Verifiche</div>
+        <div id="ck-container"></div>
+      </div>
+
+      <!-- 5. Materiali -->
+      <div class="form-sec">
+        <div class="form-sec-title">5 — Materiali Utilizzati / Sostituiti</div>
+        <div class="f-field"><textarea class="f-ta" id="r-materiali" placeholder="es. Sostituzione manometro estintore CO₂ 5kg (n° 2 pz) · Ricarica polvere estintore 6kg (n° 1 pz)"></textarea></div>
+      </div>
+
+      <!-- 6. Esito complessivo -->
+      <div class="form-sec">
+        <div class="form-sec-title">6 — Esito Complessivo</div>
+        <div class="esito-grp">
+          <div class="esito-opt"><input type="radio" name="esito" id="e-ok" value="ok"><label for="e-ok" class="e-ok">✓ Conforme</label></div>
+          <div class="esito-opt"><input type="radio" name="esito" id="e-parz" value="parz"><label for="e-parz" class="e-parz">⚠ Parz. conforme</label></div>
+          <div class="esito-opt"><input type="radio" name="esito" id="e-ko" value="ko"><label for="e-ko" class="e-ko">✗ Non conforme</label></div>
+        </div>
+      </div>
+
+      <!-- 7. Firme -->
+      <div class="form-sec">
+        <div class="form-sec-title">7 — Firme</div>
+        <div class="f-row">
+          <div class="f-field"><label class="f-lbl">Tecnico</label><input type="text" class="f-inp" id="r-firma-tec"></div>
+          <div class="f-field"><label class="f-lbl">Cliente</label><input type="text" class="f-inp" id="r-firma-cli" placeholder="Nome referente"></div>
+        </div>
+      </div>
+
+      <!-- Azioni -->
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+        <button class="btn btn-red" onclick="saveRapporto()">💾 Salva rapporto</button>
+        <button class="btn btn-outline" id="btn-stampa-r" onclick="stampaRapporto()" disabled>🖨 Stampa / Salva PDF</button>
+        <button class="btn btn-amber" id="btn-invia-r" onclick="inviaEmail()" style="display:none">📧 Invia al cliente</button>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DDT ══ -->
+<div id="screen-ddt" class="screen">
+  <div class="form-bar">
+    <button class="back-btn" onclick="goHome()">← Indietro</button>
+    <div class="form-bar-title">Documento di Trasporto</div>
+    <button class="save-btn" onclick="saveDDT()">Salva</button>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+    <div class="form-pad">
+
+      <div class="form-sec">
+        <div class="form-sec-title">Dati</div>
+        <div class="f-row">
+          <div class="f-field"><label class="f-lbl">Data</label><input type="date" class="f-inp" id="d-data"></div>
+          <div class="f-field"><label class="f-lbl">Cliente</label><input type="text" class="f-inp" id="d-cliente" readonly></div>
+        </div>
+      </div>
+
+      <div class="form-sec">
+        <div class="form-sec-title">Articoli da Magazzino</div>
+        <div id="d-mag-rows"></div>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin-top:10px" onclick="addMagRow()">+ Articolo da magazzino</button>
+      </div>
+
+      <div class="form-sec">
+        <div class="form-sec-title">Articoli / Voci Manuali</div>
+        <div id="d-man-rows"></div>
+        <button class="btn btn-outline btn-sm" style="width:100%;margin-top:10px" onclick="addManRow()">+ Riga manuale</button>
+      </div>
+
+      <div class="form-sec">
+        <div class="form-sec-title">Note</div>
+        <textarea class="f-ta" id="d-note" placeholder="Causale, destinazione, note trasporto…"></textarea>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+        <button class="btn btn-red" onclick="saveDDT()">💾 Salva DDT</button>
+        <button class="btn btn-outline" id="btn-stampa-d" onclick="stampaDDT()" disabled>🖨 Stampa / Salva PDF</button>
+      </div>
+
+    </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFILO ══ -->
+<div id="screen-profilo" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="header-logo">ROST 81</div>
+      <div class="header-sub">Profilo operatore</div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+      <div class="prof-card">
+        <div class="prof-avatar" id="p-avatar">?</div>
+        <div class="prof-nome" id="p-nome">—</div>
+        <div class="prof-email" id="p-email">—</div>
+        <div id="p-badge" style="margin-bottom:22px"></div>
+        <button class="btn btn-outline" style="width:100%" onclick="doLogout()">Esci dall'app</button>
+        <div class="prof-version" id="p-version"></div>
+      </div>
+      <div style="margin:0 16px 16px;font-size:12px;color:var(--muted);text-align:center;line-height:1.8">
+        ROST 81 Srl · Via Giotto 2, 00034 Colleferro (RM)<br>
+        P.IVA 10524751004 · Tel. 06 97234064 · info@rost81.it
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BOTTOM NAV ══ -->
+<div id="bottom-nav">
+  <div class="nav-tabs">
+    <div class="nav-tab act" id="nav-home" onclick="switchTab('home')">
+      <span class="ni">🏠</span><span>Clienti</span>
+    </div>
+    <div class="nav-tab" id="nav-profilo" onclick="switchTab('profilo')">
+      <span class="ni">👤</span><span>Profilo</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHEET CLIENTE ══ -->
+<div class="sheet-overlay" id="sh-overlay" onclick="closeSheet()"></div>
+<div class="bottom-sheet" id="sh-cliente">
+  <div class="sheet-handle"></div>
+  <div class="sheet-hdr">
+    <div class="sheet-title" id="sh-nome">—</div>
+    <div class="sheet-sub" id="sh-sub">—</div>
+  </div>
+  <div id="sh-info"></div>
+  <div class="sheet-actions" id="sh-actions"></div>
+</div>
+
+<!-- ══ TOAST ══ -->
+<div id="toast"></div>
+
+<!-- ══ SCRIPTS ══ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+// ── CONFIG ──
+const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{storageKey:'rost81_manut_auth'}});
+
+const MESI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
+
+const CK_VOCI=[
+  'Estintori — stato fisico e pressione',
+  'Estintori — scadenza revisione',
+  'Idranti / naspi — funzionamento',
+  'Segnaletica emergenza — presenza e leggibilità',
+  'Vie di esodo — sgombre e praticabili',
+  'Illuminazione di emergenza',
+  'DPI — presenza e stato',
+  'Documentazione (DVR, registri) — aggiornata'
+];
+
+// ── STATO ──
+let _op=null, _meseVis=0, _annoVis=0;
+let _clientiMese=[], _visitatiSet=new Set();
+let _magazzino=[], _clienteAtt=null;
+let _rapSalvato=false, _ddtSalvato=false;
+
+// ── BOOT ──
+(async()=>{
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    if(session) await initOp(session.user.email);
+    else showScreen('login');
+  }catch(e){showScreen('login');}
+})();
+
+async function initOp(email){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?email=eq.${encodeURIComponent(email)}&select=*`,{headers:H});
+  const ops=await r.json();
+  const op=Array.isArray(ops)?ops[0]:null;
+  if(!op){toast('Operatore non trovato. Contatta l\'ufficio.','error');await sb.auth.signOut();showScreen('login');return;}
+  if(!op.attivo){toast('Accesso revocato. Contatta l\'ufficio.','error');await sb.auth.signOut();showScreen('login');return;}
+  _op=op;
+  setupUI();
+  const now=new Date();
+  _meseVis=now.getMonth()+1; _annoVis=now.getFullYear();
+  await Promise.all([loadMag(),loadClienti()]);
+  showScreen('home');
+  document.getElementById('bottom-nav').classList.add('vis');
+}
+
+function setupUI(){
+  document.getElementById('h-badge').textContent=`${_op.nome} · ${_op.profilo}`;
+  // Profilo screen
+  document.getElementById('p-nome').textContent=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('p-email').textContent=_op.email||'';
+  document.getElementById('p-avatar').textContent=(_op.nome?.[0]||'?').toUpperCase();
+  const bc={'junior':'bdg-junior','senior':'bdg-senior','master':'bdg-master'}[_op.profilo]||'bdg-junior';
+  document.getElementById('p-badge').innerHTML=`<span class="bdg-profilo ${bc}">${_op.profilo}</span>`;
+  document.getElementById('p-version').textContent='App Manutentore v1.0 · ROST 81';
+  // Frecce mesi (solo senior/master)
+  if(_op.profilo!=='junior'){
+    document.getElementById('btn-prev').classList.remove('hidden');
+    document.getElementById('btn-next').classList.remove('hidden');
+  }
+}
+
+// ── AUTH ──
+async function doLogin(){
+  const email=document.getElementById('l-email').value.trim();
+  const pwd=document.getElementById('l-pwd').value;
+  const errEl=document.getElementById('l-err');
+  const btn=document.getElementById('l-btn');
+  errEl.textContent='';
+  if(!email||!pwd){errEl.textContent='Inserisci email e password';return;}
+  btn.disabled=true; btn.textContent='Accesso in corso…';
+  try{
+    const {data,error}=await sb.auth.signInWithPassword({email,password:pwd});
+    if(error) throw error;
+    await initOp(data.user.email);
+  }catch(e){
+    errEl.textContent=e.message==='Invalid login credentials'?'Email o password non corretti':e.message;
+    btn.disabled=false; btn.textContent='Accedi';
+  }
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  _op=null; _clientiMese=[]; _visitatiSet=new Set();
+  document.getElementById('bottom-nav').classList.remove('vis');
+  showScreen('login');
+  document.getElementById('l-email').value='';
+  document.getElementById('l-pwd').value='';
+  document.getElementById('l-err').textContent='';
+}
+
+// ── SCREENS ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('screen-'+id);
+  if(el) el.classList.add('active');
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('act'));
+  if(tab==='home'){document.getElementById('nav-home').classList.add('act');showScreen('home');}
+  else if(tab==='profilo'){document.getElementById('nav-profilo').classList.add('act');showScreen('profilo');}
+}
+
+function goHome(){
+  document.getElementById('bottom-nav').classList.add('vis');
+  switchTab('home');
+}
+
+// ── MESI ──
+async function navMese(d){
+  _meseVis+=d;
+  if(_meseVis>12){_meseVis=1;_annoVis++;}
+  if(_meseVis<1){_meseVis=12;_annoVis--;}
+  await loadClienti();
+}
+
+// ── CARICA CLIENTI ──
+async function loadClienti(){
+  document.getElementById('m-label').textContent=`${MESI[_meseVis]} ${_annoVis}`;
+  document.getElementById('h-sub').textContent=`${MESI[_meseVis]} ${_annoVis}`;
+  document.getElementById('m-count').textContent='Caricamento…';
+  document.getElementById('client-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
+
+  const [rC,rV]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:H})
+  ]);
+  const allC=await rC.json();
+  const visite=await rV.json();
+  _visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
+  _clientiMese=(allC||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(_meseVis));
+  _clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
+
+  const fatti=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
+  document.getElementById('m-count').textContent=`${fatti} ✓ di ${_clientiMese.length} clienti`;
+  renderClienti();
+}
+
+function renderClienti(){
+  const list=document.getElementById('client-list');
+  if(_clientiMese.length===0){
+    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Nessun cliente in agenda</div><div class="empty-sub">Nessun intervento programmato per '+MESI[_meseVis]+'</div></div>';
+    return;
+  }
+  const sorted=[..._clientiMese.filter(c=>!_visitatiSet.has(c.id)),..._clientiMese.filter(c=>_visitatiSet.has(c.id))];
+  list.innerHTML=sorted.map(c=>{
+    const vis=_visitatiSet.has(c.id);
+    const deb=c.note&&c.note.includes('DEBITORE');
+    return `<div class="client-card${vis?' visitato':''}${deb?' debitore':''}">
+      <div class="led ${vis?'on':'off'}" onclick="event.stopPropagation();toggleVis('${c.id}',${vis})"></div>
+      <div class="card-body" onclick="openSheet('${c.id}')">
+        <div class="card-nome">${c.nome}${deb?'<span class="bdg-deb">⚠ DEB</span>':''}</div>
+        <div class="card-meta">${[c.citta,c.referente].filter(Boolean).join(' · ')||'—'}</div>
+      </div>
+      <div class="card-n">#${c.numero_n||'?'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── VISITA TOGGLE ──
+async function toggleVis(id,era){
+  if(era){
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?cliente_id=eq.${id}&mese=eq.${_meseVis}&anno=eq.${_annoVis}`,{method:'DELETE',headers:{...H,'Prefer':'return=minimal'}});
+    _visitatiSet.delete(id);
+  }else{
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:id,mese:_meseVis,anno:_annoVis})});
+    _visitatiSet.add(id);
+  }
+  const f=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
+  document.getElementById('m-count').textContent=`${f} ✓ di ${_clientiMese.length} clienti`;
+  renderClienti();
+}
+
+// ── MAGAZZINO ──
+async function loadMag(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=*&order=nome`,{headers:H});
+  _magazzino=await r.json()||[];
+}
+
+// ── SHEET CLIENTE ──
+function openSheet(id){
+  _clienteAtt=_clientiMese.find(c=>c.id===id);
+  if(!_clienteAtt) return;
+  const c=_clienteAtt;
+  const vis=_visitatiSet.has(c.id);
+  const deb=c.note&&c.note.includes('DEBITORE');
+  document.getElementById('sh-nome').textContent=c.nome;
+  document.getElementById('sh-nome').style.color=deb?'var(--red)':'var(--dark)';
+  document.getElementById('sh-sub').textContent=[c.codice?`COD ${c.codice}`:'',c.citta].filter(Boolean).join(' · ')||'';
+
+  const fields=[
+    {l:'Telefono',v:c.telefono},{l:'Referente',v:c.referente},
+    {l:'Tel. referente',v:c.telefono_referente},{l:'Email',v:c.email},
+    {l:'PEC',v:c.pec},{l:'P.IVA',v:c.partita_iva},
+    {l:'Note',v:c.note?c.note.replace('DEBITORE','').replace(/\s*-\s*/g,'').trim()||null:null}
+  ].filter(f=>f.v);
+  document.getElementById('sh-info').innerHTML=fields.map(f=>`<div class="info-row"><span class="info-lbl">${f.l}</span><span class="info-val">${f.v}</span></div>`).join('');
+
+  let acts=`<button class="btn ${vis?'btn-outline':'btn-green'}" style="width:100%" onclick="toggleVis('${c.id}',${vis});closeSheet()">
+    ${vis?'Visita segnata — rimuovi ✓':'✓ Segna come visitato'}
+  </button>`;
+  if(_op.profilo!=='junior'){
+    acts+=`<button class="btn btn-dark" style="width:100%" onclick="closeSheet();openRapporto('${c.id}')">📋 Nuovo rapporto manutenzione</button>`;
+    acts+=`<button class="btn btn-outline" style="width:100%" onclick="closeSheet();openDDT('${c.id}')">📦 Nuovo DDT</button>`;
+  }
+  document.getElementById('sh-actions').innerHTML=acts;
+  document.getElementById('sh-overlay').classList.add('open');
+  document.getElementById('sh-cliente').classList.add('open');
+}
+
+function closeSheet(){
+  document.getElementById('sh-overlay').classList.remove('open');
+  document.getElementById('sh-cliente').classList.remove('open');
+}
+
+// ── RAPPORTO ──
+async function openRapporto(id){
+  _clienteAtt=_clientiMese.find(c=>c.id===id)||_clienteAtt;
+  if(!_clienteAtt) return;
+  const c=_clienteAtt;
+  _rapSalvato=false;
+  // Numero documento progressivo
+  const rr=await fetch(`${SUPA_URL}/rest/v1/rost81_rapporti?select=id`,{headers:H});
+  const rlist=await rr.json()||[];
+  const num=String(rlist.length+1).padStart(3,'0');
+  const docNum=`MAN-${new Date().getFullYear()}-${num}`;
+  // Compila
+  document.getElementById('r-num').value=docNum;
+  document.getElementById('r-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('r-cliente').value=c.nome;
+  document.getElementById('r-referente').value=c.referente||'';
+  document.getElementById('r-tel').value=c.telefono||'';
+  document.getElementById('r-sede').value=c.citta||'';
+  document.getElementById('r-tipo').value='';
+  document.getElementById('r-tecnico').value=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('r-descr').value='';
+  document.getElementById('r-materiali').value='';
+  document.getElementById('r-firma-tec').value=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('r-firma-cli').value='';
+  document.querySelectorAll('input[name="esito"]').forEach(r=>r.checked=false);
+  // Checklist
+  document.getElementById('ck-container').innerHTML=CK_VOCI.map((v,i)=>`
+    <div class="ck-card">
+      <div class="ck-voce">${i+1}. ${v}</div>
+      <div class="ck-row">
+        <select class="ck-sel" id="ck-e-${i}"><option value="">Esito</option><option>OK</option><option>KO</option><option>N/A</option></select>
+        <select class="ck-sel" id="ck-c-${i}"><option value="">Conformità</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
+      </div>
+      <input class="ck-note" id="ck-n-${i}" type="text" placeholder="Note (opzionale)">
+    </div>`).join('');
+  // Bottoni
+  document.getElementById('btn-stampa-r').disabled=true;
+  document.getElementById('btn-invia-r').style.display=_op.profilo==='master'?'flex':'none';
+  // Nascondi nav
+  document.getElementById('bottom-nav').classList.remove('vis');
+  showScreen('rapporto');
+}
+
+async function saveRapporto(){
+  const c=_clienteAtt;
+  if(!c){toast('Nessun cliente selezionato','error');return;}
+  const checklist=CK_VOCI.map((voce,i)=>({voce,esito:document.getElementById('ck-e-'+i)?.value||'',conformita:document.getElementById('ck-c-'+i)?.value||'',note:document.getElementById('ck-n-'+i)?.value||''}));
+  const esito=document.querySelector('input[name="esito"]:checked')?.value||'';
+  const contenuto={
+    doc_num:document.getElementById('r-num').value,
+    tipo:document.getElementById('r-tipo').value,
+    sede:document.getElementById('r-sede').value,
+    referente:document.getElementById('r-referente').value,
+    tel:document.getElementById('r-tel').value,
+    descrizione:document.getElementById('r-descr').value,
+    checklist,
+    materiali:document.getElementById('r-materiali').value,
+    esito_complessivo:esito,
+    firma_tecnico:document.getElementById('r-firma-tec').value,
+    firma_cliente:document.getElementById('r-firma-cli').value
+  };
+  const res=await fetch(`${SUPA_URL}/rest/v1/rost81_rapporti`,{
+    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('r-data').value,contenuto})
+  });
+  if(res.ok){
+    toast('✓ Rapporto salvato','success');
+    _rapSalvato=true;
+    document.getElementById('btn-stampa-r').disabled=false;
+    // Auto-segna visita
+    if(!_visitatiSet.has(c.id)){
+      await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis})});
+      _visitatiSet.add(c.id);
+      renderClienti();
+    }
+  }else{
+    const err=await res.json().catch(()=>({}));
+    toast('Errore: '+(err?.message||'salvataggio fallito'),'error');
+  }
+}
+
+function stampaRapporto(){
+  const c=_clienteAtt;
+  if(!c) return;
+  const esito=document.querySelector('input[name="esito"]:checked')?.value||'';
+  const esitoLabel={'ok':'✓ Conforme','parz':'⚠ Parzialmente conforme','ko':'✗ Non conforme','':'—'}[esito];
+  const esitoCol={'ok':'#27ae60','parz':'#e67e22','ko':'#c0392b','':'#999'}[esito];
+  const ckRighe=CK_VOCI.map((voce,i)=>{
+    const e=document.getElementById('ck-e-'+i)?.value||'—';
+    const cf=document.getElementById('ck-c-'+i)?.value||'—';
+    const n=document.getElementById('ck-n-'+i)?.value||'';
+    const col=e==='OK'?'#27ae60':e==='KO'?'#c0392b':'#888';
+    return `<tr><td>${voce}</td><td style="text-align:center;color:${col};font-weight:700">${e}</td><td style="text-align:center">${cf}</td><td style="font-size:10px;color:#888">${n}</td></tr>`;
+  }).join('');
+  const dataFmt=new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT');
+  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${document.getElementById('r-num').value}</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:24px}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:18px}
+.logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}.logo-sub{font-size:10px;color:#666;margin-top:3px}
+.doc-n{font-size:20px;font-weight:700;color:#c0392b;font-family:monospace}.doc-meta{font-size:10px;color:#888;margin-top:3px}
+.doc-title{text-align:center;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding:8px;border-bottom:1px solid #eee}
+.sec{margin-bottom:16px}.sec-t{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px;border-bottom:1px solid #f0f0f0;padding-bottom:4px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:8px}
+.f{display:flex;flex-direction:column;gap:2px}.fl{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px}.fv{font-size:12px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#1a1a1a;color:#fff;padding:6px 8px;text-align:left;font-size:9px;letter-spacing:.5px;text-transform:uppercase}
+td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:middle}
+tr:nth-child(even) td{background:#fafafa}
+.esito-box{display:inline-block;padding:5px 14px;border-radius:4px;font-weight:700;font-size:13px}
+.firma-row{display:flex;gap:40px;margin-top:24px;padding-top:20px;border-top:1px solid #eee}
+.firma-box{flex:1;font-size:10px;color:#888}.firma-line{margin-top:24px;border-top:1px solid #999;padding-top:5px}
+.footer{margin-top:16px;font-size:9px;color:#bbb;text-align:right;border-top:1px solid #f0f0f0;padding-top:8px}
+@media print{body{padding:10px}}</style></head><body>
+<div class="hdr">
+  <div><div class="logo">ROST 81</div><div class="logo-sub">Sicurezza sul lavoro · HSE · Antincendio · Formazione<br>Via Giotto 2, 00034 Colleferro (RM) · P.IVA 10524751004 · Tel. 06 97234064</div></div>
+  <div style="text-align:right"><div class="doc-n">${document.getElementById('r-num').value}</div><div class="doc-meta">Data: ${dataFmt}</div></div>
+</div>
+<div class="doc-title">Rapporto di Manutenzione</div>
+<div class="sec"><div class="sec-t">1. Dati Cliente</div>
+<div class="r2"><div class="f"><div class="fl">Cliente</div><div class="fv">${document.getElementById('r-cliente').value}</div></div><div class="f"><div class="fl">Sede / Cantiere</div><div class="fv">${document.getElementById('r-sede').value||'—'}</div></div></div>
+<div class="r2"><div class="f"><div class="fl">Referente</div><div class="fv">${document.getElementById('r-referente').value||'—'}</div></div><div class="f"><div class="fl">Telefono</div><div class="fv">${document.getElementById('r-tel').value||'—'}</div></div></div></div>
+<div class="sec"><div class="sec-t">2. Dati Intervento</div>
+<div class="r2"><div class="f"><div class="fl">Tipo intervento</div><div class="fv">${document.getElementById('r-tipo').value||'—'}</div></div><div class="f"><div class="fl">Tecnico esecutore</div><div class="fv">${document.getElementById('r-tecnico').value}</div></div></div>
+<div class="f" style="margin-top:6px"><div class="fl">Descrizione</div><div class="fv" style="font-weight:400;margin-top:2px">${document.getElementById('r-descr').value||'—'}</div></div></div>
+<div class="sec"><div class="sec-t">3. Checklist Verifiche</div>
+<table><thead><tr><th>Voce di controllo</th><th style="width:60px;text-align:center">Esito</th><th style="width:120px;text-align:center">Conformità</th><th>Note</th></tr></thead><tbody>${ckRighe}</tbody></table></div>
+<div class="sec"><div class="sec-t">4. Materiali Utilizzati / Sostituiti</div><div style="font-size:11px;line-height:1.7">${document.getElementById('r-materiali').value||'Nessun materiale utilizzato'}</div></div>
+<div class="sec"><div class="sec-t">5. Esito Complessivo</div><div class="esito-box" style="background:${esitoCol}18;color:${esitoCol};border:1.5px solid ${esitoCol}">${esitoLabel}</div></div>
+<div class="firma-row">
+  <div class="firma-box">Firma Tecnico ROST 81<div class="firma-line"><strong>${document.getElementById('r-firma-tec').value||'_____________________'}</strong></div></div>
+  <div class="firma-box">Firma Cliente / Referente<div class="firma-line"><strong>${document.getElementById('r-firma-cli').value||'_____________________'}</strong></div></div>
+</div>
+<div class="footer">ROST 81 Srl — Documento generato il ${new Date().toLocaleDateString('it-IT')} · Conservare agli atti aziendali</div>
+</body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),500);
+}
+
+function inviaEmail(){
+  const c=_clienteAtt; if(!c) return;
+  const dest=c.pec||c.email||'';
+  const sogg=encodeURIComponent(`Rapporto di manutenzione ${document.getElementById('r-num').value} — ROST 81`);
+  const data=new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT');
+  const corpo=encodeURIComponent(`Gentile ${c.referente?c.referente:'Cliente'},\n\nin allegato il rapporto di manutenzione ${document.getElementById('r-num').value} relativo all'intervento del ${data}.\n\nPer qualsiasi informazione non esiti a contattarci.\n\nCordiali saluti,\n${_op.nome} ${_op.cognome}\nROST 81 Srl\nTel. 06 97234064 · info@rost81.it`);
+  if(dest){
+    window.location.href=`mailto:${dest}?subject=${sogg}&body=${corpo}`;
+  }else{
+    // Nessuna email/PEC → apri comunque con campo vuoto e mostra avviso
+    toast('⚠ Nessuna email/PEC registrata — inserisci il destinatario manualmente','error');
+    window.location.href=`mailto:?subject=${sogg}&body=${corpo}`;
+  }
+}
+
+// ── DDT ──
+function openDDT(id){
+  _clienteAtt=_clientiMese.find(c=>c.id===id)||_clienteAtt;
+  if(!_clienteAtt) return;
+  _ddtSalvato=false;
+  document.getElementById('d-data').value=new Date().toISOString().split('T')[0];
+  document.getElementById('d-cliente').value=_clienteAtt.nome;
+  document.getElementById('d-mag-rows').innerHTML='';
+  document.getElementById('d-man-rows').innerHTML='';
+  document.getElementById('d-note').value='';
+  document.getElementById('btn-stampa-d').disabled=true;
+  document.getElementById('bottom-nav').classList.remove('vis');
+  showScreen('ddt');
+}
+
+function addMagRow(){
+  const opts=_magazzino.length>0
+    ?_magazzino.map(a=>`<option value="${a.id}" data-u="${a.unita||'pz'}">${a.nome}</option>`).join('')
+    :'<option value="">— Magazzino vuoto —</option>';
+  const rid='r'+Date.now();
+  const div=document.createElement('div');
+  div.className='ddt-row'; div.id=rid;
+  div.innerHTML=`<select class="f-inp ddt-nome" onchange="setUnit('${rid}',this)" style="font-size:14px;padding:10px 12px"><option value="">— Articolo —</option>${opts}</select>
+    <input type="number" class="f-inp ddt-qty" value="1" min="1" style="font-size:14px;padding:10px 12px">
+    <input type="text" class="f-inp ddt-unit" placeholder="pz" readonly style="font-size:14px;padding:10px 12px">
+    <button class="ddt-del" onclick="document.getElementById('${rid}').remove()">×</button>`;
+  document.getElementById('d-mag-rows').appendChild(div);
+}
+
+function setUnit(rid,sel){
+  const op=sel.options[sel.selectedIndex];
+  document.querySelector(`#${rid} .ddt-unit`).value=op.dataset.u||'pz';
+}
+
+function addManRow(){
+  const rid='r'+Date.now();
+  const div=document.createElement('div');
+  div.className='ddt-row'; div.id=rid;
+  div.innerHTML=`<input type="text" class="f-inp ddt-nome" placeholder="Descrizione" style="font-size:14px;padding:10px 12px">
+    <input type="number" class="f-inp ddt-qty" value="1" min="1" style="font-size:14px;padding:10px 12px">
+    <input type="text" class="f-inp ddt-unit" placeholder="pz" style="font-size:14px;padding:10px 12px">
+    <button class="ddt-del" onclick="document.getElementById('${rid}').remove()">×</button>`;
+  document.getElementById('d-man-rows').appendChild(div);
+}
+
+async function saveDDT(){
+  const c=_clienteAtt; if(!c){toast('Nessun cliente selezionato','error');return;}
+  const magArr=Array.from(document.getElementById('d-mag-rows').querySelectorAll('.ddt-row')).map(row=>{
+    const sel=row.querySelector('select'); if(!sel?.value) return null;
+    const art=_magazzino.find(a=>a.id===sel.value);
+    const qty=parseInt(row.querySelector('.ddt-qty').value)||0;
+    const unit=row.querySelector('.ddt-unit').value||'pz';
+    return {nome:art?.nome||'?',quantita:qty,unita:unit,da_magazzino:true,articolo_id:sel.value};
+  }).filter(Boolean);
+  const manArr=Array.from(document.getElementById('d-man-rows').querySelectorAll('.ddt-row')).map(row=>{
+    const nome=row.querySelector('.ddt-nome').value.trim(); if(!nome) return null;
+    const qty=parseInt(row.querySelector('.ddt-qty').value)||0;
+    const unit=row.querySelector('.ddt-unit').value||'pz';
+    return {nome,quantita:qty,unita:unit,da_magazzino:false};
+  }).filter(Boolean);
+  const articoli=[...magArr,...manArr];
+  if(articoli.length===0){toast('Aggiungi almeno un articolo','error');return;}
+  const res=await fetch(`${SUPA_URL}/rest/v1/rost81_ddt`,{
+    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('d-data').value,articoli})
+  });
+  if(res.ok){
+    toast('✓ DDT salvato','success');
+    _ddtSalvato=true;
+    document.getElementById('btn-stampa-d').disabled=false;
+  }else{
+    const err=await res.json().catch(()=>({}));
+    toast('Errore: '+(err?.message||'salvataggio fallito'),'error');
+  }
+}
+
+function stampaDDT(){
+  const c=_clienteAtt; if(!c) return;
+  const magArr=Array.from(document.getElementById('d-mag-rows').querySelectorAll('.ddt-row')).map(row=>{
+    const sel=row.querySelector('select'); if(!sel?.value) return '';
+    const art=_magazzino.find(a=>a.id===sel.value);
+    const qty=row.querySelector('.ddt-qty').value;
+    const unit=row.querySelector('.ddt-unit').value||'pz';
+    return `<tr><td>${art?.nome||'—'}</td><td style="text-align:center">${qty}</td><td>${unit}</td></tr>`;
+  }).filter(Boolean);
+  const manArr=Array.from(document.getElementById('d-man-rows').querySelectorAll('.ddt-row')).map(row=>{
+    const nome=row.querySelector('.ddt-nome').value; if(!nome) return '';
+    const qty=row.querySelector('.ddt-qty').value;
+    const unit=row.querySelector('.ddt-unit').value||'pz';
+    return `<tr><td>${nome}</td><td style="text-align:center">${qty}</td><td>${unit}</td></tr>`;
+  }).filter(Boolean);
+  const righe=[...magArr,...manArr].join('');
+  const dataFmt=new Date(document.getElementById('d-data').value).toLocaleDateString('it-IT');
+  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>DDT — ROST 81</title>
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:24px}
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:18px}
+.logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}.logo-sub{font-size:10px;color:#666;margin-top:3px}
+.doc-title{text-align:center;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;padding:8px;border-bottom:1px solid #eee}
+.sec{margin-bottom:16px}.sec-t{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888;margin-bottom:8px;border-bottom:1px solid #f0f0f0;padding-bottom:4px}
+.r2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.f{display:flex;flex-direction:column;gap:2px}.fl{font-size:9px;color:#aaa;text-transform:uppercase}.fv{font-size:12px;font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th{background:#1a1a1a;color:#fff;padding:6px 8px;text-align:left;font-size:9px;letter-spacing:.5px;text-transform:uppercase}
+td{padding:7px 8px;border-bottom:1px solid #eee}
+.firma-row{display:flex;gap:40px;margin-top:28px;padding-top:20px;border-top:1px solid #eee}
+.firma-box{flex:1;font-size:10px;color:#888}.firma-line{margin-top:26px;border-top:1px solid #999;padding-top:5px}
+.footer{margin-top:16px;font-size:9px;color:#bbb;text-align:right;border-top:1px solid #f0f0f0;padding-top:8px}
+@media print{body{padding:10px}}</style></head><body>
+<div class="hdr">
+  <div><div class="logo">ROST 81</div><div class="logo-sub">Via Giotto 2, 00034 Colleferro (RM) · P.IVA 10524751004</div></div>
+  <div style="text-align:right;font-size:10px;color:#888">Data: ${dataFmt}</div>
+</div>
+<div class="doc-title">Documento di Trasporto</div>
+<div class="sec"><div class="sec-t">Dati</div>
+<div class="r2"><div class="f"><div class="fl">Cliente destinatario</div><div class="fv">${c.nome}</div></div><div class="f"><div class="fl">Città</div><div class="fv">${c.citta||'—'}</div></div></div></div>
+<div class="sec"><div class="sec-t">Articoli</div>
+<table><thead><tr><th>Descrizione</th><th style="width:70px;text-align:center">Quantità</th><th style="width:60px">Unità</th></tr></thead><tbody>${righe}</tbody></table></div>
+${document.getElementById('d-note').value?`<div class="sec"><div class="sec-t">Note</div><div style="font-size:11px;line-height:1.6">${document.getElementById('d-note').value}</div></div>`:''}
+<div style="font-size:10px;color:#888;margin-top:10px">Operatore: ${_op.nome} ${_op.cognome}</div>
+<div class="firma-row">
+  <div class="firma-box">Firma mittente (ROST 81)<div class="firma-line">_____________________________</div></div>
+  <div class="firma-box">Firma destinatario<div class="firma-line">_____________________________</div></div>
+</div>
+<div class="footer">ROST 81 Srl — DDT generato il ${new Date().toLocaleDateString('it-IT')}</div>
+</body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html); w.document.close(); w.focus();
+  setTimeout(()=>w.print(),500);
+}
+
+// ── TOAST ──
+function toast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='show '+(type==='error'?'error':type==='success'?'success':'');
+  clearTimeout(t._t); t._t=setTimeout(()=>{t.className='';},3200);
+}
+
+// ── KEYBOARD ──
+document.getElementById('l-email').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('l-pwd').focus();});
+document.getElementById('l-pwd').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+</script>
+</body>
+</html>

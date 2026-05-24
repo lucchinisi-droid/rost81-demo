@@ -377,15 +377,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <button class="btn btn-red btn-sm" onclick="document.getElementById('form-nuovo-op').style.display=document.getElementById('form-nuovo-op').style.display==='none'?'block':'none'">+ Nuovo operatore</button>
         </div>
 
-        <!-- BANNER ISTRUZIONI POST-CREAZIONE -->
-        <div id="op-istruzioni" style="display:none;background:#ede9fe;border:1px solid #c4b5fd;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;font-size:13px;line-height:1.6">
-          <div style="font-weight:600;margin-bottom:4px">✅ Profilo operatore creato</div>
-          Per abilitare il login su Sentinel-81, vai su:<br>
-          <strong>Supabase → Authentication → Users → Add user</strong><br>
-          Email: <code id="op-istruzioni-email" style="font-family:'DM Mono',monospace;background:rgba(124,58,237,0.12);padding:2px 7px;border-radius:4px;font-size:12px"></code>
-          <div style="margin-top:10px"><button class="btn btn-sm" onclick="document.getElementById('op-istruzioni').style.display='none'">OK, capito</button></div>
-        </div>
-
         <!-- FORM NUOVO OPERATORE -->
         <div id="form-nuovo-op" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
           <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Nuovo operatore</div>
@@ -393,8 +384,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="op-nome" placeholder="Mario"></div>
             <div class="form-group"><label class="form-label">Cognome</label><input type="text" class="form-input" id="op-cognome" placeholder="Rossi"></div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
             <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="op-email" placeholder="mario@rost81.it"></div>
+            <div class="form-group"><label class="form-label">Password temporanea</label><input type="password" class="form-input" id="op-password" placeholder="min. 8 caratteri"></div>
             <div class="form-group">
               <label class="form-label">Profilo</label>
               <select class="form-input" id="op-profilo">
@@ -406,7 +398,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           </div>
           <div class="form-group" style="margin-bottom:14px"><label class="form-label">Note (opzionale)</label><input type="text" class="form-input" id="op-note" placeholder="es. Zona Colleferro"></div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="creaOperatore()">✓ Crea operatore</button>
+            <button class="btn btn-red" style="flex:1;justify-content:center" id="btn-crea-op" onclick="creaOperatore()">✓ Crea operatore</button>
             <button class="btn" onclick="document.getElementById('form-nuovo-op').style.display='none'">Annulla</button>
           </div>
         </div>
@@ -432,7 +424,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 <script>
 const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const SUPA_ADMIN_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTQxMDc1OSwiZXhwIjoyMDkwOTg2NzU5fQ.vanzyHny3STars9hMMv4rx2tl-enz0FdV1bAM-hpQzw';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+const HA={'apikey':SUPA_ADMIN_KEY,'Authorization':'Bearer '+SUPA_ADMIN_KEY,'Content-Type':'application/json'};
 function toggleTheme(){
   const dark=document.body.classList.toggle('dark');
   document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
@@ -770,25 +764,44 @@ async function creaOperatore(){
   const nome=document.getElementById('op-nome').value.trim();
   const cognome=document.getElementById('op-cognome').value.trim();
   const email=document.getElementById('op-email').value.trim();
+  const password=document.getElementById('op-password').value;
   const profilo=document.getElementById('op-profilo').value;
   const note=document.getElementById('op-note').value.trim();
-  if(!nome||!cognome||!email){showToast('Compila nome, cognome ed email','error');return;}
+  if(!nome||!cognome||!email||!password){showToast('Compila tutti i campi obbligatori','error');return;}
+  if(password.length<8){showToast('Password minimo 8 caratteri','error');return;}
   if(!email.includes('@')){showToast('Email non valida','error');return;}
-  const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
-    method:'POST',
-    headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({nome,cognome,email,profilo,note:note||null})
-  });
-  if(oRes.ok){
-    showToast(`✓ ${nome} ${cognome} (${profilo}) aggiunto`,'success');
-    document.getElementById('form-nuovo-op').style.display='none';
-    document.getElementById('op-istruzioni-email').textContent=email;
-    document.getElementById('op-istruzioni').style.display='block';
-    ['op-nome','op-cognome','op-email','op-note'].forEach(id=>document.getElementById(id).value='');
-    loadOperatori();
-  } else {
-    const err=await oRes.json().catch(()=>({}));
-    showToast('Errore: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
+  const btn=document.getElementById('btn-crea-op');
+  btn.disabled=true; btn.textContent='Creazione…';
+  try{
+    // 1. Crea utente auth con Admin API
+    const sRes=await fetch(`${SUPA_URL}/auth/v1/admin/users`,{
+      method:'POST',
+      headers:HA,
+      body:JSON.stringify({email,password,email_confirm:true})
+    });
+    const sData=await sRes.json();
+    const uid=sData?.id;
+    if(!uid){
+      showToast('Errore auth: '+(sData?.msg||sData?.message||sData?.error||JSON.stringify(sData)),'error');
+      return;
+    }
+    // 2. Inserisci profilo in rost81_operatori
+    const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
+      method:'POST',
+      headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({id:uid,nome,cognome,email,profilo,note:note||null})
+    });
+    if(oRes.ok){
+      showToast(`✓ ${nome} ${cognome} (${profilo}) creato — può accedere a Sentinel-81`,'success');
+      document.getElementById('form-nuovo-op').style.display='none';
+      ['op-nome','op-cognome','op-email','op-password','op-note'].forEach(id=>document.getElementById(id).value='');
+      loadOperatori();
+    } else {
+      const err=await oRes.json().catch(()=>({}));
+      showToast('Account creato ma errore profilo: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
+    }
+  } finally {
+    btn.disabled=false; btn.textContent='✓ Crea operatore';
   }
 }
 

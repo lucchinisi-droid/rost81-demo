@@ -310,9 +310,39 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- SCADENZE -->
       <div id="panel-scadenze" class="panel">
-        <div class="section-head"><div class="section-title">Tutte le scadenze</div></div>
-        <div class="alert-list">
-          <div style="text-align:center;padding:24px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Nessuna scadenza registrata</div>
+        <div class="section-head">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="section-title" id="scad-title">Scadenze</div>
+            <div style="display:flex;gap:4px">
+              <button class="btn btn-sm sort-btn active" id="scad-tab-mese"    onclick="switchScadTab('mese')">📅 Mese corrente</button>
+              <button class="btn btn-sm sort-btn"        id="scad-tab-rinnovi" onclick="switchScadTab('rinnovi')">📄 Rinnovi contratto</button>
+            </div>
+          </div>
+          <div id="scad-count-wrap" style="font-size:12px;color:var(--text-muted)"></div>
+        </div>
+
+        <!-- TAB: MESE CORRENTE -->
+        <div id="scad-panel-mese">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
+              <tbody id="scad-mese-tbody">
+                <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB: RINNOVI CONTRATTO -->
+        <div id="scad-panel-rinnovi" style="display:none">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Scadenza contratto</th><th>Giorni</th></tr></thead>
+              <tbody id="scad-rinnovi-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
@@ -536,6 +566,11 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     </div>
     <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px">
       <div class="form-group"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="d-tel-referente"></div>
+    </div>
+
+    <div class="d-section">Contratto</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Scadenza contratto</label><input type="date" class="form-input" id="d-scadenza"></div>
     </div>
 
     <div class="d-section">Mesi intervento</div>
@@ -938,6 +973,7 @@ function switchPanel(id,el){
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
   if(id==='dashboard') loadDashboardMagazzino();
   if(id==='clienti') loadClienti();
+  if(id==='scadenze') loadScadenze();
   if(id==='appmanut') loadOperatori();
 }
 
@@ -1099,6 +1135,83 @@ async function cambiaProfiloModal(id,profiloAttuale,nomeCompleto){
   else showToast('Errore aggiornamento profilo','error');
 }
 
+// ---- SCADENZE ----
+let _scadTab='mese';
+
+function switchScadTab(tab){
+  _scadTab=tab;
+  document.querySelectorAll('[id^="scad-tab-"]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('scad-tab-'+tab).classList.add('active');
+  document.getElementById('scad-panel-mese').style.display=tab==='mese'?'block':'none';
+  document.getElementById('scad-panel-rinnovi').style.display=tab==='rinnovi'?'block':'none';
+}
+
+async function loadScadenze(){
+  await Promise.all([loadAgendaMese(),loadRinnovi()]);
+}
+
+async function loadAgendaMese(){
+  const now=new Date();
+  const mese=now.getMonth()+1;
+  const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
+  document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${now.getFullYear()}`;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
+  const data=await r.json();
+  const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
+  clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
+  document.getElementById('scad-count-wrap').textContent=_scadTab==='mese'?`${clientiMese.length} clienti`:'';
+  const tbody=document.getElementById('scad-mese-tbody');
+  if(clientiMese.length===0){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente programmato per questo mese</td></tr>';
+    return;
+  }
+  tbody.innerHTML=clientiMese.map(c=>{
+    const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]).join(' · ');
+    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')">
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td><div class="td-name">${c.nome}</div></td>
+      <td style="font-size:12px">${c.citta||'—'}</td>
+      <td style="font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
+      <td style="font-size:12px">${c.referente||'—'}</td>
+      <td style="font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+async function loadRinnovi(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,numero_n,codice,nome,citta,data_scadenza_contratto&data_scadenza_contratto=not.is.null&order=data_scadenza_contratto`,{headers:H});
+  const data=await r.json();
+  const today=new Date(); today.setHours(0,0,0,0);
+  const relevant=(data||[]).filter(c=>{
+    if(!c.data_scadenza_contratto) return false;
+    const diff=Math.floor((new Date(c.data_scadenza_contratto)-today)/(864e5));
+    return diff<=90;
+  });
+  const tbody=document.getElementById('scad-rinnovi-tbody');
+  if(relevant.length===0){
+    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun rinnovo nei prossimi 90 giorni</td></tr>';
+    return;
+  }
+  tbody.innerHTML=relevant.map(c=>{
+    const diff=Math.floor((new Date(c.data_scadenza_contratto)-today)/(864e5));
+    const dataFmt=new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT');
+    let badge;
+    if(diff<0)       badge=`<span class="badge badge-red">Scaduto ${Math.abs(diff)}gg fa</span>`;
+    else if(diff<=30) badge=`<span class="badge badge-red">${diff} giorni</span>`;
+    else if(diff<=60) badge=`<span class="badge badge-amber">${diff} giorni</span>`;
+    else              badge=`<span class="badge badge-green">${diff} giorni</span>`;
+    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')">
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td class="td-name">${c.nome}</td>
+      <td style="font-size:12px">${c.citta||'—'}</td>
+      <td style="font-size:12px;font-family:'DM Mono',monospace">${dataFmt}</td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+}
+
 loadDashboardMagazzino();
 loadSidebarBadges();
 
@@ -1129,6 +1242,7 @@ function openClienteDrawer(c){
   document.getElementById('d-tel').value=c.telefono||'';
   document.getElementById('d-referente').value=c.referente||'';
   document.getElementById('d-tel-referente').value=c.telefono_referente||'';
+  document.getElementById('d-scadenza').value=c.data_scadenza_contratto||'';
   // Note
   document.getElementById('d-note').value=c.note||'';
   // Mesi
@@ -1172,6 +1286,7 @@ async function salvaModificheCliente(){
       telefono:document.getElementById('d-tel').value.trim()||null,
       referente:document.getElementById('d-referente').value.trim()||null,
       telefono_referente:document.getElementById('d-tel-referente').value.trim()||null,
+      data_scadenza_contratto:document.getElementById('d-scadenza').value||null,
       note:document.getElementById('d-note').value.trim()||null,
     };
     if(nVal!=='') body.numero_n=parseInt(nVal);

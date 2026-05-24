@@ -41,6 +41,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
 .nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
+.sort-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
 .sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
 .sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
 .main{margin-left:220px;flex:1}
@@ -217,9 +218,16 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <!-- CLIENTI -->
       <div id="panel-clienti" class="panel">
         <div class="section-head">
-          <div class="section-title">Tutti i clienti</div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="section-title">Tutti i clienti</div>
+            <div style="display:flex;gap:4px">
+              <button class="btn btn-sm sort-btn active" id="sort-n"    onclick="setSortKey('n')">N</button>
+              <button class="btn btn-sm sort-btn"        id="sort-cod"  onclick="setSortKey('cod')">COD</button>
+              <button class="btn btn-sm sort-btn"        id="sort-nome" onclick="setSortKey('nome')">Cliente</button>
+            </div>
+          </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <input type="text" id="clienti-search" placeholder="🔍 Cerca cliente…" oninput="filterClienti()" style="padding:6px 10px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;width:180px">
+            <input type="text" id="clienti-search" placeholder="🔍 Cerca cliente…" oninput="applyFilterAndSort()" style="padding:6px 10px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;width:180px">
             <button class="btn btn-sm" onclick="loadClienti()">↻</button>
           </div>
         </div>
@@ -467,11 +475,47 @@ async function loadSidebarBadges(){
 
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
 let _clientiData=[];
+let _sortKey='n';
+
+function setSortKey(key){
+  _sortKey=key;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sort-'+key).classList.add('active');
+  applyFilterAndSort();
+}
+
+function sortedData(data){
+  return [...data].sort((a,b)=>{
+    if(_sortKey==='n'){
+      const an=a.numero_n??99999, bn=b.numero_n??99999;
+      return an-bn;
+    }
+    if(_sortKey==='cod'){
+      const ac=(a.codice||'zzz').toLowerCase(), bc=(b.codice||'zzz').toLowerCase();
+      return ac.localeCompare(bc,'it');
+    }
+    // nome
+    return (a.nome||'').toLowerCase().localeCompare((b.nome||'').toLowerCase(),'it');
+  });
+}
+
+function applyFilterAndSort(){
+  const q=(document.getElementById('clienti-search')?.value||'').toLowerCase();
+  let data=_clientiData;
+  if(q) data=data.filter(c=>
+    (c.nome||'').toLowerCase().includes(q)||
+    (c.citta||'').toLowerCase().includes(q)||
+    (c.codice||'').toLowerCase().includes(q)||
+    String(c.numero_n||'').includes(q)||
+    (c.partita_iva||'').toLowerCase().includes(q)
+  );
+  renderClienti(sortedData(data));
+}
 
 async function loadClienti(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)&order=numero_n`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
   _clientiData=await r.json();
-  renderClienti(_clientiData);
+  applyFilterAndSort();
 }
 
 function renderClienti(data){
@@ -499,17 +543,6 @@ function renderClienti(data){
   }).join('');
 }
 
-function filterClienti(){
-  const q=document.getElementById('clienti-search').value.toLowerCase();
-  if(!q){renderClienti(_clientiData);return;}
-  renderClienti(_clientiData.filter(c=>
-    (c.nome||'').toLowerCase().includes(q)||
-    (c.citta||'').toLowerCase().includes(q)||
-    (c.codice||'').toLowerCase().includes(q)||
-    (c.numero_n||'').toLowerCase().includes(q)||
-    (c.partita_iva||'').toLowerCase().includes(q)
-  ));
-}
 
 async function loadClienteIds(){
   const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?order=nome&select=id,nome`,{headers:H});

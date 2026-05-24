@@ -1214,15 +1214,18 @@ async function toggleVisita(clienteId, visitatoAttuale){
   const mese=now.getMonth()+1, anno=now.getFullYear();
   const nuovoStato=!visitatoAttuale;
   const filtro=`operatore_id=eq.${CRM_ADMIN_ID}&cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`;
-  // 1. prova a fare PATCH sul record esistente
-  const pRes=await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}`,{
-    method:'PATCH',
-    headers:{...H,'Prefer':'return=representation'},
-    body:JSON.stringify({visitato:nuovoStato})
-  });
-  const pData=await pRes.json().catch(()=>[]);
-  // 2. se non esisteva, INSERT
-  if(!Array.isArray(pData)||pData.length===0){
+  // 1. cerca il record esistente per id
+  const gRes=await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}&select=id`,{headers:H});
+  const gData=await gRes.json().catch(()=>[]);
+  if(Array.isArray(gData)&&gData.length>0){
+    // 2a. esiste → PATCH per id (PK, filtro infallibile)
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite?id=eq.${gData[0].id}`,{
+      method:'PATCH',
+      headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({visitato:nuovoStato})
+    });
+  } else {
+    // 2b. non esiste → INSERT
     await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
       method:'POST',
       headers:{...H,'Prefer':'return=minimal'},

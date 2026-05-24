@@ -325,7 +325,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         <div id="scad-panel-mese">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
+              <thead><tr><th style="width:36px"></th><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
               <tbody id="scad-mese-tbody">
                 <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
               </tbody>
@@ -1150,33 +1150,65 @@ async function loadScadenze(){
   await Promise.all([loadAgendaMese(),loadRinnovi()]);
 }
 
+const CRM_ADMIN_ID='00000000-0000-0000-0000-000000000001';
+
 async function loadAgendaMese(){
   const now=new Date();
   const mese=now.getMonth()+1;
+  const anno=now.getFullYear();
   const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
-  document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${now.getFullYear()}`;
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
-  const data=await r.json();
+  document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${anno}`;
+
+  // fetch clienti + visite mese in parallelo
+  const [rC,rV]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite?operatore_id=eq.${CRM_ADMIN_ID}&mese=eq.${mese}&anno=eq.${anno}&select=cliente_id,visitato`,{headers:H})
+  ]);
+  const data=await rC.json();
+  const visite=await rV.json();
+  const visitatiSet=new Set((visite||[]).filter(v=>v.visitato).map(v=>v.cliente_id));
+
   const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
   clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
-  document.getElementById('scad-count-wrap').textContent=_scadTab==='mese'?`${clientiMese.length} clienti`:'';
+
+  const fatti=clientiMese.filter(c=>visitatiSet.has(c.id)).length;
+  document.getElementById('scad-count-wrap').innerHTML=_scadTab==='mese'
+    ?`<span style="color:var(--green);font-weight:600">${fatti} ✓</span> <span style="color:var(--text-muted)">/ ${clientiMese.length}</span>`:'';
+
   const tbody=document.getElementById('scad-mese-tbody');
   if(clientiMese.length===0){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente programmato per questo mese</td></tr>';
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente programmato per questo mese</td></tr>';
     return;
   }
   tbody.innerHTML=clientiMese.map(c=>{
+    const visitato=visitatiSet.has(c.id);
     const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]).join(' · ');
-    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')">
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td><div class="td-name">${c.nome}</div></td>
-      <td style="font-size:12px">${c.citta||'—'}</td>
-      <td style="font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
-      <td style="font-size:12px">${c.referente||'—'}</td>
-      <td style="font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
+    const led=visitato
+      ?'<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 4px var(--green)"></span>'
+      :'<span style="display:inline-block;width:10px;height:10px;border-radius:50%;border:2px solid var(--border-med)"></span>';
+    return `<tr class="clickable" style="${visitato?'opacity:.4':''}" >
+      <td onclick="event.stopPropagation();toggleVisita('${c.id}',${visitato})" style="cursor:pointer;text-align:center">${led}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')"><div class="td-name">${c.nome}</div></td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-size:12px">${c.citta||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-size:12px">${c.referente||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
     </tr>`;
   }).join('');
+}
+
+async function toggleVisita(clienteId, visitatoAttuale){
+  const now=new Date();
+  const mese=now.getMonth()+1, anno=now.getFullYear();
+  const nuovoStato=!visitatoAttuale;
+  await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
+    method:'POST',
+    headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
+  });
+  loadAgendaMese();
 }
 
 async function loadRinnovi(){

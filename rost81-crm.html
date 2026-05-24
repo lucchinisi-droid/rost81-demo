@@ -40,7 +40,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-item:hover{color:var(--text);background:var(--bg)}
 .nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
-.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf}
+.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
 .sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
 .sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
 .main{margin-left:220px;flex:1}
@@ -128,6 +128,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><span>◻</span><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><span>📦</span><span>Magazzino</span><span class="nav-badge green" id="badge-scorte">0</span></div>
       <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><span>📋</span><span>Documenti di Lavoro</span></div>
+      <div class="nav-item" onclick="switchPanel('appmanut',this)"><span>👷</span><span>App Manutentore</span><span class="nav-badge purple" id="badge-operatori">0</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
   </aside>
@@ -359,6 +360,59 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           </a>
 
         </div>
+      </div>
+
+      <!-- APP MANUTENTORE -->
+      <div id="panel-appmanut" class="panel">
+
+        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label">👷 Operatori totali</div><div class="stat-val" id="op-tot">—</div></div>
+          <div class="stat-card"><div class="stat-label">🟢 Attivi</div><div class="stat-val green" id="op-attivi">—</div></div>
+          <div class="stat-card"><div class="stat-label">Junior</div><div class="stat-val" id="op-junior">—</div></div>
+          <div class="stat-card"><div class="stat-label">Senior / Master</div><div class="stat-val" style="color:#7c3aed" id="op-senior">—</div></div>
+        </div>
+
+        <div class="section-head">
+          <div class="section-title">Operatori</div>
+          <button class="btn btn-red btn-sm" onclick="document.getElementById('form-nuovo-op').style.display=document.getElementById('form-nuovo-op').style.display==='none'?'block':'none'">+ Nuovo operatore</button>
+        </div>
+
+        <!-- FORM NUOVO OPERATORE -->
+        <div id="form-nuovo-op" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Nuovo operatore</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="op-nome" placeholder="Mario"></div>
+            <div class="form-group"><label class="form-label">Cognome</label><input type="text" class="form-input" id="op-cognome" placeholder="Rossi"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="op-email" placeholder="mario@rost81.it"></div>
+            <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="op-password" placeholder="min. 8 caratteri"></div>
+            <div class="form-group">
+              <label class="form-label">Profilo</label>
+              <select class="form-input" id="op-profilo">
+                <option value="junior">Junior</option>
+                <option value="senior">Senior</option>
+                <option value="master">Master</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-bottom:14px"><label class="form-label">Note (opzionale)</label><input type="text" class="form-input" id="op-note" placeholder="es. Zona Colleferro"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="creaOperatore()">✓ Crea operatore</button>
+            <button class="btn" onclick="document.getElementById('form-nuovo-op').style.display='none'">Annulla</button>
+          </div>
+        </div>
+
+        <!-- TABELLA OPERATORI -->
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Nome</th><th>Email</th><th>Profilo</th><th>Stato</th><th>Note</th><th>Creato</th><th></th></tr></thead>
+            <tbody id="operatori-tbody">
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
 
     </div>
@@ -618,11 +672,12 @@ function switchPanel(id,el){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
   el.classList.add('active');
-  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro'};
+  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore'};
   document.getElementById('page-title').textContent=labels[id]||id;
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
   if(id==='dashboard') loadDashboardMagazzino();
   if(id==='clienti') loadClienti();
+  if(id==='appmanut') loadOperatori();
 }
 
 loadClienteIds();
@@ -664,6 +719,100 @@ async function loadDashboardMagazzino(){
       `).join('');
     }
   }
+}
+
+// ---- APP MANUTENTORE ----
+const PROFILO_BADGE={
+  junior:'<span class="badge badge-gray">Junior</span>',
+  senior:'<span class="badge badge-blue">Senior</span>',
+  master:'<span style="background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px">Master</span>'
+};
+
+async function loadOperatori(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=*&order=created_at.desc`,{headers:H});
+  const data=await r.json();
+  if(!Array.isArray(data)) return;
+  // stats
+  document.getElementById('op-tot').textContent=data.length;
+  document.getElementById('op-attivi').textContent=data.filter(o=>o.attivo).length;
+  document.getElementById('op-junior').textContent=data.filter(o=>o.profilo==='junior').length;
+  document.getElementById('op-senior').textContent=data.filter(o=>o.profilo==='senior'||o.profilo==='master').length;
+  document.getElementById('badge-operatori').textContent=data.filter(o=>o.attivo).length;
+  // tabella
+  const tbody=document.getElementById('operatori-tbody');
+  if(data.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun operatore ancora creato</td></tr>';return;}
+  tbody.innerHTML=data.map(o=>`
+    <tr style="${!o.attivo?'opacity:.45':''}">
+      <td style="font-weight:500">${o.nome} ${o.cognome}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${o.email||'—'}</td>
+      <td>${PROFILO_BADGE[o.profilo]||o.profilo}</td>
+      <td>${o.attivo
+        ?'<span class="badge badge-green">● Attivo</span>'
+        :'<span class="badge badge-red">○ Disattivato</span>'}</td>
+      <td style="font-size:11px;color:var(--text-muted)">${o.note||'—'}</td>
+      <td style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">${new Date(o.created_at).toLocaleDateString('it-IT')}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-sm" onclick="toggleOperatore('${o.id}',${o.attivo})">${o.attivo?'🔒 Revoca':'🔓 Riattiva'}</button>
+        <button class="btn btn-sm" onclick="cambiaProfiloModal('${o.id}','${o.profilo}','${o.nome} ${o.cognome}')">✏️</button>
+      </td>
+    </tr>`).join('');
+}
+
+async function creaOperatore(){
+  const nome=document.getElementById('op-nome').value.trim();
+  const cognome=document.getElementById('op-cognome').value.trim();
+  const email=document.getElementById('op-email').value.trim();
+  const password=document.getElementById('op-password').value;
+  const profilo=document.getElementById('op-profilo').value;
+  const note=document.getElementById('op-note').value.trim();
+  if(!nome||!cognome||!email||!password){showToast('Compila tutti i campi obbligatori','error');return;}
+  if(password.length<8){showToast('Password minimo 8 caratteri','error');return;}
+  // 1. crea utente Supabase Auth
+  const sRes=await fetch(`${SUPA_URL}/auth/v1/signup`,{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({email,password})
+  });
+  const sData=await sRes.json();
+  const uid=sData?.user?.id||sData?.id;
+  if(!uid){showToast('Errore creazione account: '+(sData?.msg||sData?.message||'Email già in uso?'),'error');return;}
+  // 2. inserisci in rost81_operatori
+  const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
+    method:'POST',
+    headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({id:uid,nome,cognome,profilo,note:note||null})
+  });
+  if(oRes.ok){
+    showToast(`✓ Operatore ${nome} ${cognome} creato (${profilo})`,'success');
+    document.getElementById('form-nuovo-op').style.display='none';
+    ['op-nome','op-cognome','op-email','op-password','op-note'].forEach(id=>document.getElementById(id).value='');
+    loadOperatori();
+  } else {
+    const err=await oRes.json();
+    showToast('Errore profilo: '+JSON.stringify(err),'error');
+  }
+}
+
+async function toggleOperatore(id,attivo){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?id=eq.${id}`,{
+    method:'PATCH',
+    headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({attivo:!attivo})
+  });
+  if(r.ok){showToast(attivo?'🔒 Accesso revocato':'🔓 Operatore riattivato','success');loadOperatori();}
+  else showToast('Errore aggiornamento','error');
+}
+
+async function cambiaProfiloModal(id,profiloAttuale,nomeCompleto){
+  const nuovo=prompt(`Cambia profilo di ${nomeCompleto}\nInserisci: junior / senior / master\n(attuale: ${profiloAttuale})`);
+  if(!nuovo||!['junior','senior','master'].includes(nuovo.toLowerCase())) return;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?id=eq.${id}`,{
+    method:'PATCH',
+    headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({profilo:nuovo.toLowerCase()})
+  });
+  if(r.ok){showToast(`✓ Profilo aggiornato: ${nuovo}`,'success');loadOperatori();}
+  else showToast('Errore aggiornamento profilo','error');
 }
 
 loadDashboardMagazzino();

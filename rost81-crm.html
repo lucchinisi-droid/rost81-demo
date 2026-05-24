@@ -42,6 +42,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
 .nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
 .sort-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
+.mese-pill{display:flex;align-items:center;font-size:12px;cursor:pointer;padding:4px 12px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s;color:var(--text)}
 .sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
 .sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
 .main{margin-left:220px;flex:1}
@@ -260,10 +261,18 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="form-group" style="margin-bottom:16px">
             <label class="form-label" style="margin-bottom:8px">Mesi intervento</label>
             <div style="display:flex;flex-wrap:wrap;gap:6px" id="nc-mesi-wrap">
-              ${['Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'].map((m,i)=>`
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;padding:4px 10px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s" id="label-m-${i+1}">
-                  <input type="checkbox" value="${i+1}" onchange="highlightMese(${i+1},this.checked)" style="display:none"> ${m}
-                </label>`).join('')}
+              <label id="label-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightMese(1,this.checked)"  style="display:none"> Gen</label>
+              <label id="label-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightMese(2,this.checked)"  style="display:none"> Feb</label>
+              <label id="label-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightMese(3,this.checked)"  style="display:none"> Mar</label>
+              <label id="label-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightMese(4,this.checked)"  style="display:none"> Apr</label>
+              <label id="label-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightMese(5,this.checked)"  style="display:none"> Mag</label>
+              <label id="label-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightMese(6,this.checked)"  style="display:none"> Giu</label>
+              <label id="label-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightMese(7,this.checked)"  style="display:none"> Lug</label>
+              <label id="label-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightMese(8,this.checked)"  style="display:none"> Ago</label>
+              <label id="label-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightMese(9,this.checked)"  style="display:none"> Set</label>
+              <label id="label-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightMese(10,this.checked)" style="display:none"> Ott</label>
+              <label id="label-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightMese(11,this.checked)" style="display:none"> Nov</label>
+              <label id="label-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightMese(12,this.checked)" style="display:none"> Dic</label>
             </div>
           </div>
 

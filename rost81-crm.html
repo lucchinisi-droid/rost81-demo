@@ -1098,13 +1098,20 @@ async function creaOperatore(){
     const sData=await sRes.json();
     let uid=sData?.id;
 
-    // 422 = email già registrata → cerca l'utente esistente e riusa il suo id
+    // 422 = email già registrata → cerca l'utente esistente, riusa id e aggiorna la password
     if(!uid && sRes.status===422){
       const listRes=await fetch(`${SUPA_URL}/auth/v1/admin/users?page=1&per_page=500`,{headers:HA});
       const listData=await listRes.json();
       const found=(listData?.users||[]).find(u=>u.email===email);
-      if(found){ uid=found.id; }
-      else{ showToast('Email già registrata — usa un indirizzo diverso','error'); return; }
+      if(found){
+        uid=found.id;
+        // Aggiorna la password dell'utente esistente
+        await fetch(`${SUPA_URL}/auth/v1/admin/users/${uid}`,{
+          method:'PUT',
+          headers:HA,
+          body:JSON.stringify({password,email_confirm:true})
+        });
+      } else{ showToast('Email già registrata — usa un indirizzo diverso','error'); return; }
     }
 
     if(!uid){

@@ -600,14 +600,19 @@ let magazzino=[];
 let clientiMap={};
 
 async function loadSidebarBadges(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id`,{headers:H});
-  const d=await r.json();
-  const n=Array.isArray(d)?d.length:0;
-  document.getElementById('badge-clienti').textContent=n;
+  const [rC,rO]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H})
+  ]);
+  const dC=await rC.json(), dO=await rO.json();
+  const nC=Array.isArray(dC)?dC.length:0;
+  const nO=Array.isArray(dO)?dO.length:0;
+  document.getElementById('badge-clienti').textContent=nC;
   document.getElementById('badge-scadenze').textContent=0;
   document.getElementById('badge-preventivi').textContent=0;
+  document.getElementById('badge-operatori').textContent=nO;
   const el=document.getElementById('dash-clienti-tot');
-  if(el) el.textContent=n;
+  if(el) el.textContent=nC;
 }
 
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};

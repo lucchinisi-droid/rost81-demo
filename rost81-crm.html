@@ -1193,18 +1193,18 @@ async function loadAgendaMese(){
   tbody.innerHTML=clientiMese.map(c=>{
     const visitato=visitatiSet.has(c.id);
     const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]).join(' · ');
-    const toggleBtn=visitato
-      ?`<button onclick="toggleVisita('${c.id}',true)" style="all:unset;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--green-light);cursor:pointer;flex-shrink:0"><span style="width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 5px var(--green);display:block"></span></button>`
-      :`<button onclick="toggleVisita('${c.id}',false)" style="all:unset;display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:2px dashed var(--border-med);cursor:pointer;flex-shrink:0"><span style="width:10px;height:10px;border-radius:50%;border:2px solid var(--border-med);display:block"></span></button>`;
-    return `<tr style="${visitato?'opacity:.42':''}">
-      <td style="padding:8px;width:44px">${toggleBtn}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable"><div class="td-name">${c.nome}</div></td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-size:12px">${c.citta||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-size:12px">${c.referente||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" class="clickable" style="font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
+    const led=visitato
+      ?`<div style="width:20px;height:20px;border-radius:50%;background:var(--green);margin:auto;box-shadow:0 0 6px var(--green)"></div>`
+      :`<div style="width:20px;height:20px;border-radius:50%;border:2px solid #ccc;margin:auto"></div>`;
+    return `<tr style="${visitato?'opacity:.4':''}">
+      <td onclick="toggleVisita('${c.id}',${visitato})" style="cursor:pointer;text-align:center;padding:10px 8px;width:44px">${led}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer"><div class="td-name">${c.nome}</div></td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.citta||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.referente||'—'}</td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
     </tr>`;
   }).join('');
 }

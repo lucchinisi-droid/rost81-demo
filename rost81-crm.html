@@ -1213,17 +1213,19 @@ async function toggleVisita(clienteId, visitatoAttuale){
   const now=new Date();
   const mese=now.getMonth()+1, anno=now.getFullYear();
   const nuovoStato=!visitatoAttuale;
-  const filtro=`operatore_id=eq.${CRM_ADMIN_ID}&cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`;
-  // 1. cancella eventuale record esistente
-  await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}`,{method:'DELETE',headers:H});
-  // 2. inserisce con il nuovo stato
-  await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
+  // upsert con conflict esplicito sui 4 campi → ON CONFLICT(operatore_id,cliente_id,mese,anno) DO UPDATE
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_visite?on_conflict=operatore_id,cliente_id,mese,anno`,{
     method:'POST',
-    headers:{...H,'Prefer':'return=minimal'},
+    headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
     body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
   });
-  loadAgendaMese();
-  loadSidebarBadges();
+  if(r.ok){
+    loadAgendaMese();
+    loadSidebarBadges();
+  } else {
+    const err=await r.json().catch(()=>({}));
+    showToast('Errore visita: '+(err?.message||err?.hint||r.status),'error');
+  }
 }
 
 async function loadRinnovi(){

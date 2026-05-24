@@ -642,7 +642,7 @@ async function loadSidebarBadges(){
     fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H}),
     fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=id`,{headers:H}),
     fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?mesi=cs.{${mese}}&select=cliente_id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite?operatore_id=eq.${CRM_ADMIN_ID}&mese=eq.${mese}&anno=eq.${anno}&visitato=eq.true&select=id`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=id`,{headers:H})
   ]);
   const [dC,dO,dM,dSC,dSV]=await Promise.all([rC.json(),rO.json(),rM.json(),rSC.json(),rSV.json()]);
   const nC=Array.isArray(dC)?dC.length:0;
@@ -1160,8 +1160,6 @@ async function loadScadenze(){
   await Promise.all([loadAgendaMese(),loadRinnovi()]);
 }
 
-const CRM_ADMIN_ID='00000000-0000-0000-0000-000000000001';
-
 async function loadAgendaMese(){
   const now=new Date();
   const mese=now.getMonth()+1;
@@ -1169,14 +1167,13 @@ async function loadAgendaMese(){
   const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
   document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${anno}`;
 
-  // fetch clienti + visite mese in parallelo
   const [rC,rV]=await Promise.all([
     fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite?operatore_id=eq.${CRM_ADMIN_ID}&mese=eq.${mese}&anno=eq.${anno}&select=cliente_id,visitato`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=cliente_id`,{headers:H})
   ]);
   const data=await rC.json();
   const visite=await rV.json();
-  const visitatiSet=new Set((visite||[]).filter(v=>v.visitato).map(v=>v.cliente_id));
+  const visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
 
   const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
   clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
@@ -1212,20 +1209,18 @@ async function loadAgendaMese(){
 async function toggleVisita(clienteId, visitatoAttuale){
   const now=new Date();
   const mese=now.getMonth()+1, anno=now.getFullYear();
-  const nuovoStato=!visitatoAttuale;
-  const filtro=`operatore_id=eq.${CRM_ADMIN_ID}&cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`;
-  // prova INSERT
-  const iRes=await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
-    method:'POST',
-    headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
-  });
-  if(iRes.status===409){
-    // record esiste → PATCH
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}`,{
-      method:'PATCH',
-      headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify({visitato:nuovoStato})
+  if(visitatoAttuale){
+    // già visitato → rimuovi (DELETE)
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`,{
+      method:'DELETE',
+      headers:{...H,'Prefer':'return=minimal'}
+    });
+  } else {
+    // non visitato → segna (INSERT)
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{
+      method:'POST',
+      headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({cliente_id:clienteId,mese,anno})
     });
   }
   loadAgendaMese();

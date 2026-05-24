@@ -43,6 +43,16 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
 .sort-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
 .mese-pill{display:flex;align-items:center;font-size:12px;cursor:pointer;padding:4px 12px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s;color:var(--text)}
+tr.clickable{cursor:pointer}
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.28);z-index:50;display:none;backdrop-filter:blur(1px)}
+.drawer-overlay.open{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:500px;max-width:95vw;background:var(--surface);box-shadow:-6px 0 32px rgba(0,0,0,0.14);z-index:51;transform:translateX(100%);transition:transform .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column}
+.drawer.open{transform:translateX(0)}
+.drawer-header{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--surface);z-index:1}
+.drawer-body{padding:20px 24px;flex:1}
+.drawer-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:8px;position:sticky;bottom:0;background:var(--surface)}
+.d-section{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin:18px 0 10px}
+.d-section:first-child{margin-top:0}
 .sidebar-footer{margin-top:auto;padding:16px 20px 0;border-top:1px solid var(--border)}
 .sidebar-contact{font-size:11px;color:var(--text-hint);line-height:1.7}
 .main{margin-left:220px;flex:1}
@@ -486,6 +496,76 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
 <div id="toast" class="toast"></div>
 
+<!-- DRAWER ANAGRAFICA CLIENTE -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeClienteDrawer()"></div>
+<div class="drawer" id="cliente-drawer">
+  <div class="drawer-header">
+    <div>
+      <div style="font-size:16px;font-weight:600" id="drawer-title">Anagrafica</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="drawer-sub"></div>
+    </div>
+    <button class="btn btn-sm" onclick="closeClienteDrawer()">✕ Chiudi</button>
+  </div>
+
+  <div class="drawer-body">
+    <div class="d-section">Identificazione</div>
+    <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">N</label><input type="number" class="form-input" id="d-n"></div>
+      <div class="form-group"><label class="form-label">Codice</label><input type="text" class="form-input" id="d-cod"></div>
+      <div class="form-group"><label class="form-label">Ragione sociale</label><input type="text" class="form-input" id="d-nome"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">P.IVA</label><input type="text" class="form-input" id="d-piva"></div>
+      <div class="form-group"><label class="form-label">Codice fiscale</label><input type="text" class="form-input" id="d-cf"></div>
+    </div>
+
+    <div class="d-section">Sede</div>
+    <div style="display:grid;grid-template-columns:1fr 80px;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Città</label><input type="text" class="form-input" id="d-citta"></div>
+      <div class="form-group"><label class="form-label">Prov.</label><input type="text" class="form-input" id="d-prov" maxlength="2" style="text-transform:uppercase"></div>
+    </div>
+
+    <div class="d-section">Contatti</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="d-email"></div>
+      <div class="form-group"><label class="form-label">PEC</label><input type="email" class="form-input" id="d-pec"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Telefono</label><input type="text" class="form-input" id="d-tel"></div>
+      <div class="form-group"><label class="form-label">Referente</label><input type="text" class="form-input" id="d-referente"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="d-tel-referente"></div>
+    </div>
+
+    <div class="d-section">Mesi intervento</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px" id="d-mesi-wrap">
+      <label id="d-label-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightDrawerMese(1,this.checked)"  style="display:none"> Gen</label>
+      <label id="d-label-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightDrawerMese(2,this.checked)"  style="display:none"> Feb</label>
+      <label id="d-label-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightDrawerMese(3,this.checked)"  style="display:none"> Mar</label>
+      <label id="d-label-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightDrawerMese(4,this.checked)"  style="display:none"> Apr</label>
+      <label id="d-label-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightDrawerMese(5,this.checked)"  style="display:none"> Mag</label>
+      <label id="d-label-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightDrawerMese(6,this.checked)"  style="display:none"> Giu</label>
+      <label id="d-label-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightDrawerMese(7,this.checked)"  style="display:none"> Lug</label>
+      <label id="d-label-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightDrawerMese(8,this.checked)"  style="display:none"> Ago</label>
+      <label id="d-label-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightDrawerMese(9,this.checked)"  style="display:none"> Set</label>
+      <label id="d-label-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightDrawerMese(10,this.checked)" style="display:none"> Ott</label>
+      <label id="d-label-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightDrawerMese(11,this.checked)" style="display:none"> Nov</label>
+      <label id="d-label-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightDrawerMese(12,this.checked)" style="display:none"> Dic</label>
+    </div>
+
+    <div class="d-section">Note</div>
+    <div class="form-group" style="margin-bottom:4px">
+      <textarea class="form-input" id="d-note" rows="3" style="resize:vertical"></textarea>
+    </div>
+  </div>
+
+  <div class="drawer-footer">
+    <button class="btn btn-red" style="flex:1;justify-content:center" id="btn-salva-drawer" onclick="salvaModificheCliente()">✓ Salva modifiche</button>
+    <button class="btn" onclick="closeClienteDrawer()">Annulla</button>
+  </div>
+</div>
+
 <script>
 const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
@@ -664,7 +744,7 @@ function renderClienti(data){
       ? '<span class="badge badge-red" style="font-size:10px">⚠ DEBITORE</span>'+(c.note.replace('DEBITORE','').replace(' - ','').trim()?` <span style="font-size:11px;color:var(--text-muted)">${c.note.replace('DEBITORE','').replace(' - ','').trim()}</span>`:'')
       : `<span style="font-size:11px;color:var(--text-muted)">${c.note||'—'}</span>`;
     const rowStyle=debitore?'font-weight:600;color:var(--red)':'';
-    return `<tr style="${rowStyle}">
+    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')" style="${rowStyle}">
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
       <td><div class="td-name" style="${rowStyle}">${c.nome}</div>${c.citta?`<div class="td-sub">${c.citta} (${c.provincia||''})</div>`:''}</td>
@@ -1016,6 +1096,104 @@ async function cambiaProfiloModal(id,profiloAttuale,nomeCompleto){
 
 loadDashboardMagazzino();
 loadSidebarBadges();
+
+// ---- DRAWER ANAGRAFICA CLIENTE ----
+let _clienteEditId=null;
+
+function openClienteDrawerById(id){
+  const c=_clientiData.find(x=>x.id===id);
+  if(c) openClienteDrawer(c);
+}
+
+function openClienteDrawer(c){
+  _clienteEditId=c.id;
+  document.getElementById('drawer-title').textContent=c.nome;
+  document.getElementById('drawer-sub').textContent=[c.citta,c.provincia].filter(Boolean).join(' · ')||'';
+  // Identificazione
+  document.getElementById('d-n').value=c.numero_n??'';
+  document.getElementById('d-cod').value=c.codice||'';
+  document.getElementById('d-nome').value=c.nome||'';
+  document.getElementById('d-piva').value=c.partita_iva||'';
+  document.getElementById('d-cf').value=c.codice_fiscale||'';
+  // Sede
+  document.getElementById('d-citta').value=c.citta||'';
+  document.getElementById('d-prov').value=c.provincia||'';
+  // Contatti
+  document.getElementById('d-email').value=c.email||'';
+  document.getElementById('d-pec').value=c.pec||'';
+  document.getElementById('d-tel').value=c.telefono||'';
+  document.getElementById('d-referente').value=c.referente||'';
+  document.getElementById('d-tel-referente').value=c.telefono_referente||'';
+  // Note
+  document.getElementById('d-note').value=c.note||'';
+  // Mesi
+  const mesi=c.rost81_scadenze_contratto?.[0]?.mesi||[];
+  for(let i=1;i<=12;i++){
+    const cb=document.querySelector(`#d-label-m-${i} input`);
+    cb.checked=mesi.includes(i);
+    highlightDrawerMese(i,mesi.includes(i));
+  }
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('cliente-drawer').classList.add('open');
+}
+
+function closeClienteDrawer(){
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('cliente-drawer').classList.remove('open');
+}
+
+function highlightDrawerMese(n,checked){
+  const lbl=document.getElementById('d-label-m-'+n);
+  if(checked){lbl.style.background='var(--red)';lbl.style.color='#fff';lbl.style.borderColor='var(--red)';}
+  else{lbl.style.background='';lbl.style.color='';lbl.style.borderColor='';}
+}
+
+async function salvaModificheCliente(){
+  const nome=document.getElementById('d-nome').value.trim();
+  if(!nome){showToast('Ragione sociale obbligatoria','error');return;}
+  const btn=document.getElementById('btn-salva-drawer');
+  btn.disabled=true;btn.textContent='Salvataggio…';
+  try{
+    const nVal=document.getElementById('d-n').value;
+    const body={
+      nome,
+      codice:document.getElementById('d-cod').value.trim()||null,
+      partita_iva:document.getElementById('d-piva').value.trim()||null,
+      codice_fiscale:document.getElementById('d-cf').value.trim()||null,
+      citta:document.getElementById('d-citta').value.trim()||null,
+      provincia:document.getElementById('d-prov').value.trim().toUpperCase()||null,
+      email:document.getElementById('d-email').value.trim()||null,
+      pec:document.getElementById('d-pec').value.trim()||null,
+      telefono:document.getElementById('d-tel').value.trim()||null,
+      referente:document.getElementById('d-referente').value.trim()||null,
+      telefono_referente:document.getElementById('d-tel-referente').value.trim()||null,
+      note:document.getElementById('d-note').value.trim()||null,
+    };
+    if(nVal!=='') body.numero_n=parseInt(nVal);
+    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?id=eq.${_clienteEditId}`,{
+      method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify(body)
+    });
+    // Aggiorna mesi: delete + insert
+    const mesi=[...document.querySelectorAll('#d-mesi-wrap input:checked')].map(cb=>parseInt(cb.value));
+    await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?cliente_id=eq.${_clienteEditId}`,{method:'DELETE',headers:H});
+    if(mesi.length>0){
+      await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto`,{
+        method:'POST',headers:{...H,'Prefer':'return=minimal'},
+        body:JSON.stringify({cliente_id:_clienteEditId,mesi})
+      });
+    }
+    if(r.ok){
+      showToast('✓ Modifiche salvate','success');
+      closeClienteDrawer();
+      loadClienti();
+    } else {
+      const err=await r.json().catch(()=>({}));
+      showToast('Errore: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
+    }
+  }catch(e){showToast('Errore: '+e.message,'error');}
+  finally{btn.disabled=false;btn.textContent='✓ Salva modifiche';}
+}
 
 </script>
 </body>

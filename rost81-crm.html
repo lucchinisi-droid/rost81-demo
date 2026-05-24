@@ -635,16 +635,26 @@ let magazzino=[];
 let clientiMap={};
 
 async function loadSidebarBadges(){
-  const [rC,rO]=await Promise.all([
+  const now=new Date();
+  const mese=now.getMonth()+1, anno=now.getFullYear();
+  const [rC,rO,rM,rSC,rSV]=await Promise.all([
     fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=id`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?mesi=cs.{${mese}}&select=cliente_id`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite?operatore_id=eq.${CRM_ADMIN_ID}&mese=eq.${mese}&anno=eq.${anno}&visitato=eq.true&select=id`,{headers:H})
   ]);
-  const dC=await rC.json(), dO=await rO.json();
+  const [dC,dO,dM,dSC,dSV]=await Promise.all([rC.json(),rO.json(),rM.json(),rSC.json(),rSV.json()]);
   const nC=Array.isArray(dC)?dC.length:0;
   const nO=Array.isArray(dO)?dO.length:0;
+  const nM=Array.isArray(dM)?dM.length:0;
+  const totMese=Array.isArray(dSC)?dSC.length:0;
+  const fatti=Array.isArray(dSV)?dSV.length:0;
+  const daFare=Math.max(0,totMese-fatti);
   document.getElementById('badge-clienti').textContent=nC;
-  document.getElementById('badge-scadenze').textContent=0;
+  document.getElementById('badge-scadenze').textContent=daFare;
   document.getElementById('badge-preventivi').textContent=0;
+  document.getElementById('badge-scorte').textContent=nM;
   document.getElementById('badge-operatori').textContent=nO;
   const el=document.getElementById('dash-clienti-tot');
   if(el) el.textContent=nC;
@@ -1209,6 +1219,7 @@ async function toggleVisita(clienteId, visitatoAttuale){
     body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
   });
   loadAgendaMese();
+  loadSidebarBadges();
 }
 
 async function loadRinnovi(){

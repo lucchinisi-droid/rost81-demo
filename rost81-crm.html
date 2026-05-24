@@ -1189,15 +1189,20 @@ async function loadAgendaMese(){
   }
   tbody.innerHTML=clientiMese.map(c=>{
     const visitato=visitatiSet.has(c.id);
+    const debitore=c.note&&c.note.includes('DEBITORE');
     const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]).join(' · ');
     const led=visitato
       ?`<div style="width:20px;height:20px;border-radius:50%;background:var(--green);margin:auto;box-shadow:0 0 6px var(--green)"></div>`
       :`<div style="width:20px;height:20px;border-radius:50%;border:2px solid #ccc;margin:auto"></div>`;
-    return `<tr style="${visitato?'opacity:.4':''}">
+    const rowStyle=[visitato?'opacity:.4':'',debitore?'border-left:3px solid var(--red)':''].filter(Boolean).join(';');
+    const nomeCell=debitore
+      ?`<div class="td-name" style="color:var(--red);font-weight:600">${c.nome} <span class="badge badge-red" style="font-size:10px;vertical-align:middle;margin-left:4px">⚠ DEBITORE</span></div>`
+      :`<div class="td-name">${c.nome}</div>`;
+    return `<tr style="${rowStyle}">
       <td onclick="toggleVisita('${c.id}',${visitato})" style="cursor:pointer;text-align:center;padding:10px 8px;width:44px">${led}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer"><div class="td-name">${c.nome}</div></td>
+      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer">${nomeCell}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.citta||'—'}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.referente||'—'}</td>

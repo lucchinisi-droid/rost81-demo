@@ -1096,6 +1096,11 @@ async function creaOperatore(){
       body:JSON.stringify({email,password,email_confirm:true})
     });
     const sData=await sRes.json();
+    console.log('Admin API response',sRes.status, JSON.stringify(sData));
+    if(sRes.status===500){
+      showToast('Supabase 500: '+(sData?.message||sData?.msg||sData?.error_description||sData?.error||JSON.stringify(sData)),'error');
+      return;
+    }
     let uid=sData?.id;
 
     // 422 = email già registrata → cerca l'utente esistente, riusa id e aggiorna la password

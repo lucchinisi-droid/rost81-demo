@@ -323,11 +323,22 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
         <!-- TAB: MESE CORRENTE -->
         <div id="scad-panel-mese">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+            <div style="display:flex;align-items:center;gap:8px">
+              <select id="scad-anno" onchange="loadAgendaMese()" style="padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="2021">2021</option><option value="2022">2022</option><option value="2023">2023</option><option value="2024">2024</option><option value="2025">2025</option><option value="2026">2026</option><option value="2027">2027</option><option value="2028">2028</option><option value="2029">2029</option><option value="2030">2030</option><option value="2031">2031</option><option value="2032">2032</option><option value="2033">2033</option><option value="2034">2034</option><option value="2035">2035</option><option value="2036">2036</option>
+              </select>
+              <select id="scad-mese" onchange="loadAgendaMese()" style="padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:13px;font-family:inherit;cursor:pointer">
+                <option value="1">Gennaio</option><option value="2">Febbraio</option><option value="3">Marzo</option><option value="4">Aprile</option><option value="5">Maggio</option><option value="6">Giugno</option><option value="7">Luglio</option><option value="8">Agosto</option><option value="9">Settembre</option><option value="10">Ottobre</option><option value="11">Novembre</option><option value="12">Dicembre</option>
+              </select>
+            </div>
+            <button class="btn btn-sm" onclick="exportScadenzePDF()" style="gap:6px">📄 Esporta PDF</button>
+          </div>
           <div class="table-wrap">
             <table>
               <thead><tr><th style="width:36px"></th><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
               <tbody id="scad-mese-tbody">
-                <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+                <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
               </tbody>
             </table>
           </div>
@@ -1147,6 +1158,7 @@ async function cambiaProfiloModal(id,profiloAttuale,nomeCompleto){
 
 // ---- SCADENZE ----
 let _scadTab='mese';
+let _scadClientiMese=[], _scadVisitatiSet=new Set();
 
 function switchScadTab(tab){
   _scadTab=tab;
@@ -1162,8 +1174,10 @@ async function loadScadenze(){
 
 async function loadAgendaMese(){
   const now=new Date();
-  const mese=now.getMonth()+1;
-  const anno=now.getFullYear();
+  const annoEl=document.getElementById('scad-anno');
+  const meseEl=document.getElementById('scad-mese');
+  const mese=meseEl?parseInt(meseEl.value):now.getMonth()+1;
+  const anno=annoEl?parseInt(annoEl.value):now.getFullYear();
   const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
   document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${anno}`;
 
@@ -1177,6 +1191,8 @@ async function loadAgendaMese(){
 
   const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
   clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
+  _scadClientiMese=clientiMese;
+  _scadVisitatiSet=visitatiSet;
 
   const fatti=clientiMese.filter(c=>visitatiSet.has(c.id)).length;
   document.getElementById('scad-count-wrap').innerHTML=_scadTab==='mese'
@@ -1209,6 +1225,78 @@ async function loadAgendaMese(){
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
     </tr>`;
   }).join('');
+}
+
+function exportScadenzePDF(){
+  const annoEl=document.getElementById('scad-anno');
+  const meseEl=document.getElementById('scad-mese');
+  const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
+  const anno=annoEl?annoEl.value:new Date().getFullYear();
+  const mese=meseEl?parseInt(meseEl.value):new Date().getMonth()+1;
+  const meseName=MESI_LUNGHI[mese]||'';
+  const totale=_scadClientiMese.length;
+  if(totale===0){showToast('Nessun cliente in agenda per questo mese','error');return;}
+  const visitati=_scadClientiMese.filter(c=>_scadVisitatiSet.has(c.id)).length;
+  const daFare=totale-visitati;
+  const debitori=_scadClientiMese.filter(c=>c.note&&c.note.includes('DEBITORE')).length;
+  const righe=_scadClientiMese.map(c=>{
+    const visitato=_scadVisitatiSet.has(c.id);
+    const debitore=c.note&&c.note.includes('DEBITORE');
+    const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>({1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'}[m]||m)).join(' · ');
+    return `<tr style="${visitato?'opacity:.5':''}${debitore?';border-left:3px solid #c0392b':''}">
+      <td style="font-family:monospace;font-size:10px;color:#888">${c.numero_n||'—'}</td>
+      <td style="font-family:monospace;font-size:10px;color:#888">${c.codice||'—'}</td>
+      <td style="${debitore?'color:#c0392b;font-weight:700':''}">${c.nome}${debitore?' <span style="background:#fde8e6;color:#8b1a10;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">⚠ DEBITORE</span>':''}</td>
+      <td>${c.citta||'—'}</td>
+      <td style="font-family:monospace;font-size:10px">${c.telefono||'—'}</td>
+      <td>${c.referente||'—'}</td>
+      <td style="text-align:center;font-size:16px">${visitato?'<span style="color:#27ae60">✓</span>':'<span style="color:#ccc">○</span>'}</td>
+      <td style="font-size:10px;color:#888">${tuttiMesi||'—'}</td>
+    </tr>`;
+  }).join('');
+  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
+<title>Scadenze ${meseName} ${anno} — ROST 81</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:28px}
+  .header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:20px}
+  .logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}
+  .logo-sub{font-size:10px;color:#666;margin-top:3px}
+  .print-meta{text-align:right;font-size:10px;color:#888;line-height:1.6}
+  .doc-title{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
+  .stats{display:flex;gap:20px;margin-bottom:20px;padding:12px 16px;background:#f5f5f3;border-radius:4px}
+  .stat{text-align:center;min-width:60px}
+  .stat-n{font-size:22px;font-weight:700;line-height:1.2}
+  .stat-l{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.5px}
+  table{width:100%;border-collapse:collapse;font-size:11px}
+  th{background:#1a1a1a;color:#fff;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+  td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:middle}
+  tr:nth-child(even) td{background:#fafafa}
+  .footer{margin-top:20px;font-size:9px;color:#aaa;text-align:right;border-top:1px solid #eee;padding-top:10px}
+  @media print{body{padding:10px}}
+</style></head><body>
+<div class="header">
+  <div><div class="logo">ROST 81</div><div class="logo-sub">Via Giotto 2, 00034 Colleferro (RM) &nbsp;·&nbsp; P.IVA 10524751004 &nbsp;·&nbsp; info@rost81.it</div></div>
+  <div class="print-meta">Stampato il ${new Date().toLocaleDateString('it-IT')}<br>${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>
+</div>
+<div class="doc-title">Riepilogo Manutenzioni — ${meseName} ${anno}</div>
+<div class="stats">
+  <div class="stat"><div class="stat-n">${totale}</div><div class="stat-l">In agenda</div></div>
+  <div class="stat"><div class="stat-n" style="color:#27ae60">${visitati}</div><div class="stat-l">Visitati</div></div>
+  <div class="stat"><div class="stat-n" style="color:#e67e22">${daFare}</div><div class="stat-l">Da fare</div></div>
+  ${debitori>0?`<div class="stat"><div class="stat-n" style="color:#c0392b">${debitori}</div><div class="stat-l">Debitori</div></div>`:''}
+</div>
+<table>
+  <thead><tr><th>N</th><th>COD</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th style="text-align:center">Visita</th><th>Mesi contratto</th></tr></thead>
+  <tbody>${righe}</tbody>
+</table>
+<div class="footer">ROST 81 Srl — Documento generato automaticamente dal CRM interno</div>
+</body></html>`;
+  const w=window.open('','_blank');
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(()=>w.print(),500);
 }
 
 async function toggleVisita(clienteId, visitatoAttuale){
@@ -1264,6 +1352,15 @@ async function loadRinnovi(){
     </tr>`;
   }).join('');
 }
+
+// Inizializza selettori scadenze sul mese/anno correnti
+(function(){
+  const _n=new Date();
+  const aEl=document.getElementById('scad-anno');
+  const mEl=document.getElementById('scad-mese');
+  if(aEl) aEl.value=_n.getFullYear();
+  if(mEl) mEl.value=_n.getMonth()+1;
+})();
 
 loadDashboardMagazzino();
 loadSidebarBadges();

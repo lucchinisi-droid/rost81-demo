@@ -1214,22 +1214,18 @@ async function toggleVisita(clienteId, visitatoAttuale){
   const mese=now.getMonth()+1, anno=now.getFullYear();
   const nuovoStato=!visitatoAttuale;
   const filtro=`operatore_id=eq.${CRM_ADMIN_ID}&cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`;
-  // 1. cerca il record esistente per id
-  const gRes=await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}&select=id`,{headers:H});
-  const gData=await gRes.json().catch(()=>[]);
-  if(Array.isArray(gData)&&gData.length>0){
-    // 2a. esiste → PATCH per id (PK, filtro infallibile)
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite?id=eq.${gData[0].id}`,{
+  // prova INSERT
+  const iRes=await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
+    method:'POST',
+    headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
+  });
+  if(iRes.status===409){
+    // record esiste → PATCH
+    await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}`,{
       method:'PATCH',
       headers:{...H,'Prefer':'return=minimal'},
       body:JSON.stringify({visitato:nuovoStato})
-    });
-  } else {
-    // 2b. non esiste → INSERT
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
-      method:'POST',
-      headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
     });
   }
   loadAgendaMese();

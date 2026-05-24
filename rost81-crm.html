@@ -253,9 +253,15 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <div class="form-group"><label class="form-label">Telefono</label><input type="text" class="form-input" id="nc-tel" placeholder="06 1234567"></div>
           </div>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
             <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="nc-email" placeholder="cliente@email.it"></div>
-            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="nc-note" placeholder="es. DEBITORE - importo"></div>
+            <div class="form-group"><label class="form-label">PEC</label><input type="email" class="form-input" id="nc-pec" placeholder="cliente@pec.it"></div>
+            <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="nc-note" placeholder="Annotazioni varie"></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
+            <div class="form-group"><label class="form-label">Referente</label><input type="text" class="form-input" id="nc-referente" placeholder="Mario Rossi"></div>
+            <div class="form-group"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="nc-tel-referente" placeholder="333 1234567"></div>
           </div>
 
           <div class="form-group" style="margin-bottom:16px">
@@ -612,7 +618,10 @@ async function salvaNuovoCliente(){
       citta:document.getElementById('nc-citta').value.trim()||null,
       provincia:(document.getElementById('nc-prov').value.trim().toUpperCase())||null,
       email:document.getElementById('nc-email').value.trim()||null,
+      pec:document.getElementById('nc-pec').value.trim()||null,
       telefono:document.getElementById('nc-tel').value.trim()||null,
+      referente:document.getElementById('nc-referente').value.trim()||null,
+      telefono_referente:document.getElementById('nc-tel-referente').value.trim()||null,
       note:document.getElementById('nc-note').value.trim()||null,
     };
     const nVal=document.getElementById('nc-n').value;
@@ -634,7 +643,7 @@ async function salvaNuovoCliente(){
     }
     showToast(`✓ ${nome} aggiunto`,'success');
     // reset form
-    ['nc-n','nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-note'].forEach(id=>document.getElementById(id).value='');
+    ['nc-n','nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-pec','nc-referente','nc-tel-referente','nc-note'].forEach(id=>document.getElementById(id).value='');
     document.querySelectorAll('#nc-mesi-wrap input').forEach(cb=>{cb.checked=false;highlightMese(cb.value,false);});
     document.getElementById('form-nuovo-cliente').style.display='none';
     loadClienti();

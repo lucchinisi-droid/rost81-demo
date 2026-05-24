@@ -377,6 +377,15 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <button class="btn btn-red btn-sm" onclick="document.getElementById('form-nuovo-op').style.display=document.getElementById('form-nuovo-op').style.display==='none'?'block':'none'">+ Nuovo operatore</button>
         </div>
 
+        <!-- BANNER ISTRUZIONI POST-CREAZIONE -->
+        <div id="op-istruzioni" style="display:none;background:#ede9fe;border:1px solid #c4b5fd;border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:14px;font-size:13px;line-height:1.6">
+          <div style="font-weight:600;margin-bottom:4px">✅ Profilo operatore creato</div>
+          Per abilitare il login su Sentinel-81, vai su:<br>
+          <strong>Supabase → Authentication → Users → Add user</strong><br>
+          Email: <code id="op-istruzioni-email" style="font-family:'DM Mono',monospace;background:rgba(124,58,237,0.12);padding:2px 7px;border-radius:4px;font-size:12px"></code>
+          <div style="margin-top:10px"><button class="btn btn-sm" onclick="document.getElementById('op-istruzioni').style.display='none'">OK, capito</button></div>
+        </div>
+
         <!-- FORM NUOVO OPERATORE -->
         <div id="form-nuovo-op" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
           <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Nuovo operatore</div>
@@ -384,9 +393,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="op-nome" placeholder="Mario"></div>
             <div class="form-group"><label class="form-label">Cognome</label><input type="text" class="form-input" id="op-cognome" placeholder="Rossi"></div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
             <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="op-email" placeholder="mario@rost81.it"></div>
-            <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="op-password" placeholder="min. 8 caratteri"></div>
             <div class="form-group">
               <label class="form-label">Profilo</label>
               <select class="form-input" id="op-profilo">
@@ -762,34 +770,25 @@ async function creaOperatore(){
   const nome=document.getElementById('op-nome').value.trim();
   const cognome=document.getElementById('op-cognome').value.trim();
   const email=document.getElementById('op-email').value.trim();
-  const password=document.getElementById('op-password').value;
   const profilo=document.getElementById('op-profilo').value;
   const note=document.getElementById('op-note').value.trim();
-  if(!nome||!cognome||!email||!password){showToast('Compila tutti i campi obbligatori','error');return;}
-  if(password.length<8){showToast('Password minimo 8 caratteri','error');return;}
-  // 1. crea utente Supabase Auth
-  const sRes=await fetch(`${SUPA_URL}/auth/v1/signup`,{
-    method:'POST',
-    headers:{'apikey':SUPA_KEY,'Content-Type':'application/json'},
-    body:JSON.stringify({email,password})
-  });
-  const sData=await sRes.json();
-  const uid=sData?.user?.id||sData?.id;
-  if(!uid){showToast('Errore creazione account: '+(sData?.msg||sData?.message||'Email già in uso?'),'error');return;}
-  // 2. inserisci in rost81_operatori
+  if(!nome||!cognome||!email){showToast('Compila nome, cognome ed email','error');return;}
+  if(!email.includes('@')){showToast('Email non valida','error');return;}
   const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
     method:'POST',
     headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({id:uid,nome,cognome,profilo,note:note||null})
+    body:JSON.stringify({nome,cognome,email,profilo,note:note||null})
   });
   if(oRes.ok){
-    showToast(`✓ Operatore ${nome} ${cognome} creato (${profilo})`,'success');
+    showToast(`✓ ${nome} ${cognome} (${profilo}) aggiunto`,'success');
     document.getElementById('form-nuovo-op').style.display='none';
-    ['op-nome','op-cognome','op-email','op-password','op-note'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('op-istruzioni-email').textContent=email;
+    document.getElementById('op-istruzioni').style.display='block';
+    ['op-nome','op-cognome','op-email','op-note'].forEach(id=>document.getElementById(id).value='');
     loadOperatori();
   } else {
-    const err=await oRes.json();
-    showToast('Errore profilo: '+JSON.stringify(err),'error');
+    const err=await oRes.json().catch(()=>({}));
+    showToast('Errore: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
   }
 }
 

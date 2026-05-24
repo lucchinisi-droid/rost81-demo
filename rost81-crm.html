@@ -1213,9 +1213,13 @@ async function toggleVisita(clienteId, visitatoAttuale){
   const now=new Date();
   const mese=now.getMonth()+1, anno=now.getFullYear();
   const nuovoStato=!visitatoAttuale;
+  const filtro=`operatore_id=eq.${CRM_ADMIN_ID}&cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`;
+  // 1. cancella eventuale record esistente
+  await fetch(`${SUPA_URL}/rest/v1/rost81_visite?${filtro}`,{method:'DELETE',headers:H});
+  // 2. inserisce con il nuovo stato
   await fetch(`${SUPA_URL}/rest/v1/rost81_visite`,{
     method:'POST',
-    headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
+    headers:{...H,'Prefer':'return=minimal'},
     body:JSON.stringify({operatore_id:CRM_ADMIN_ID,cliente_id:clienteId,mese,anno,visitato:nuovoStato})
   });
   loadAgendaMese();

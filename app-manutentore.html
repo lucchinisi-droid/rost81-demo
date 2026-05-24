@@ -16,6 +16,7 @@
   --border:#e5e5e3; --bg:#f0f0ee; --surface:#fff;
   --green:#27ae60; --green-light:#eaf7ef;
   --amber:#e67e22; --amber-light:#fef3e2;
+  --orange:#e85d00; --orange-light:#fff0e6;
   --nav-h:64px;
   --safe-b:env(safe-area-inset-bottom,0px);
   --safe-t:env(safe-area-inset-top,0px);
@@ -110,6 +111,7 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 .btn-dark{background:var(--dark);color:#fff}
 .btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--dark)}
 .btn-amber{background:var(--amber);color:#fff}
+.btn-orange{background:var(--orange);color:#fff}
 .btn-sm{padding:9px 14px;font-size:13px;border-radius:10px}
 
 /* ── TOP BAR FORM ── */
@@ -158,6 +160,63 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 .ddt-del{background:var(--red-light);border:none;border-radius:9px;color:var(--red);font-size:18px;padding:10px 13px;cursor:pointer;flex-shrink:0;line-height:1;font-family:inherit}
 .ddt-del:active{opacity:.7}
 
+/* ── DOCUMENTI ── */
+.doc-list{padding:12px;display:flex;flex-direction:column;gap:8px}
+.doc-card{background:var(--surface);border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:transform .1s;display:flex;gap:14px;align-items:flex-start}
+.doc-card:active{transform:scale(.985)}
+.doc-icon{font-size:26px;flex-shrink:0;margin-top:2px}
+.doc-body{flex:1;min-width:0}
+.doc-nome{font-size:14px;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-desc{font-size:12px;color:var(--muted);line-height:1.4}
+.doc-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between;align-items:center}
+.doc-cliente{font-size:11px;font-weight:700;color:var(--red)}
+.doc-filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.doc-filter-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--dark);transition:all .15s}
+.doc-filter-btn.act{background:var(--dark);color:#fff;border-color:var(--dark)}
+
+/* ── SENTINEL ── */
+#screen-sentinel{background:#0c1710}
+.sentinel-header{background:#0c1710;padding:10px 16px;border-bottom:1px solid #1a2e20;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding-top:calc(var(--safe-t) + 6px)}
+.sentinel-logo{font-family:'DM Mono',monospace;font-size:20px;font-weight:500;color:var(--orange);letter-spacing:-.5px}
+.sentinel-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px}
+.sentinel-kb-badge{font-size:10px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.45);padding:4px 10px;border-radius:20px;cursor:pointer;flex-shrink:0}
+.chat-area{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px;display:flex;flex-direction:column;gap:10px;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 72px)}
+.msg{max-width:86%;word-break:break-word}
+.msg-bubble{padding:12px 15px;border-radius:18px;font-size:14px;line-height:1.6}
+.msg-user{align-self:flex-end}
+.msg-user .msg-bubble{background:var(--orange);color:#fff;border-bottom-right-radius:5px}
+.msg-ai{align-self:flex-start}
+.msg-ai .msg-bubble{background:#1a2e20;color:#e0f0e8;border-bottom-left-radius:5px}
+.msg-ai .msg-bubble strong,.msg-ai .msg-bubble b{color:#7de0a4;font-weight:700}
+.msg-ai .msg-bubble code{background:#0c1710;padding:2px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:12px;color:#7de0a4}
+.msg-ai .msg-bubble a{color:var(--orange);text-decoration:underline}
+.msg-time{font-size:10px;color:rgba(255,255,255,.2);margin-top:4px;text-align:right}
+.msg-ai .msg-time{text-align:left}
+.typing-bubble{background:#1a2e20;border-radius:18px;border-bottom-left-radius:5px;padding:14px 18px;display:inline-flex;gap:5px;align-items:center}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);animation:tdot 1.2s infinite}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes tdot{0%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.sentinel-input-area{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + var(--safe-b));background:#0c1710;border-top:1px solid #1a2e20;padding:10px 14px;display:flex;gap:10px;align-items:flex-end;z-index:15}
+.sentinel-inp{flex:1;background:#1a2e20;border:1px solid #2a4030;border-radius:22px;color:#e0f0e8;font-family:inherit;font-size:15px;padding:11px 16px;outline:none;resize:none;max-height:100px;overflow-y:auto;line-height:1.4}
+.sentinel-inp::placeholder{color:rgba(255,255,255,.25)}
+.sentinel-inp:focus{border-color:#3a6048}
+.sentinel-send{background:var(--orange);border:none;border-radius:50%;width:44px;height:44px;flex-shrink:0;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:opacity .15s}
+.sentinel-send:active{opacity:.8}
+.sentinel-send:disabled{opacity:.35}
+.sentinel-setup{background:#1a2e20;border-radius:18px;padding:22px;margin:20px 14px}
+.sentinel-setup-icon{font-size:36px;margin-bottom:12px}
+.sentinel-setup-title{font-size:16px;font-weight:700;color:#e0f0e8;margin-bottom:8px}
+.sentinel-setup-sub{font-size:13px;color:rgba(255,255,255,.45);margin-bottom:20px;line-height:1.6}
+.sentinel-key-inp{width:100%;background:#0c1710;border:1px solid #2a4030;border-radius:12px;color:#e0f0e8;font-family:'DM Mono',monospace;font-size:13px;padding:13px 14px;outline:none;margin-bottom:10px;transition:border-color .15s}
+.sentinel-key-inp:focus{border-color:var(--orange)}
+.sentinel-key-btn{background:var(--orange);color:#fff;border:none;border-radius:12px;padding:13px 20px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s}
+.sentinel-key-btn:active{opacity:.82}
+.sentinel-empty{text-align:center;padding:40px 24px;color:rgba(255,255,255,.25)}
+.sentinel-empty-icon{font-size:44px;margin-bottom:12px}
+.sentinel-empty-title{font-size:14px;font-weight:600;color:rgba(255,255,255,.4)}
+.sentinel-empty-sub{font-size:12px;margin-top:8px;line-height:1.6}
+
 /* ── TOAST ── */
 #toast{position:fixed;bottom:calc(var(--nav-h) + 16px + var(--safe-b));left:50%;transform:translateX(-50%) translateY(16px);background:var(--dark);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:100;opacity:0;transition:all .25s;pointer-events:none;max-width:88vw;text-align:center;white-space:normal;line-height:1.4}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -179,7 +238,8 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 
 /* ── RESPONSIVE ── */
 @media(min-width:600px){
-  .client-list,.form-pad{max-width:580px;margin-left:auto;margin-right:auto}
+  .client-list,.form-pad,.doc-list{max-width:580px;margin-left:auto;margin-right:auto}
+  .chat-area{max-width:640px;margin-left:auto;margin-right:auto}
   #screen-login{background:var(--dark)}
 }
 </style>
@@ -234,8 +294,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
   <div class="scroll-area">
     <div class="scroll-pad">
     <div class="form-pad">
-
-      <!-- 1. Documento -->
       <div class="form-sec">
         <div class="form-sec-title">1 — Documento</div>
         <div class="f-row">
@@ -243,8 +301,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
           <div class="f-field"><label class="f-lbl">Data intervento</label><input type="date" class="f-inp" id="r-data"></div>
         </div>
       </div>
-
-      <!-- 2. Cliente -->
       <div class="form-sec">
         <div class="form-sec-title">2 — Dati Cliente</div>
         <div class="f-field"><label class="f-lbl">Ragione sociale</label><input type="text" class="f-inp" id="r-cliente" readonly></div>
@@ -254,8 +310,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
         </div>
         <div class="f-field"><label class="f-lbl">Sede / Cantiere</label><input type="text" class="f-inp" id="r-sede"></div>
       </div>
-
-      <!-- 3. Intervento -->
       <div class="form-sec">
         <div class="form-sec-title">3 — Intervento</div>
         <div class="f-field">
@@ -273,20 +327,14 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
         <div class="f-field"><label class="f-lbl">Tecnico esecutore</label><input type="text" class="f-inp" id="r-tecnico" readonly></div>
         <div class="f-field"><label class="f-lbl">Descrizione intervento</label><textarea class="f-ta" id="r-descr" placeholder="Descrivi brevemente i lavori eseguiti…"></textarea></div>
       </div>
-
-      <!-- 4. Checklist -->
       <div class="form-sec">
         <div class="form-sec-title">4 — Checklist Verifiche</div>
         <div id="ck-container"></div>
       </div>
-
-      <!-- 5. Materiali -->
       <div class="form-sec">
         <div class="form-sec-title">5 — Materiali Utilizzati / Sostituiti</div>
         <div class="f-field"><textarea class="f-ta" id="r-materiali" placeholder="es. Sostituzione manometro estintore CO₂ 5kg (n° 2 pz) · Ricarica polvere estintore 6kg (n° 1 pz)"></textarea></div>
       </div>
-
-      <!-- 6. Esito complessivo -->
       <div class="form-sec">
         <div class="form-sec-title">6 — Esito Complessivo</div>
         <div class="esito-grp">
@@ -295,8 +343,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
           <div class="esito-opt"><input type="radio" name="esito" id="e-ko" value="ko"><label for="e-ko" class="e-ko">✗ Non conforme</label></div>
         </div>
       </div>
-
-      <!-- 7. Firme -->
       <div class="form-sec">
         <div class="form-sec-title">7 — Firme</div>
         <div class="f-row">
@@ -304,14 +350,11 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
           <div class="f-field"><label class="f-lbl">Cliente</label><input type="text" class="f-inp" id="r-firma-cli" placeholder="Nome referente"></div>
         </div>
       </div>
-
-      <!-- Azioni -->
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
         <button class="btn btn-red" onclick="saveRapporto()">💾 Salva rapporto</button>
         <button class="btn btn-outline" id="btn-stampa-r" onclick="stampaRapporto()" disabled>🖨 Stampa / Salva PDF</button>
         <button class="btn btn-amber" id="btn-invia-r" onclick="inviaEmail()" style="display:none">📧 Invia al cliente</button>
       </div>
-
     </div>
     </div>
   </div>
@@ -327,7 +370,6 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
   <div class="scroll-area">
     <div class="scroll-pad">
     <div class="form-pad">
-
       <div class="form-sec">
         <div class="form-sec-title">Dati</div>
         <div class="f-row">
@@ -335,31 +377,63 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
           <div class="f-field"><label class="f-lbl">Cliente</label><input type="text" class="f-inp" id="d-cliente" readonly></div>
         </div>
       </div>
-
       <div class="form-sec">
         <div class="form-sec-title">Articoli da Magazzino</div>
         <div id="d-mag-rows"></div>
         <button class="btn btn-outline btn-sm" style="width:100%;margin-top:10px" onclick="addMagRow()">+ Articolo da magazzino</button>
       </div>
-
       <div class="form-sec">
         <div class="form-sec-title">Articoli / Voci Manuali</div>
         <div id="d-man-rows"></div>
         <button class="btn btn-outline btn-sm" style="width:100%;margin-top:10px" onclick="addManRow()">+ Riga manuale</button>
       </div>
-
       <div class="form-sec">
         <div class="form-sec-title">Note</div>
         <textarea class="f-ta" id="d-note" placeholder="Causale, destinazione, note trasporto…"></textarea>
       </div>
-
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
         <button class="btn btn-red" onclick="saveDDT()">💾 Salva DDT</button>
         <button class="btn btn-outline" id="btn-stampa-d" onclick="stampaDDT()" disabled>🖨 Stampa / Salva PDF</button>
       </div>
+    </div>
+    </div>
+  </div>
+</div>
 
+<!-- ══ DOCUMENTI ══ -->
+<div id="screen-documenti" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="header-logo">ROST 81</div>
+      <div class="header-sub">Documenti</div>
     </div>
+    <div class="header-badge" id="docs-count">—</div>
+  </div>
+  <div class="doc-filter-bar" id="doc-filter-bar">
+    <button class="doc-filter-btn act" onclick="filterDocs('tutti')">Tutti</button>
+    <button class="doc-filter-btn" onclick="filterDocs('rapporto')">📋 Rapporti</button>
+    <button class="doc-filter-btn" onclick="filterDocs('ddt')">📦 DDT</button>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+      <div id="doc-list" class="doc-list"></div>
     </div>
+  </div>
+</div>
+
+<!-- ══ SENTINEL ══ -->
+<div id="screen-sentinel" class="screen">
+  <div class="sentinel-header">
+    <div>
+      <div class="sentinel-logo">Sentinel-81</div>
+      <div class="sentinel-sub">Assistente sicurezza sul lavoro · ROST 81</div>
+    </div>
+    <div class="sentinel-kb-badge" id="s-kb-badge" onclick="reloadKB()">⏳ KB…</div>
+  </div>
+  <div class="chat-area" id="chat-area"></div>
+  <div class="sentinel-input-area" id="sentinel-input-area">
+    <textarea class="sentinel-inp" id="s-inp" placeholder="Scrivi o ditta voce…" rows="1" onkeydown="sentinelKeydown(event)" oninput="autoResize(this)"></textarea>
+    <button class="sentinel-send" id="s-send" onclick="sendSentinelMsg()">↑</button>
   </div>
 </div>
 
@@ -395,6 +469,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
     <div class="nav-tab act" id="nav-home" onclick="switchTab('home')">
       <span class="ni">🏠</span><span>Clienti</span>
     </div>
+    <div class="nav-tab" id="nav-documenti" onclick="switchTab('documenti')">
+      <span class="ni">📁</span><span>Documenti</span>
+    </div>
+    <div class="nav-tab" id="nav-sentinel" onclick="switchTab('sentinel')">
+      <span class="ni">🛡</span><span>Sentinel</span>
+    </div>
     <div class="nav-tab" id="nav-profilo" onclick="switchTab('profilo')">
       <span class="ni">👤</span><span>Profilo</span>
     </div>
@@ -424,6 +504,8 @@ const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{storageKey:'rost81_manut_auth'}});
+const SENTINEL_REPO='lucchinisi-droid/sentinel-81';
+const SENTINEL_MODEL='claude-sonnet-4-20250514';
 
 const MESI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
 
@@ -443,6 +525,12 @@ let _op=null, _meseVis=0, _annoVis=0;
 let _clientiMese=[], _visitatiSet=new Set();
 let _magazzino=[], _clienteAtt=null;
 let _rapSalvato=false, _ddtSalvato=false;
+let _rapHtml='', _ddtHtml='', _rapDocNum='', _ddtData='';
+// documenti
+let _docs=[], _docsFiltered=[], _docFilter='tutti';
+// sentinel
+let _sentinelMsgs=[], _sentinelKB=null, _sentinelLoading=false;
+let _sentinelApiKey=localStorage.getItem('sentinel81_apikey')||'';
 
 // ── BOOT ──
 (async()=>{
@@ -466,18 +554,18 @@ async function initOp(email){
   await Promise.all([loadMag(),loadClienti()]);
   showScreen('home');
   document.getElementById('bottom-nav').classList.add('vis');
+  // Carica KB Sentinel in background
+  loadSentinelKB();
 }
 
 function setupUI(){
   document.getElementById('h-badge').textContent=`${_op.nome} · ${_op.profilo}`;
-  // Profilo screen
   document.getElementById('p-nome').textContent=`${_op.nome} ${_op.cognome}`;
   document.getElementById('p-email').textContent=_op.email||'';
   document.getElementById('p-avatar').textContent=(_op.nome?.[0]||'?').toUpperCase();
   const bc={'junior':'bdg-junior','senior':'bdg-senior','master':'bdg-master'}[_op.profilo]||'bdg-junior';
   document.getElementById('p-badge').innerHTML=`<span class="bdg-profilo ${bc}">${_op.profilo}</span>`;
-  document.getElementById('p-version').textContent='App Manutentore v1.0 · ROST 81';
-  // Frecce mesi (solo senior/master)
+  document.getElementById('p-version').textContent='App Manutentore v2.0 · ROST 81';
   if(_op.profilo!=='junior'){
     document.getElementById('btn-prev').classList.remove('hidden');
     document.getElementById('btn-next').classList.remove('hidden');
@@ -506,6 +594,7 @@ async function doLogin(){
 async function doLogout(){
   await sb.auth.signOut();
   _op=null; _clientiMese=[]; _visitatiSet=new Set();
+  _docs=[]; _sentinelMsgs=[]; _sentinelKB=null;
   document.getElementById('bottom-nav').classList.remove('vis');
   showScreen('login');
   document.getElementById('l-email').value='';
@@ -522,8 +611,11 @@ function showScreen(id){
 
 function switchTab(tab){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('act'));
-  if(tab==='home'){document.getElementById('nav-home').classList.add('act');showScreen('home');}
-  else if(tab==='profilo'){document.getElementById('nav-profilo').classList.add('act');showScreen('profilo');}
+  const navEl=document.getElementById('nav-'+tab);
+  if(navEl) navEl.classList.add('act');
+  showScreen(tab);
+  if(tab==='documenti') loadDocumenti();
+  if(tab==='sentinel') initSentinelScreen();
 }
 
 function goHome(){
@@ -545,7 +637,6 @@ async function loadClienti(){
   document.getElementById('h-sub').textContent=`${MESI[_meseVis]} ${_annoVis}`;
   document.getElementById('m-count').textContent='Caricamento…';
   document.getElementById('client-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
-
   const [rC,rV]=await Promise.all([
     fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
     fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:H})
@@ -555,7 +646,6 @@ async function loadClienti(){
   _visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
   _clientiMese=(allC||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(_meseVis));
   _clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
-
   const fatti=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
   document.getElementById('m-count').textContent=`${fatti} ✓ di ${_clientiMese.length} clienti`;
   renderClienti();
@@ -612,7 +702,6 @@ function openSheet(id){
   document.getElementById('sh-nome').textContent=c.nome;
   document.getElementById('sh-nome').style.color=deb?'var(--red)':'var(--dark)';
   document.getElementById('sh-sub').textContent=[c.codice?`COD ${c.codice}`:'',c.citta].filter(Boolean).join(' · ')||'';
-
   const fields=[
     {l:'Telefono',v:c.telefono},{l:'Referente',v:c.referente},
     {l:'Tel. referente',v:c.telefono_referente},{l:'Email',v:c.email},
@@ -620,13 +709,15 @@ function openSheet(id){
     {l:'Note',v:c.note?c.note.replace('DEBITORE','').replace(/\s*-\s*/g,'').trim()||null:null}
   ].filter(f=>f.v);
   document.getElementById('sh-info').innerHTML=fields.map(f=>`<div class="info-row"><span class="info-lbl">${f.l}</span><span class="info-val">${f.v}</span></div>`).join('');
-
   let acts=`<button class="btn ${vis?'btn-outline':'btn-green'}" style="width:100%" onclick="toggleVis('${c.id}',${vis});closeSheet()">
     ${vis?'Visita segnata — rimuovi ✓':'✓ Segna come visitato'}
   </button>`;
   if(_op.profilo!=='junior'){
     acts+=`<button class="btn btn-dark" style="width:100%" onclick="closeSheet();openRapporto('${c.id}')">📋 Nuovo rapporto manutenzione</button>`;
     acts+=`<button class="btn btn-outline" style="width:100%" onclick="closeSheet();openDDT('${c.id}')">📦 Nuovo DDT</button>`;
+  }
+  if(_op.profilo==='master'){
+    acts+=`<button class="btn btn-outline" style="width:100%" onclick="closeSheet();switchTab('documenti')">📁 Vedi documenti cliente</button>`;
   }
   document.getElementById('sh-actions').innerHTML=acts;
   document.getElementById('sh-overlay').classList.add('open');
@@ -643,14 +734,12 @@ async function openRapporto(id){
   _clienteAtt=_clientiMese.find(c=>c.id===id)||_clienteAtt;
   if(!_clienteAtt) return;
   const c=_clienteAtt;
-  _rapSalvato=false;
-  // Numero documento progressivo
+  _rapSalvato=false; _rapHtml=''; _rapDocNum='';
   const rr=await fetch(`${SUPA_URL}/rest/v1/rost81_rapporti?select=id`,{headers:H});
   const rlist=await rr.json()||[];
   const num=String(rlist.length+1).padStart(3,'0');
-  const docNum=`MAN-${new Date().getFullYear()}-${num}`;
-  // Compila
-  document.getElementById('r-num').value=docNum;
+  _rapDocNum=`MAN-${new Date().getFullYear()}-${num}`;
+  document.getElementById('r-num').value=_rapDocNum;
   document.getElementById('r-data').value=new Date().toISOString().split('T')[0];
   document.getElementById('r-cliente').value=c.nome;
   document.getElementById('r-referente').value=c.referente||'';
@@ -663,7 +752,6 @@ async function openRapporto(id){
   document.getElementById('r-firma-tec').value=`${_op.nome} ${_op.cognome}`;
   document.getElementById('r-firma-cli').value='';
   document.querySelectorAll('input[name="esito"]').forEach(r=>r.checked=false);
-  // Checklist
   document.getElementById('ck-container').innerHTML=CK_VOCI.map((v,i)=>`
     <div class="ck-card">
       <div class="ck-voce">${i+1}. ${v}</div>
@@ -673,10 +761,8 @@ async function openRapporto(id){
       </div>
       <input class="ck-note" id="ck-n-${i}" type="text" placeholder="Note (opzionale)">
     </div>`).join('');
-  // Bottoni
   document.getElementById('btn-stampa-r').disabled=true;
   document.getElementById('btn-invia-r').style.display=_op.profilo==='master'?'flex':'none';
-  // Nascondi nav
   document.getElementById('bottom-nav').classList.remove('vis');
   showScreen('rapporto');
 }
@@ -707,7 +793,6 @@ async function saveRapporto(){
     toast('✓ Rapporto salvato','success');
     _rapSalvato=true;
     document.getElementById('btn-stampa-r').disabled=false;
-    // Auto-segna visita
     if(!_visitatiSet.has(c.id)){
       await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis})});
       _visitatiSet.add(c.id);
@@ -719,9 +804,8 @@ async function saveRapporto(){
   }
 }
 
-function stampaRapporto(){
+function buildRapportoHtml(){
   const c=_clienteAtt;
-  if(!c) return;
   const esito=document.querySelector('input[name="esito"]:checked')?.value||'';
   const esitoLabel={'ok':'✓ Conforme','parz':'⚠ Parzialmente conforme','ko':'✗ Non conforme','':'—'}[esito];
   const esitoCol={'ok':'#27ae60','parz':'#e67e22','ko':'#c0392b','':'#999'}[esito];
@@ -733,7 +817,7 @@ function stampaRapporto(){
     return `<tr><td>${voce}</td><td style="text-align:center;color:${col};font-weight:700">${e}</td><td style="text-align:center">${cf}</td><td style="font-size:10px;color:#888">${n}</td></tr>`;
   }).join('');
   const dataFmt=new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT');
-  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${document.getElementById('r-num').value}</title>
+  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${document.getElementById('r-num').value}</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:24px}
 .hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:18px}
 .logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}.logo-sub{font-size:10px;color:#666;margin-top:3px}
@@ -772,9 +856,19 @@ tr:nth-child(even) td{background:#fafafa}
 </div>
 <div class="footer">ROST 81 Srl — Documento generato il ${new Date().toLocaleDateString('it-IT')} · Conservare agli atti aziendali</div>
 </body></html>`;
+}
+
+async function stampaRapporto(){
+  const c=_clienteAtt; if(!c) return;
+  const html=buildRapportoHtml();
+  _rapHtml=html;
   const w=window.open('','_blank');
   w.document.write(html); w.document.close(); w.focus();
   setTimeout(()=>w.print(),500);
+  // Salva sul CRM
+  const nomeFile=`${_rapDocNum}.html`;
+  const descr=`Rapporto manutenzione — ${document.getElementById('r-tipo').value||'intervento'} — ${new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT')} — ${_op.nome} ${_op.cognome}`;
+  await uploadDocumento(html, nomeFile, descr, c.id);
 }
 
 function inviaEmail(){
@@ -786,7 +880,6 @@ function inviaEmail(){
   if(dest){
     window.location.href=`mailto:${dest}?subject=${sogg}&body=${corpo}`;
   }else{
-    // Nessuna email/PEC → apri comunque con campo vuoto e mostra avviso
     toast('⚠ Nessuna email/PEC registrata — inserisci il destinatario manualmente','error');
     window.location.href=`mailto:?subject=${sogg}&body=${corpo}`;
   }
@@ -796,7 +889,7 @@ function inviaEmail(){
 function openDDT(id){
   _clienteAtt=_clientiMese.find(c=>c.id===id)||_clienteAtt;
   if(!_clienteAtt) return;
-  _ddtSalvato=false;
+  _ddtSalvato=false; _ddtHtml=''; _ddtData='';
   document.getElementById('d-data').value=new Date().toISOString().split('T')[0];
   document.getElementById('d-cliente').value=_clienteAtt.nome;
   document.getElementById('d-mag-rows').innerHTML='';
@@ -860,7 +953,7 @@ async function saveDDT(){
   });
   if(res.ok){
     toast('✓ DDT salvato','success');
-    _ddtSalvato=true;
+    _ddtSalvato=true; _ddtData=document.getElementById('d-data').value;
     document.getElementById('btn-stampa-d').disabled=false;
   }else{
     const err=await res.json().catch(()=>({}));
@@ -868,8 +961,8 @@ async function saveDDT(){
   }
 }
 
-function stampaDDT(){
-  const c=_clienteAtt; if(!c) return;
+function buildDDTHtml(){
+  const c=_clienteAtt;
   const magArr=Array.from(document.getElementById('d-mag-rows').querySelectorAll('.ddt-row')).map(row=>{
     const sel=row.querySelector('select'); if(!sel?.value) return '';
     const art=_magazzino.find(a=>a.id===sel.value);
@@ -885,7 +978,7 @@ function stampaDDT(){
   }).filter(Boolean);
   const righe=[...magArr,...manArr].join('');
   const dataFmt=new Date(document.getElementById('d-data').value).toLocaleDateString('it-IT');
-  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>DDT — ROST 81</title>
+  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>DDT — ROST 81</title>
 <style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:24px}
 .hdr{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:18px}
 .logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}.logo-sub{font-size:10px;color:#666;margin-top:3px}
@@ -916,9 +1009,286 @@ ${document.getElementById('d-note').value?`<div class="sec"><div class="sec-t">N
 </div>
 <div class="footer">ROST 81 Srl — DDT generato il ${new Date().toLocaleDateString('it-IT')}</div>
 </body></html>`;
+}
+
+async function stampaDDT(){
+  const c=_clienteAtt; if(!c) return;
+  const html=buildDDTHtml();
+  _ddtHtml=html;
   const w=window.open('','_blank');
   w.document.write(html); w.document.close(); w.focus();
   setTimeout(()=>w.print(),500);
+  // Salva sul CRM
+  const dataStr=(_ddtData||new Date().toISOString().split('T')[0]).replace(/-/g,'');
+  const nomeFile=`DDT-${dataStr}-${c.nome.replace(/\s+/g,'-').substring(0,20)}.html`;
+  const descr=`DDT — ${c.nome} — ${new Date(_ddtData||Date.now()).toLocaleDateString('it-IT')} — ${_op.nome} ${_op.cognome}`;
+  await uploadDocumento(html, nomeFile, descr, c.id);
+}
+
+// ── UPLOAD DOCUMENTO → CRM ──
+async function uploadDocumento(htmlContent, nomeFile, descrizione, clienteId){
+  try{
+    const blob=new Blob([htmlContent],{type:'text/html;charset=utf-8'});
+    const path=`rapporti/${new Date().getFullYear()}/${nomeFile}`;
+    const upRes=await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`,{
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'text/html','x-upsert':'true'},
+      body:blob
+    });
+    const url=upRes.ok?`${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`:null;
+    await fetch(`${SUPA_URL}/rest/v1/rost81_documenti`,{
+      method:'POST',headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({cliente_id:clienteId,nome_file:nomeFile,descrizione,url})
+    });
+    toast('📁 Documento salvato sul CRM','success');
+  }catch(e){
+    console.error('uploadDocumento:',e);
+  }
+}
+
+// ── DOCUMENTI ──
+async function loadDocumenti(){
+  document.getElementById('doc-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
+  // Carica tutti i clienti per nome lookup
+  const [rD,rC]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_documenti?select=*&order=created_at.desc`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,nome`,{headers:H})
+  ]);
+  const docs=await rD.json()||[];
+  const clientiMap=Object.fromEntries((await rC.json()||[]).map(c=>[c.id,c.nome]));
+  // Per Junior/Senior: filtra solo clienti del mese corrente
+  let clientiIds=null;
+  if(_op.profilo!=='master'){
+    clientiIds=new Set(_clientiMese.map(c=>c.id));
+  }
+  _docs=docs.map(d=>({...d,clienteNome:clientiMap[d.cliente_id]||'—'}))
+    .filter(d=>clientiIds?clientiIds.has(d.cliente_id):true);
+  document.getElementById('docs-count').textContent=`${_docs.length} doc`;
+  applyDocFilter();
+}
+
+function filterDocs(tipo){
+  _docFilter=tipo;
+  document.querySelectorAll('.doc-filter-btn').forEach(b=>b.classList.remove('act'));
+  event.target.classList.add('act');
+  applyDocFilter();
+}
+
+function applyDocFilter(){
+  if(_docFilter==='tutti') _docsFiltered=_docs;
+  else if(_docFilter==='rapporto') _docsFiltered=_docs.filter(d=>d.nome_file?.startsWith('MAN-'));
+  else if(_docFilter==='ddt') _docsFiltered=_docs.filter(d=>d.nome_file?.startsWith('DDT-'));
+  else _docsFiltered=_docs;
+  renderDocumenti();
+}
+
+function renderDocumenti(){
+  const list=document.getElementById('doc-list');
+  if(_docsFiltered.length===0){
+    list.innerHTML='<div class="empty"><div class="empty-icon">📭</div><div class="empty-title">Nessun documento</div><div class="empty-sub">I documenti salvati dopo stampa rapporti e DDT appariranno qui</div></div>';
+    return;
+  }
+  list.innerHTML=_docsFiltered.map(d=>{
+    const isRap=d.nome_file?.startsWith('MAN-');
+    const isDDT=d.nome_file?.startsWith('DDT-');
+    const icon=isRap?'📋':isDDT?'📦':'📄';
+    const data=new Date(d.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    return `<div class="doc-card" onclick="openDoc('${d.url||''}','${d.nome_file||''}')">
+      <div class="doc-icon">${icon}</div>
+      <div class="doc-body">
+        <div class="doc-nome">${d.nome_file||'Documento'}</div>
+        <div class="doc-desc">${d.descrizione||'—'}</div>
+        <div class="doc-meta">
+          <span class="doc-cliente">${d.clienteNome}</span>
+          <span>${data}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openDoc(url,nome){
+  if(url){
+    window.open(url,'_blank');
+  }else{
+    toast('⚠ URL non disponibile per questo documento','error');
+  }
+}
+
+// ── SENTINEL ──
+async function loadSentinelKB(){
+  document.getElementById('s-kb-badge').textContent='⏳ KB…';
+  try{
+    const r=await fetch(`https://api.github.com/repos/${SENTINEL_REPO}/contents/knowledge`);
+    if(!r.ok) throw new Error('GitHub API');
+    const files=await r.json();
+    const txts=files.filter(f=>f.name.endsWith('.txt'));
+    const contents=await Promise.all(txts.map(async f=>{
+      const r2=await fetch(f.download_url);
+      return `=== ${f.name} ===\n${await r2.text()}`;
+    }));
+    _sentinelKB=contents.join('\n\n');
+    document.getElementById('s-kb-badge').textContent=`✓ KB (${txts.length} file)`;
+  }catch(e){
+    _sentinelKB='';
+    document.getElementById('s-kb-badge').textContent='⚠ KB offline';
+  }
+}
+
+async function reloadKB(){
+  _sentinelKB=null;
+  await loadSentinelKB();
+}
+
+function initSentinelScreen(){
+  if(!_sentinelApiKey){
+    renderSentinelSetup();
+  }else{
+    renderChatArea();
+  }
+}
+
+function renderSentinelSetup(){
+  const area=document.getElementById('chat-area');
+  document.getElementById('sentinel-input-area').style.display='none';
+  area.innerHTML=`<div class="sentinel-setup">
+    <div class="sentinel-setup-icon">🛡</div>
+    <div class="sentinel-setup-title">Configurazione Sentinel-81</div>
+    <div class="sentinel-setup-sub">Inserisci la tua Anthropic API Key per attivare l'assistente sicurezza. La chiave viene salvata solo su questo dispositivo.</div>
+    <input class="sentinel-key-inp" id="s-key-inp" type="password" placeholder="sk-ant-api03-…" autocomplete="off">
+    <button class="sentinel-key-btn" onclick="saveSentinelKey()">Attiva Sentinel-81</button>
+  </div>`;
+}
+
+function saveSentinelKey(){
+  const key=document.getElementById('s-key-inp')?.value?.trim()||'';
+  if(!key.startsWith('sk-ant')){toast('Chiave non valida — deve iniziare con sk-ant','error');return;}
+  _sentinelApiKey=key;
+  localStorage.setItem('sentinel81_apikey',key);
+  renderChatArea();
+}
+
+function renderChatArea(){
+  const area=document.getElementById('chat-area');
+  document.getElementById('sentinel-input-area').style.display='flex';
+  if(_sentinelMsgs.length===0){
+    area.innerHTML=`<div class="sentinel-empty">
+      <div class="sentinel-empty-icon">🛡</div>
+      <div class="sentinel-empty-title">Sentinel-81 attivo</div>
+      <div class="sentinel-empty-sub">Assistente sicurezza sul lavoro e antincendio.<br>Chiedi normativa, procedure, checklist, emergenze.</div>
+    </div>`;
+  }else{
+    renderChat();
+  }
+}
+
+function renderChat(){
+  const area=document.getElementById('chat-area');
+  area.innerHTML=_sentinelMsgs.map(m=>{
+    const isUser=m.role==='user';
+    const ora=m.time?new Date(m.time).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}):'';
+    const bubble=formatSentinelMsg(m.content);
+    return `<div class="msg ${isUser?'msg-user':'msg-ai'}">
+      <div class="msg-bubble">${bubble}</div>
+      <div class="msg-time">${ora}</div>
+    </div>`;
+  }).join('');
+  area.scrollTop=area.scrollHeight;
+}
+
+function formatSentinelMsg(txt){
+  return txt
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\n/g,'<br>');
+}
+
+async function sendSentinelMsg(){
+  if(_sentinelLoading) return;
+  const inp=document.getElementById('s-inp');
+  const txt=inp.value.trim();
+  if(!txt) return;
+  if(!_sentinelApiKey){renderSentinelSetup();return;}
+  inp.value=''; inp.style.height='auto';
+  const now=Date.now();
+  _sentinelMsgs.push({role:'user',content:txt,time:now});
+  renderChat();
+  // Typing indicator
+  const area=document.getElementById('chat-area');
+  const typDiv=document.createElement('div');
+  typDiv.className='msg msg-ai'; typDiv.id='typing-indicator';
+  typDiv.innerHTML='<div class="typing-bubble"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+  area.appendChild(typDiv);
+  area.scrollTop=area.scrollHeight;
+  _sentinelLoading=true;
+  document.getElementById('s-send').disabled=true;
+  try{
+    const sysPrompt=buildSentinelSystem();
+    const msgs=_sentinelMsgs.filter(m=>m.role!=='typing').map(m=>({role:m.role,content:m.content}));
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{
+        'x-api-key':_sentinelApiKey,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-allow-browser':'true',
+        'content-type':'application/json'
+      },
+      body:JSON.stringify({model:SENTINEL_MODEL,max_tokens:1500,system:sysPrompt,messages:msgs})
+    });
+    const data=await res.json();
+    document.getElementById('typing-indicator')?.remove();
+    if(data.error){
+      toast('Sentinel: '+data.error.message,'error');
+      _sentinelMsgs.pop();
+    }else{
+      const reply=data.content?.[0]?.text||'';
+      _sentinelMsgs.push({role:'assistant',content:reply,time:Date.now()});
+      renderChat();
+    }
+  }catch(e){
+    document.getElementById('typing-indicator')?.remove();
+    toast('Errore connessione Sentinel','error');
+    _sentinelMsgs.pop();
+    renderChat();
+  }finally{
+    _sentinelLoading=false;
+    document.getElementById('s-send').disabled=false;
+  }
+}
+
+function buildSentinelSystem(){
+  let sys=`Sei Sentinel-81, assistente operativo per la sicurezza sul lavoro e antincendio di ROST 81 Srl (P.IVA 10524751004).
+
+NORMATIVA CORE:
+- D.Lgs. 81/08 — Testo Unico Sicurezza sul Lavoro
+- DM 3 agosto 2015 — Codice di Prevenzione Incendi
+- DPR 151/2011 — Semplificazione prevenzione incendi
+- DM 1 settembre 2021 — Controlli e manutenzione sistemi antincendio
+- DM 2 settembre 2021 — Gestione sicurezza antincendio
+
+MODALITÀ CAMPO (problema attivo sul cantiere): risposte brevissime, step-by-step numerati, tono collega esperto.
+MODALITÀ CONSULENZA (normativa, analisi): risposta completa con riferimenti normativi precisi, tono consulente senior.
+
+REGOLE ASSOLUTE:
+- Mai inventare riferimenti normativi
+- In emergenza reale → prima risposta: "Chiama il 115"
+- Rispondi sempre in italiano
+- Gestisci italiano informale, errori di battitura, trascrizioni vocali`;
+  if(_sentinelKB){
+    sys+=`\n\n=== KNOWLEDGE BASE ===\n${_sentinelKB}`;
+  }
+  return sys;
+}
+
+function sentinelKeydown(e){
+  if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendSentinelMsg();}
+}
+
+function autoResize(el){
+  el.style.height='auto';
+  el.style.height=Math.min(el.scrollHeight,100)+'px';
 }
 
 // ── TOAST ──

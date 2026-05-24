@@ -440,6 +440,14 @@ if(localStorage.getItem('rost81-theme')==='dark'){
 
 document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
+function showToast(msg,type='success'){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show '+(type==='error'?'error':'success');
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.className='toast';},3200);
+}
+
 function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
 
 // ---- MAGAZZINO ----
@@ -773,33 +781,46 @@ async function creaOperatore(){
   const btn=document.getElementById('btn-crea-op');
   btn.disabled=true; btn.textContent='Creazione…';
   try{
-    // 1. Crea utente auth con Admin API
+    // 1. Crea utente Auth con Admin API
     const sRes=await fetch(`${SUPA_URL}/auth/v1/admin/users`,{
       method:'POST',
       headers:HA,
       body:JSON.stringify({email,password,email_confirm:true})
     });
     const sData=await sRes.json();
-    const uid=sData?.id;
+    let uid=sData?.id;
+
+    // 422 = email già registrata → cerca l'utente esistente e riusa il suo id
+    if(!uid && sRes.status===422){
+      const listRes=await fetch(`${SUPA_URL}/auth/v1/admin/users?page=1&per_page=500`,{headers:HA});
+      const listData=await listRes.json();
+      const found=(listData?.users||[]).find(u=>u.email===email);
+      if(found){ uid=found.id; }
+      else{ showToast('Email già registrata — usa un indirizzo diverso','error'); return; }
+    }
+
     if(!uid){
       showToast('Errore auth: '+(sData?.msg||sData?.message||sData?.error||JSON.stringify(sData)),'error');
       return;
     }
-    // 2. Inserisci profilo in rost81_operatori
+
+    // 2. Inserisci/aggiorna profilo (upsert su id)
     const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
       method:'POST',
-      headers:{...H,'Prefer':'return=minimal'},
+      headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
       body:JSON.stringify({id:uid,nome,cognome,email,profilo,note:note||null})
     });
     if(oRes.ok){
-      showToast(`✓ ${nome} ${cognome} (${profilo}) creato — può accedere a Sentinel-81`,'success');
+      showToast(`✓ ${nome} ${cognome} (${profilo}) — accesso Sentinel-81 attivo`,'success');
       document.getElementById('form-nuovo-op').style.display='none';
       ['op-nome','op-cognome','op-email','op-password','op-note'].forEach(id=>document.getElementById(id).value='');
       loadOperatori();
     } else {
       const err=await oRes.json().catch(()=>({}));
-      showToast('Account creato ma errore profilo: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
+      showToast('Account creato, errore profilo: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
     }
+  } catch(e){
+    showToast('Errore imprevisto: '+e.message,'error');
   } finally {
     btn.disabled=false; btn.textContent='✓ Crea operatore';
   }

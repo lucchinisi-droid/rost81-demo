@@ -153,7 +153,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
 
         <div class="stat-row">
-          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val">0</div></div>
+          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val" id="dash-clienti-tot">0</div></div>
           <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">0</div></div>
           <div class="stat-card"><div class="stat-label">Entro 30gg</div><div class="stat-val amber">0</div></div>
           <div class="stat-card"><div class="stat-label">In regola</div><div class="stat-val green">0</div></div>
@@ -215,12 +215,18 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- CLIENTI -->
       <div id="panel-clienti" class="panel">
-        <div class="section-head"><div class="section-title">Tutti i clienti</div><button class="btn">+ Nuovo cliente</button></div>
+        <div class="section-head">
+          <div class="section-title">Tutti i clienti</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="clienti-search" placeholder="🔍 Cerca cliente…" oninput="filterClienti()" style="padding:6px 10px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;width:180px">
+            <button class="btn btn-sm" onclick="loadClienti()">↻</button>
+          </div>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Cliente</th><th>Settore</th><th>Servizi</th><th>Stato</th><th></th></tr></thead>
+            <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Prov.</th><th>Interventi</th><th>Note</th></tr></thead>
             <tbody id="clienti-tbody">
-              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente ancora inserito</td></tr>
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
             </tbody>
           </table>
         </div>
@@ -391,6 +397,54 @@ async function loadSidebarBadges(){
   document.getElementById('badge-clienti').textContent=n;
   document.getElementById('badge-scadenze').textContent=0;
   document.getElementById('badge-preventivi').textContent=0;
+  const el=document.getElementById('dash-clienti-tot');
+  if(el) el.textContent=n;
+}
+
+const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
+let _clientiData=[];
+
+async function loadClienti(){
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)&order=numero_n`,{headers:H});
+  _clientiData=await r.json();
+  renderClienti(_clientiData);
+}
+
+function renderClienti(data){
+  const tbody=document.getElementById('clienti-tbody');
+  if(!data||data.length===0){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente trovato</td></tr>';
+    return;
+  }
+  tbody.innerHTML=data.map(c=>{
+    const debitore=c.note&&c.note.includes('DEBITORE');
+    const mesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]||m).join(' · ');
+    const noteDisplay=debitore
+      ? '<span class="badge badge-red" style="font-size:10px">⚠ DEBITORE</span>'+(c.note.replace('DEBITORE','').replace(' - ','').trim()?` <span style="font-size:11px;color:var(--text-muted)">${c.note.replace('DEBITORE','').replace(' - ','').trim()}</span>`:'')
+      : `<span style="font-size:11px;color:var(--text-muted)">${c.note||'—'}</span>`;
+    const rowStyle=debitore?'font-weight:600;color:var(--red)':'';
+    return `<tr style="${rowStyle}">
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td><div class="td-name" style="${rowStyle}">${c.nome}</div>${c.citta?`<div class="td-sub">${c.citta} (${c.provincia||''})</div>`:''}</td>
+      <td style="font-size:12px">${c.citta||'—'}</td>
+      <td style="font-size:12px">${c.provincia||'—'}</td>
+      <td style="font-size:11px;white-space:nowrap">${mesi||'—'}</td>
+      <td>${noteDisplay}</td>
+    </tr>`;
+  }).join('');
+}
+
+function filterClienti(){
+  const q=document.getElementById('clienti-search').value.toLowerCase();
+  if(!q){renderClienti(_clientiData);return;}
+  renderClienti(_clientiData.filter(c=>
+    (c.nome||'').toLowerCase().includes(q)||
+    (c.citta||'').toLowerCase().includes(q)||
+    (c.codice||'').toLowerCase().includes(q)||
+    (c.numero_n||'').toLowerCase().includes(q)||
+    (c.partita_iva||'').toLowerCase().includes(q)
+  ));
 }
 
 async function loadClienteIds(){
@@ -568,6 +622,7 @@ function switchPanel(id,el){
   document.getElementById('page-title').textContent=labels[id]||id;
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
   if(id==='dashboard') loadDashboardMagazzino();
+  if(id==='clienti') loadClienti();
 }
 
 loadClienteIds();

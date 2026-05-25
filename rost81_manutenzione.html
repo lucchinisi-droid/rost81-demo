@@ -760,77 +760,74 @@ html, body {
   </div>
 </div>
 
-<!-- ════════ BOTTOM BAR - unico container fixed ════════ -->
-<div id="bottom-bar" class="no-print" style="position:fixed;bottom:0;left:0;right:0;z-index:9000;display:flex;flex-direction:column;">
+<!-- ════════ BOTTOM BAR ════════ -->
 
-  <!-- Pannello AI (primo nel DOM = appare sopra i tab) -->
-  <div id="ai-panel" style="background:#4a0f0e;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
-    <div style="display:flex;flex-direction:column;height:370px;padding:0 12px 10px;">
-      <div id="ai-messages" style="flex:1;overflow-y:auto;padding:8px 2px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;"></div>
-      <div id="ai-actions" style="display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;">
-        <button onclick="chipClick('Genera il report annotazioni di manutenzione')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">📋 Report</button>
-        <button onclick="chipClick('Genera il preventivo di spesa')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">💶 Preventivo</button>
-        <button onclick="chipClick('Genera sia report che preventivo')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">⚡ Entrambi</button>
-        <button onclick="chipClick('Riassumi le anomalie riscontrate')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">🔍 Anomalie</button>
-      </div>
-      <div style="display:flex;gap:7px;background:#3a0f0e;border-radius:8px;padding:6px 8px;align-items:center;">
-        <textarea id="ai-text" placeholder="Scrivi o usa il microfono..." rows="1" style="flex:1;background:transparent;border:none;color:white;font-family:inherit;font-size:13px;outline:none;resize:none;min-height:28px;max-height:65px;line-height:1.4;"></textarea>
-        <button id="mic-btn" onclick="toggleMic()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
-        </button>
-        <button onclick="sendMsg()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
+<!-- Tab bar: sempre fisso in fondo -->
+<div id="bottom-tabs" class="no-print" style="position:fixed;bottom:0;left:0;right:0;z-index:9010;display:flex;height:52px;background:#1c1c1c;border-top:2px solid #2a2a2a;">
+  <button id="btn-ai-tab" onclick="toggleAI()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#4a0f0e;border:none;border-right:1px solid #2a2a2a;cursor:pointer;font-family:inherit;">
+    <div style="width:7px;height:7px;background:#ffb3b0;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;"></div>
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#ffb3b0;">Agente AI</span>
+    <svg id="ai-arrow" style="margin-left:auto;width:16px;height:16px;color:#ffb3b0;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+  <button id="btn-exp-tab" onclick="toggleExport()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#1c1c1c;border:none;cursor:pointer;font-family:inherit;">
+    <svg style="width:15px;height:15px;color:#888;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span id="exp-tab-label" style="font-size:12px;color:#aaa;font-weight:500;">Esporta PDF</span>
+    <svg id="exp-arrow" style="margin-left:auto;width:16px;height:16px;color:#888;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
+</div>
+
+<!-- Pannello AI: position fixed, cresce verso l'alto dal bordo superiore dei tab -->
+<div id="ai-panel" class="no-print" style="position:fixed;bottom:52px;left:0;right:0;z-index:9009;background:#4a0f0e;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
+  <div style="display:flex;flex-direction:column;height:370px;padding:0 12px 10px;">
+    <div id="ai-messages" style="flex:1;overflow-y:auto;padding:8px 2px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;"></div>
+    <div id="ai-actions" style="display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;">
+      <button onclick="chipClick('Genera il report annotazioni di manutenzione')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">📋 Report</button>
+      <button onclick="chipClick('Genera il preventivo di spesa')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">💶 Preventivo</button>
+      <button onclick="chipClick('Genera sia report che preventivo')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">⚡ Entrambi</button>
+      <button onclick="chipClick('Riassumi le anomalie riscontrate')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">🔍 Anomalie</button>
+    </div>
+    <div style="display:flex;gap:7px;background:#3a0f0e;border-radius:8px;padding:6px 8px;align-items:center;">
+      <textarea id="ai-text" placeholder="Scrivi o usa il microfono..." rows="1" style="flex:1;background:transparent;border:none;color:white;font-family:inherit;font-size:13px;outline:none;resize:none;min-height:28px;max-height:65px;line-height:1.4;"></textarea>
+      <button id="mic-btn" onclick="toggleMic()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+      </button>
+      <button onclick="sendMsg()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Pannello Export (secondo nel DOM = appare sopra i tab, sotto AI) -->
-  <div id="exp-panel" style="background:#111;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
-    <div style="padding:16px 20px;">
-      <div style="font-size:10px;color:#666;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Scegli cosa includere</div>
-      <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <button id="card-s1" onclick="toggleCard('s1')" style="flex:1;border:2px solid #b92b27;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#2a0f0e;font-family:inherit;text-align:left;">
-          <div id="chk-s1" style="width:18px;height:18px;border-radius:4px;background:#b92b27;border:2px solid #b92b27;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>
-          </div>
-          <div><div style="font-size:13px;font-weight:600;color:white;">Manutenzione</div><div style="font-size:10.5px;color:#777;margin-top:1px;">Documento + firme</div></div>
-        </button>
-        <button id="card-s2" onclick="toggleCard('s2')" disabled style="flex:1;border:2px solid #2a2a2a;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#1a1a1a;font-family:inherit;text-align:left;opacity:.4;">
-          <div id="chk-s2" style="width:18px;height:18px;border-radius:4px;background:transparent;border:2px solid #555;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><polyline points="2 6 5 9 10 3"/></svg>
-          </div>
-          <div><div style="font-size:13px;font-weight:600;color:white;">Preventivo</div><div id="card-s2-sub" style="font-size:10.5px;color:#777;margin-top:1px;">Crea prima il preventivo</div></div>
-        </button>
-      </div>
-      <div style="display:flex;gap:9px;">
-        <button onclick="sendToApp()" style="flex:1;background:#1e3a2a;color:#6fcf97;border:1px solid #2d5a3f;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-          Invia a APP Client
-        </button>
-        <button onclick="exportPDF()" style="flex:1;background:#b92b27;color:white;border:none;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Esporta PDF
-        </button>
-      </div>
+<!-- Pannello Export: position fixed, stessa base dei tab, cresce verso l'alto -->
+<div id="exp-panel" class="no-print" style="position:fixed;bottom:52px;left:0;right:0;z-index:9009;background:#111;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
+  <div style="padding:16px 20px;">
+    <div style="font-size:10px;color:#666;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Scegli cosa includere</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;">
+      <button id="card-s1" onclick="toggleCard('s1')" style="flex:1;border:2px solid #b92b27;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#2a0f0e;font-family:inherit;text-align:left;">
+        <div id="chk-s1" style="width:18px;height:18px;border-radius:4px;background:#b92b27;border:2px solid #b92b27;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>
+        </div>
+        <div><div style="font-size:13px;font-weight:600;color:white;">Manutenzione</div><div style="font-size:10.5px;color:#777;margin-top:1px;">Documento + firme</div></div>
+      </button>
+      <button id="card-s2" onclick="toggleCard('s2')" disabled style="flex:1;border:2px solid #2a2a2a;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#1a1a1a;font-family:inherit;text-align:left;opacity:.4;">
+        <div id="chk-s2" style="width:18px;height:18px;border-radius:4px;background:transparent;border:2px solid #555;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><polyline points="2 6 5 9 10 3"/></svg>
+        </div>
+        <div><div style="font-size:13px;font-weight:600;color:white;">Preventivo</div><div id="card-s2-sub" style="font-size:10.5px;color:#777;margin-top:1px;">Crea prima il preventivo</div></div>
+      </button>
+    </div>
+    <div style="display:flex;gap:9px;">
+      <button onclick="sendToApp()" style="flex:1;background:#1e3a2a;color:#6fcf97;border:1px solid #2d5a3f;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Invia a APP Client
+      </button>
+      <button onclick="exportPDF()" style="flex:1;background:#b92b27;color:white;border:none;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Esporta PDF
+      </button>
     </div>
   </div>
-
-  <!-- Tab bar (ultimo nel DOM = sempre in fondo allo schermo) -->
-  <div id="bottom-tabs" style="display:flex;height:52px;background:#1c1c1c;border-top:2px solid #2a2a2a;flex-shrink:0;">
-    <button id="btn-ai-tab" onclick="toggleAI()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#4a0f0e;border:none;border-right:1px solid #2a2a2a;cursor:pointer;font-family:inherit;">
-      <div style="width:7px;height:7px;background:#ffb3b0;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;"></div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#ffb3b0;">Agente AI</span>
-      <svg id="ai-arrow" style="margin-left:auto;width:16px;height:16px;color:#ffb3b0;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-    <button id="btn-exp-tab" onclick="toggleExport()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#1c1c1c;border:none;cursor:pointer;font-family:inherit;">
-      <svg style="width:15px;height:15px;color:#888;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span id="exp-tab-label" style="font-size:12px;color:#aaa;font-weight:500;">Esporta PDF</span>
-      <svg id="exp-arrow" style="margin-left:auto;width:16px;height:16px;color:#888;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-  </div>
-
-</div><!-- /bottom-bar -->
+</div>
 
 <!-- Toast -->
 <div id="toast" style="position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1c1c1c;color:white;padding:9px 18px;border-radius:6px;font-size:13px;z-index:99999;transition:transform .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap;"></div>

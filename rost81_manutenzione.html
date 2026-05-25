@@ -763,29 +763,10 @@ html, body {
 <!-- ════════ BOTTOM BAR - unico container fixed ════════ -->
 <div id="bottom-bar" class="no-print" style="position:fixed;bottom:0;left:0;right:0;z-index:9000;display:flex;flex-direction:column;">
 
-  <!-- Riga tab: AI a sinistra, Esporta a destra -->
-  <div id="bottom-tabs" style="display:flex;height:52px;background:#1c1c1c;border-top:2px solid #2a2a2a;">
-
-    <!-- Tab AI -->
-    <button id="btn-ai-tab" onclick="toggleAI()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#4a0f0e;border:none;border-right:1px solid #2a2a2a;cursor:pointer;font-family:inherit;">
-      <div style="width:7px;height:7px;background:#ffb3b0;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;"></div>
-      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#ffb3b0;">Agente AI</span>
-      <svg id="ai-arrow" style="margin-left:auto;width:16px;height:16px;color:#ffb3b0;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-
-    <!-- Tab Esporta -->
-    <button id="btn-exp-tab" onclick="toggleExport()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#1c1c1c;border:none;cursor:pointer;font-family:inherit;">
-      <svg style="width:15px;height:15px;color:#888;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      <span id="exp-tab-label" style="font-size:12px;color:#aaa;font-weight:500;">Esporta PDF</span>
-      <svg id="exp-arrow" style="margin-left:auto;width:16px;height:16px;color:#888;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
-    </button>
-
-  </div>
-
-  <!-- Pannello AI (sopra i tab, scorre verso l'alto) -->
-  <div id="ai-panel" style="order:-2;background:#4a0f0e;max-height:0;overflow:hidden;transition:max-height .3s ease;">
-    <div style="display:flex;flex-direction:column;height:380px;padding:0 12px 12px;">
-      <div id="ai-messages" style="flex:1;overflow-y:auto;padding:8px 2px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;"></div>
+  <!-- Pannello AI (primo nel DOM = appare sopra i tab) -->
+  <div id="ai-panel" style="background:#4a0f0e;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
+    <div style="display:flex;flex-direction:column;height:370px;padding:0 12px 10px;">
+      <div id="ai-messages" style="flex:1;overflow-y:auto;padding:8px 2px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;-webkit-overflow-scrolling:touch;"></div>
       <div id="ai-actions" style="display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;">
         <button onclick="chipClick('Genera il report annotazioni di manutenzione')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">📋 Report</button>
         <button onclick="chipClick('Genera il preventivo di spesa')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">💶 Preventivo</button>
@@ -804,19 +785,17 @@ html, body {
     </div>
   </div>
 
-  <!-- Pannello Export (sopra i tab) -->
-  <div id="exp-panel" style="order:-1;background:#111;max-height:0;overflow:hidden;transition:max-height .3s ease;">
+  <!-- Pannello Export (secondo nel DOM = appare sopra i tab, sotto AI) -->
+  <div id="exp-panel" style="background:#111;max-height:0;overflow:hidden;transition:max-height .35s cubic-bezier(.4,0,.2,1);">
     <div style="padding:16px 20px;">
       <div style="font-size:10px;color:#666;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Scegli cosa includere</div>
       <div style="display:flex;gap:10px;margin-bottom:14px;">
-        <!-- Card Manutenzione -->
         <button id="card-s1" onclick="toggleCard('s1')" style="flex:1;border:2px solid #b92b27;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#2a0f0e;font-family:inherit;text-align:left;">
           <div id="chk-s1" style="width:18px;height:18px;border-radius:4px;background:#b92b27;border:2px solid #b92b27;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>
           </div>
           <div><div style="font-size:13px;font-weight:600;color:white;">Manutenzione</div><div style="font-size:10.5px;color:#777;margin-top:1px;">Documento + firme</div></div>
         </button>
-        <!-- Card Preventivo -->
         <button id="card-s2" onclick="toggleCard('s2')" disabled style="flex:1;border:2px solid #2a2a2a;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#1a1a1a;font-family:inherit;text-align:left;opacity:.4;">
           <div id="chk-s2" style="width:18px;height:18px;border-radius:4px;background:transparent;border:2px solid #555;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
             <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><polyline points="2 6 5 9 10 3"/></svg>
@@ -835,6 +814,20 @@ html, body {
         </button>
       </div>
     </div>
+  </div>
+
+  <!-- Tab bar (ultimo nel DOM = sempre in fondo allo schermo) -->
+  <div id="bottom-tabs" style="display:flex;height:52px;background:#1c1c1c;border-top:2px solid #2a2a2a;flex-shrink:0;">
+    <button id="btn-ai-tab" onclick="toggleAI()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#4a0f0e;border:none;border-right:1px solid #2a2a2a;cursor:pointer;font-family:inherit;">
+      <div style="width:7px;height:7px;background:#ffb3b0;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;"></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#ffb3b0;">Agente AI</span>
+      <svg id="ai-arrow" style="margin-left:auto;width:16px;height:16px;color:#ffb3b0;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+    <button id="btn-exp-tab" onclick="toggleExport()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#1c1c1c;border:none;cursor:pointer;font-family:inherit;">
+      <svg style="width:15px;height:15px;color:#888;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span id="exp-tab-label" style="font-size:12px;color:#aaa;font-weight:500;">Esporta PDF</span>
+      <svg id="exp-arrow" style="margin-left:auto;width:16px;height:16px;color:#888;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
   </div>
 
 </div><!-- /bottom-bar -->

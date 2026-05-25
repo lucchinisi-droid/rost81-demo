@@ -359,21 +359,25 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- PREVENTIVI -->
       <div id="panel-preventivi" class="panel">
-        <div class="section-head"><div class="section-title">Preventivi</div><button class="btn btn-red" onclick="document.getElementById('nuovo-prev').style.display='block'">+ Nuovo</button></div>
+        <div class="section-head">
+          <div class="section-title">Archivio Preventivi</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn btn-sm" onclick="loadPreventivi()">↻ Aggiorna</button>
+            <a href="rost81_manutenzione.html" target="_blank" style="text-decoration:none"><button class="btn btn-sm btn-red">+ Nuovo preventivo</button></a>
+          </div>
+        </div>
+        <div id="prev-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
+          <div class="stat-card"><div class="stat-label">Preventivi totali</div><div class="stat-val blue" id="prev-count">—</div></div>
+          <div class="stat-card"><div class="stat-label">Valore totale (IVA incl.)</div><div class="stat-val" id="prev-totale">—</div></div>
+          <div class="stat-card"><div class="stat-label">Ultimo salvato</div><div class="stat-val" id="prev-ultimo" style="font-size:13px">—</div></div>
+        </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>N°</th><th>Cliente</th><th>Oggetto</th><th>Importo</th><th>Data</th><th>Stato</th></tr></thead>
+            <thead><tr><th>N° Preventivo</th><th>Cliente</th><th>Data</th><th>Importo totale</th><th>Documento</th></tr></thead>
             <tbody id="preventivi-tbody">
-              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun preventivo ancora inserito</td></tr>
+              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
             </tbody>
           </table>
-        </div>
-        <div id="nuovo-prev" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Cliente</label><select id="prev-cliente" style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"><option value="">— seleziona cliente —</option></select></div>
-            <div><label style="display:block;font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Oggetto</label><input type="text" placeholder="es. Corso antincendio" style="width:100%;padding:9px 12px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:13px;font-family:'DM Sans',sans-serif;color:var(--text);background:var(--surface);outline:none"></div>
-          </div>
-          <div style="display:flex;gap:8px"><button class="btn btn-red">✉ Invia</button><button class="btn">💾 Salva bozza</button><button class="btn" style="margin-left:auto;color:var(--red)" onclick="document.getElementById('nuovo-prev').style.display='none'">✕</button></div>
         </div>
       </div>
 
@@ -461,21 +465,48 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       </div>
       <!-- DOCUMENTI LIVE -->
       <div id="panel-doclavoro" class="panel">
-        <div class="section-head" style="margin-bottom:16px">
-          <div class="section-title">Documenti di Lavoro</div>
+
+        <!-- ── Strumenti di lavoro ── -->
+        <div class="section-head" style="margin-bottom:14px">
+          <div class="section-title">Strumenti di Lavoro</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px">
 
           <a href="rost81_manutenzione.html" target="_blank" style="text-decoration:none;color:inherit">
-            <div style="background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border-left:4px solid var(--red);cursor:pointer;transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='var(--shadow)'">
-              <div style="font-size:28px;margin-bottom:10px">🔧</div>
-              <div style="font-size:13px;font-weight:600;margin-bottom:4px">Rapporto di Manutenzione</div>
-              <div style="font-size:11px;color:var(--text-muted);line-height:1.5">Estintori · Idranti · DPI · Segnaletica<br>Checklist + firme + stampa PDF</div>
-              <div style="margin-top:12px;font-size:11px;color:var(--red);font-weight:500">Apri documento →</div>
+            <div style="background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--red);cursor:pointer;transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='var(--shadow)'">
+              <div style="font-size:26px;margin-bottom:8px">🔧</div>
+              <div style="font-size:13px;font-weight:600;margin-bottom:3px">Rapporto di Manutenzione</div>
+              <div style="font-size:11px;color:var(--text-muted);line-height:1.5">Estintori · Firme · AI · PDF</div>
+              <div style="margin-top:10px;font-size:11px;color:var(--red);font-weight:500">Apri →</div>
             </div>
           </a>
 
+          <div style="background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid #aaa;opacity:.55">
+            <div style="font-size:26px;margin-bottom:8px">📦</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:3px">DDT</div>
+            <div style="font-size:11px;color:var(--text-muted);line-height:1.5">Documento di trasporto</div>
+            <div style="margin-top:10px;font-size:11px;color:var(--text-hint);font-weight:500">Prossimamente</div>
+          </div>
+
         </div>
+
+        <!-- ── Archivio Documenti ── -->
+        <div class="section-head" style="margin-bottom:14px">
+          <div class="section-title">Archivio Documenti</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="archivio-filtro-anno" onchange="loadArchivioDoc()" style="padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:12px;font-family:inherit"></select>
+            <button class="btn btn-sm" onclick="loadArchivioDoc()">↻ Aggiorna</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Data</th><th>N° Documento</th><th>Cliente</th><th>Descrizione</th><th>Documento</th></tr></thead>
+            <tbody id="archivio-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
       </div>
 
       <!-- APP MANUTENTORE -->
@@ -998,6 +1029,90 @@ function switchPanel(id,el){
   if(id==='clienti') loadClienti();
   if(id==='scadenze') loadScadenze();
   if(id==='appmanut') loadOperatori();
+  if(id==='preventivi') loadPreventivi();
+  if(id==='doclavoro') loadArchivioDoc();
+}
+
+/* ══ PREVENTIVI ══ */
+async function loadPreventivi() {
+  const tbody = document.getElementById('preventivi-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
+  try {
+    const r = await fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=*,rost81_clienti(nome)&order=created_at.desc`, {headers:H});
+    const data = await r.json();
+    // Stats
+    document.getElementById('prev-count').textContent = data.length;
+    const tot = data.reduce((s,p)=>s+(parseFloat(p.importo_totale)||0),0);
+    document.getElementById('prev-totale').textContent = '€ '+tot.toFixed(2).replace('.',',');
+    if(data.length) {
+      const u = new Date(data[0].created_at);
+      document.getElementById('prev-ultimo').textContent = u.toLocaleDateString('it-IT');
+    }
+    if(!data.length) {
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Nessun preventivo ancora salvato.<br><small>Crea un preventivo dal Documento di Manutenzione e clicca Esporta PDF.</small></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(p => {
+      const cliente = p.rost81_clienti?.nome || '—';
+      const dataFmt = p.data ? new Date(p.data+'T12:00:00').toLocaleDateString('it-IT') : '—';
+      const importo = p.importo_totale ? '€ '+parseFloat(p.importo_totale).toFixed(2).replace('.',',') : '—';
+      const link = p.url ? `<a href="${p.url}" target="_blank" style="color:var(--red);font-size:11px;font-weight:600;text-decoration:none">Apri →</a>` : '<span style="color:var(--text-hint);font-size:11px">—</span>';
+      return `<tr>
+        <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--red)">${p.numero||'—'}</td>
+        <td style="font-weight:500">${cliente}</td>
+        <td style="font-size:12px;color:var(--text-muted)">${dataFmt}</td>
+        <td style="font-family:'DM Mono',monospace;font-weight:600">${importo}</td>
+        <td>${link}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:16px">Errore caricamento preventivi</td></tr>';
+  }
+}
+
+/* ══ ARCHIVIO DOCUMENTI ══ */
+async function loadArchivioDoc() {
+  const tbody = document.getElementById('archivio-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
+  // Popola selettore anno
+  const selAnno = document.getElementById('archivio-filtro-anno');
+  if(!selAnno.options.length) {
+    const y = new Date().getFullYear();
+    for(let i=y+1;i>=2024;i--) {
+      const o = document.createElement('option'); o.value=i; o.textContent=i;
+      if(i===y) o.selected=true;
+      selAnno.appendChild(o);
+    }
+    const oAll = document.createElement('option'); oAll.value='tutti'; oAll.textContent='Tutti gli anni';
+    selAnno.appendChild(oAll);
+  }
+  const annoFiltro = selAnno.value;
+  try {
+    let url = `${SUPA_URL}/rest/v1/rost81_documenti?select=*,rost81_clienti(nome)&order=created_at.desc`;
+    if(annoFiltro !== 'tutti') {
+      url += `&created_at=gte.${annoFiltro}-01-01&created_at=lt.${parseInt(annoFiltro)+1}-01-01`;
+    }
+    const r = await fetch(url, {headers:H});
+    const data = await r.json();
+    if(!data.length) {
+      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Nessun documento archiviato per questo periodo.<br><small>I rapporti vengono salvati automaticamente al momento dell\'esportazione PDF.</small></td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map(d => {
+      const cliente = d.rost81_clienti?.nome || '—';
+      const dataFmt = new Date(d.created_at).toLocaleDateString('it-IT');
+      const link = d.url ? `<a href="${d.url}" target="_blank" style="color:var(--red);font-size:11px;font-weight:600;text-decoration:none">Apri →</a>` : '<span style="color:var(--text-hint);font-size:11px">—</span>';
+      return `<tr>
+        <td style="font-size:12px;color:var(--text-muted)">${dataFmt}</td>
+        <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--red)">${d.nome_file||'—'}</td>
+        <td style="font-weight:500">${cliente}</td>
+        <td style="font-size:12px;color:var(--text-muted)">${d.descrizione||'—'}</td>
+        <td>${link}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:16px">Errore caricamento archivio</td></tr>';
+  }
 }
 
 loadClienteIds();

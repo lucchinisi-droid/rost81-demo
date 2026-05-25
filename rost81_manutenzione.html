@@ -1293,6 +1293,8 @@ function exportPDF() {
   sec1.style.display = s1 ? '' : 'none';
   if(s2) sec2.style.display = '';
   expOpen = false; updateExpPanel();
+  // Salva su Supabase in background
+  salvaSuSupabase();
   setTimeout(() => {
     window.print();
     setTimeout(() => {
@@ -1300,6 +1302,130 @@ function exportPDF() {
       if(wasHidden && !s2) sec2.style.display = 'none';
     }, 700);
   }, 150);
+}
+
+/* ══ SALVATAGGIO SU SUPABASE ══ */
+function buildSnapshotHtml(tipo) {
+  const d = getFormData();
+  const sel = document.getElementById('cliente-select');
+  const clienteNome = sel.options[sel.selectedIndex]?.text || '';
+  const css = `body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px;font-size:13px;color:#1c1c1c}
+h1{color:#b92b27;font-size:17px;border-bottom:2.5px solid #b92b27;padding-bottom:8px;margin-bottom:16px}
+h2{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#666;margin:18px 0 6px;border-bottom:1px solid #eee;padding-bottom:3px}
+table{width:100%;border-collapse:collapse;margin:6px 0 12px}
+td,th{padding:6px 9px;border:1px solid #ddd;font-size:12px;vertical-align:top}
+th{background:#f2f0ec;font-weight:600;text-align:left}
+.mono{font-family:'Courier New',monospace;font-weight:600;color:#b92b27}
+.tot{font-weight:600;background:#f9f9f9}
+footer{margin-top:32px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px}`;
+
+  if(tipo === 'rapporto') {
+    const annotazioni = (document.getElementById('annotazioni').innerText || '').replace(/</g,'&lt;').replace(/\n/g,'<br>');
+    return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${d.docNum}</title><style>${css}</style></head><body>
+<h1>ROST81 — Documento di Manutenzione</h1>
+<table><tr><th>N° Documento</th><td class="mono">${d.docNum}</td><th>Data</th><td>${d.data}</td></tr>
+<tr><th>Cliente</th><td>${clienteNome}</td><th>P.IVA</th><td>${d.piva}</td></tr>
+<tr><th>Responsabile</th><td>${d.responsabile}</td><th>Manutentore</th><td>${d.manutentore}</td></tr>
+<tr><th>Indirizzo</th><td colspan="3">${d.indirizzo}</td></tr></table>
+<h2>Tipo intervento</h2><p>${d.tipoIntervento==='programmato'?'Intervento programmato':'Intervento straordinario'}</p>
+<h2>Attività svolte</h2><p>${d.attivita||'—'}${d.attAltro?' | '+d.attAltro:''}</p>
+<h2>Segnalazioni</h2><p>${d.segnalazioni||'—'}${d.segAltro?' | '+d.segAltro:''}</p>
+<h2>Stato intervento</h2><p>${d.stato==='finito'?'✓ Intervento finito':'⚠ Intervento da finire'}</p>
+<h2>Annotazioni</h2><p>${annotazioni||'—'}</p>
+<footer>ROST 81 Srl — Via Giotto 2, 00034 Colleferro (RM) — P.IVA 10524751004 — Tel. 06 97234064</footer>
+</body></html>`;
+  } else {
+    const prevNum = document.getElementById('prev-num').value;
+    const prevData = document.getElementById('prev-data').value;
+    const prevCliente = document.getElementById('prev-cliente').value;
+    const prevResp = document.getElementById('prev-responsabile').value;
+    const prevInd = document.getElementById('prev-indirizzo').value;
+    const prevEmail = document.getElementById('prev-email').value;
+    let righe = '';
+    document.querySelectorAll('#prev-body tr').forEach(tr => {
+      const ins = tr.querySelectorAll('input');
+      if(ins.length >= 3) {
+        const desc = ins[0]?.value||'', qta = ins[1]?.value||'', pr = ins[2]?.value||'';
+        const tot = (parseFloat(qta)||0)*(parseFloat(pr)||0);
+        righe += `<tr><td>${desc}</td><td style="text-align:right">${qta}</td><td style="text-align:right">€ ${parseFloat(pr).toFixed(2).replace('.',',')}</td><td style="text-align:right">€ ${tot.toFixed(2).replace('.',',')}</td></tr>`;
+      }
+    });
+    const totImp = document.getElementById('tot-imp').textContent;
+    const totIva = document.getElementById('tot-iva').textContent;
+    const totTot = document.getElementById('tot-tot').textContent;
+    return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${prevNum}</title><style>${css}</style></head><body>
+<h1>ROST81 — Preventivo di Spesa</h1>
+<table><tr><th>N° Preventivo</th><td class="mono">${prevNum}</td><th>Data</th><td>${prevData}</td></tr>
+<tr><th>Cliente</th><td>${prevCliente}</td><th>Responsabile</th><td>${prevResp}</td></tr>
+<tr><th>Indirizzo</th><td>${prevInd}</td><th>Email</th><td>${prevEmail}</td></tr></table>
+<h2>Voci di preventivo</h2>
+<table><thead><tr><th>Descrizione</th><th style="text-align:right">Qtà</th><th style="text-align:right">Prezzo unit.</th><th style="text-align:right">Totale</th></tr></thead>
+<tbody>${righe}</tbody>
+<tfoot><tr class="tot"><td colspan="3">Imponibile</td><td style="text-align:right">€ ${totImp}</td></tr>
+<tr class="tot"><td colspan="3">IVA 22%</td><td style="text-align:right">€ ${totIva}</td></tr>
+<tr class="tot"><td colspan="3"><strong>TOTALE</strong></td><td style="text-align:right"><strong>€ ${totTot}</strong></td></tr></tfoot></table>
+<footer>ROST 81 Srl — Via Giotto 2, 00034 Colleferro (RM) — P.IVA 10524751004 — Tel. 06 97234064</footer>
+</body></html>`;
+  }
+}
+
+async function salvaSuSupabase() {
+  const d = getFormData();
+  const sel = document.getElementById('cliente-select');
+  const clienteId = sel.value || null;
+  const clienteNome = sel.options[sel.selectedIndex]?.text || '';
+  const anno = new Date().getFullYear();
+  try {
+    // ── Rapporto di manutenzione ──
+    if(cardState.s1) {
+      const html = buildSnapshotHtml('rapporto');
+      const path = `rapporti/${anno}/${d.docNum}.html`;
+      const up = await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`, {
+        method:'POST',
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'text/html;charset=utf-8','x-upsert':'true'},
+        body: html
+      });
+      const url = `${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`;
+      await fetch(`${SUPA_URL}/rest/v1/rost81_documenti`, {
+        method:'POST', headers:{...H,'Prefer':'return=minimal'},
+        body: JSON.stringify({
+          cliente_id: clienteId,
+          nome_file: `${d.docNum}.html`,
+          descrizione: `Rapporto manutenzione – ${clienteNome} – ${d.data}`,
+          url: up.ok ? url : null
+        })
+      });
+    }
+    // ── Preventivo ──
+    if(cardState.s2) {
+      const html = buildSnapshotHtml('preventivo');
+      const prevNum = document.getElementById('prev-num').value;
+      const prevData = document.getElementById('prev-data').value || d.data;
+      const path = `preventivi/${anno}/${prevNum}.html`;
+      const totStr = document.getElementById('tot-tot').textContent.replace(',','.').replace(/[^\d.]/g,'');
+      const importo = parseFloat(totStr) || 0;
+      const up = await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`, {
+        method:'POST',
+        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'text/html;charset=utf-8','x-upsert':'true'},
+        body: html
+      });
+      const url = `${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`;
+      await fetch(`${SUPA_URL}/rest/v1/rost81_preventivi`, {
+        method:'POST', headers:{...H,'Prefer':'return=minimal'},
+        body: JSON.stringify({
+          cliente_id: clienteId,
+          numero: prevNum,
+          data: prevData,
+          importo_totale: importo,
+          url: up.ok ? url : null
+        })
+      });
+    }
+    showToast('✓ Salvato sul CRM','success');
+  } catch(e) {
+    console.error('Errore salvataggio Supabase:', e);
+    showToast('Salvato in locale – errore CRM','error');
+  }
 }
 
 /* ══ INVIA APP ══ */

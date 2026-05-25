@@ -2,489 +2,1386 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>ROST81 – Documento di Manutenzione</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap');
 
-  :root {
-    --red: #c0392b;
-    --dark: #1a1a1a;
-    --mid: #444;
-    --light: #f5f5f3;
-    --border: #ddd;
-    --accent: #e8e0d5;
+:root {
+  --red: #b92b27;
+  --red-dark: #8a1f1c;
+  --red-light: #fdf0f0;
+  --dark: #1c1c1c;
+  --mid: #666;
+  --light: #f4f3f0;
+  --border: #d8d5cf;
+  --section-bg: #faf9f7;
+  --ai-bg: #7a1a18;
+  --ai-dark: #4a0f0e;
+  --ai-accent: #ffb3b0;
+  --bar-h: 56px;
+  --ai-h: 52px;
+  --r: 4px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  font-family: 'IBM Plex Sans', sans-serif;
+  background: var(--light); color: var(--dark);
+  font-size: 15px; line-height: 1.5;
+  -webkit-tap-highlight-color: transparent;
+  /* Safari iOS: evita bounce scroll che interferisce con fixed */
+  overscroll-behavior: none;
+}
+
+/* ══════════ PRINT ══════════ */
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { font-size: 9pt; background: white; }
+  .no-print, #export-bar, #ai-panel, #firma-modal, #toast { display: none !important; }
+  .wrapper { padding: 0; max-width: 100%; }
+
+  .page-wrap {
+    box-shadow: none !important; border: none !important;
+    padding: 0 !important; margin: 0 !important;
+    page-break-after: always;
   }
+  .page-wrap:last-of-type { page-break-after: avoid; }
+  .section-block { page-break-inside: avoid; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--light);
-    color: var(--dark);
-    font-size: 14px;
-    line-height: 1.5;
-  }
-
-  @media print {
-    .no-print { display: none !important; }
-    body { background: white; font-size: 12px; }
-    .page { box-shadow: none; max-width: 100%; margin: 0; padding: 20px; }
-    .section { break-inside: avoid; }
-  }
-
-  .wrapper {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 20px;
-  }
-
-  .page {
-    background: white;
-    box-shadow: 0 2px 20px rgba(0,0,0,.08);
-    padding: 32px;
-    margin-bottom: 20px;
-  }
-
-  .header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    border-bottom: 3px solid var(--red);
-    padding-bottom: 16px;
-    margin-bottom: 20px;
-  }
-
-  .logo-area h1 {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 26px;
-    font-weight: 500;
-    letter-spacing: -1px;
-    color: var(--red);
-  }
-
-  .logo-area p {
-    font-size: 11px;
-    color: var(--mid);
-    margin-top: 2px;
-  }
-
-  .header-right {
-    text-align: right;
-    font-size: 12px;
-    color: var(--mid);
-  }
-
-  .doc-title {
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin: 16px 0;
-    padding: 10px;
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    color: var(--dark);
-  }
-
-  .row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .row-3 {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  label {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    color: var(--mid);
-  }
-
-  input[type="text"],
-  input[type="date"],
-  input[type="number"],
-  select,
-  textarea {
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    padding: 7px 10px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 13px;
-    color: var(--dark);
-    background: white;
-    width: 100%;
-    outline: none;
-    transition: border-color .15s;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--red);
-  }
-
-  textarea {
-    resize: vertical;
-    min-height: 60px;
-  }
-
-  .section {
-    margin-bottom: 24px;
-  }
+  .doc-header { padding-bottom: 8pt; margin-bottom: 8pt; }
+  .doc-title   { padding: 5pt 0; margin-bottom: 10pt; font-size: 10.5pt; }
 
   .section-title {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .08em;
-    color: var(--red);
-    border-bottom: 1px solid var(--accent);
-    padding-bottom: 6px;
-    margin-bottom: 14px;
+    background: #ddd !important; color: #000 !important;
+    font-size: 7pt !important; padding: 3pt 7pt !important; margin: 7pt 0 5pt !important;
+    border-radius: 0 !important;
   }
-
-  /* checklist */
-  .checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
+  .field label  { font-size: 6.5pt !important; margin-bottom: 1pt !important; }
+  .field input, .field select {
+    font-size: 8.5pt !important; padding: 2pt 5pt !important;
+    background: white !important; border: 1px solid #ccc !important;
+    min-height: unset !important; border-radius: 0 !important;
   }
+  .check-grid  { gap: 3pt !important; margin-bottom: 5pt !important; }
+  .check-opt   { padding: 3pt 6pt !important; font-size: 8pt !important; min-height: unset !important; border-radius: 0 !important; }
+  .seg-grid    { gap: 3pt !important; }
+  .seg-opt     { padding: 3pt 6pt !important; font-size: 8pt !important; min-height: unset !important; border-radius: 0 !important; }
+  .tipo-row, .stato-row { padding: 4pt 7pt !important; border-radius: 0 !important; }
+  .radio-opt   { font-size: 8.5pt !important; }
+  .ext-table th { font-size: 6.5pt !important; padding: 2pt 4pt !important; }
+  .ext-table td { font-size: 8pt !important; padding: 2pt 4pt !important; }
+  .subcat td   { font-size: 7.5pt !important; padding: 3pt 4pt !important; }
+  .grid-2, .grid-3 { gap: 6pt !important; margin-bottom: 5pt !important; }
+  .annotazioni-box { min-height: 40pt !important; font-size: 8.5pt !important; padding: 5pt !important; }
+  .firma-row   { margin-top: 10pt !important; gap: 16pt !important; }
+  .print-firma-area { height: 50pt !important; }
+  .preventivo-table th { font-size: 7pt !important; padding: 3pt 6pt !important; }
+  .preventivo-table td { font-size: 8.5pt !important; padding: 3pt 6pt !important; }
+  .logo h1 { font-size: 18pt !important; }
+  .logo p  { font-size: 7pt !important; }
+  .doc-meta input { font-size: 8.5pt !important; }
+}
 
-  .check-row {
-    display: grid;
-    grid-template-columns: 1fr 80px 80px 120px;
-    gap: 8px;
-    align-items: center;
-    padding: 7px 10px;
-    background: #fafaf8;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    font-size: 13px;
-  }
+/* ══════════ LAYOUT ══════════ */
+.wrapper {
+  max-width: 800px; margin: 0 auto;
+  padding: 20px 14px calc(var(--bar-h) + 16px);
+}
+.page-wrap {
+  background: white;
+  box-shadow: 0 2px 18px rgba(0,0,0,.08);
+  padding: 24px 28px; margin-bottom: 14px; border-radius: 6px;
+}
 
-  .check-row:nth-child(even) { background: white; }
+/* ── Header ── */
+.doc-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 3px solid var(--red); padding-bottom: 12px; margin-bottom: 14px; gap: 12px;
+}
+.logo h1 { font-family: 'IBM Plex Mono', monospace; font-size: 24px; color: var(--red); letter-spacing: -1px; font-weight: 600; }
+.logo p  { font-size: 10.5px; color: var(--mid); margin-top: 1px; }
 
-  .check-row-head {
-    font-size: 10px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .05em;
-    color: var(--mid);
-    padding: 4px 10px;
-    display: grid;
-    grid-template-columns: 1fr 80px 80px 120px;
-    gap: 8px;
-  }
+.doc-meta { text-align: right; flex-shrink: 0; }
+.doc-meta .mf { margin-bottom: 5px; }
+.doc-meta label { font-size: 9.5px; color: var(--mid); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 1px; }
+.doc-meta input {
+  border: none; border-bottom: 1.5px solid #ccc;
+  background: transparent; font-size: 12.5px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  text-align: right; outline: none; width: 155px; color: var(--dark); padding: 2px 0;
+}
+.doc-meta input:focus { border-bottom-color: var(--red); }
+.doc-meta input[readonly] { cursor: default; font-family: 'IBM Plex Mono', monospace; color: var(--red); font-weight: 600; }
 
-  .check-row select {
-    padding: 4px 6px;
-    font-size: 12px;
-  }
+.doc-title {
+  text-align: center; font-size: 12.5px; font-weight: 600;
+  letter-spacing: 2.5px; text-transform: uppercase;
+  padding: 7px 0; border-bottom: 1px solid var(--border); margin-bottom: 16px;
+}
 
-  .check-row input[type="text"] {
-    padding: 4px 8px;
-    font-size: 12px;
-  }
+/* ── Section title ── */
+.section-title {
+  background: var(--dark); color: white;
+  font-size: 9.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase;
+  padding: 5px 11px; margin: 16px 0 11px; border-radius: 3px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.autofill-badge {
+  font-size: 9.5px; color: #2e7d52; background: #e8f5ee;
+  padding: 2px 7px; border-radius: 10px; display: none; font-weight: 400;
+}
+.autofill-badge.show { display: inline; }
 
-  /* firma */
-  .firma-box {
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    height: 70px;
-    background: #fafaf8;
-    display: flex;
-    align-items: flex-end;
-    padding: 6px 10px;
-    font-size: 11px;
-    color: var(--mid);
-  }
+/* ── Grids ── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 9px; }
 
-  /* print button */
-  .print-bar {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
+/* ── Fields ── */
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field label { font-size: 10px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: .4px; }
 
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-family: 'IBM Plex Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: white;
-    color: var(--dark);
-    transition: all .15s;
-  }
+.field input[type=text],
+.field input[type=date],
+.field input[type=email],
+.field input[type=number],
+.field select,
+.field textarea {
+  border: 1.5px solid var(--border); background: var(--section-bg);
+  padding: 8px 10px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13.5px; color: var(--dark); border-radius: var(--r);
+  outline: none; transition: border-color .15s; min-height: 40px;
+  -webkit-appearance: none; width: 100%;
+}
+.field input:focus, .field select:focus { border-color: var(--red); background: white; }
 
-  .btn:hover { background: var(--accent); }
+/* Obbligatori: bordo rosso sempre */
+.field.required input,
+.field.required select { border-color: var(--red); }
+.field.required input:focus,
+.field.required select:focus { border-color: var(--red-dark); background: white; }
+/* Dopo compilazione: torna normale */
+.field.required.filled input,
+.field.required.filled select { border-color: var(--border); }
+.field.required.filled input:focus,
+.field.required.filled select:focus { border-color: var(--red); }
 
-  .btn-red {
-    background: var(--red);
-    color: white;
-    border-color: var(--red);
-  }
+.field .err-msg { font-size: 10px; color: var(--red); display: none; }
+.field.show-err .err-msg { display: block; }
 
-  .btn-red:hover { background: #a93226; }
+/* ── Tipo intervento ── */
+.tipo-row {
+  display: flex; gap: 18px; margin-bottom: 11px;
+  padding: 9px 12px; border: 1.5px solid var(--border);
+  background: var(--section-bg); border-radius: var(--r);
+}
+.radio-opt { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13.5px; padding: 3px 0; }
+.radio-opt input[type=radio] { accent-color: var(--red); width: 16px; height: 16px; }
 
-  /* numero doc */
-  .doc-num {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    background: var(--accent);
-    padding: 3px 8px;
-    border-radius: 3px;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
+/* ── Check grid ── */
+.check-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 9px; }
+.check-opt {
+  display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: 13px;
+  padding: 8px 11px; border: 1.5px solid var(--border);
+  background: var(--section-bg); border-radius: var(--r); min-height: 40px;
+}
+.check-opt input[type=checkbox] { accent-color: var(--red); width: 16px; height: 16px; flex-shrink: 0; }
 
-  .esito-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 14px;
-    border-radius: 3px;
-    font-weight: 600;
-    font-size: 13px;
-  }
+/* ── Estintori ── */
+.ext-table { width: 100%; border-collapse: collapse; margin-bottom: 11px; font-size: 12.5px; table-layout: fixed; }
+.ext-table th {
+  background: #eeece8; text-align: left; padding: 6px 7px;
+  font-size: 9.5px; font-weight: 600; text-transform: uppercase; letter-spacing: .3px;
+  border: 1px solid var(--border); overflow: hidden;
+}
+.ext-table td { border: 1px solid var(--border); padding: 5px 7px; vertical-align: middle; overflow: hidden; }
+.ext-table td input[type=number] {
+  width: 48px; border: none; background: transparent;
+  font-family: 'IBM Plex Mono', monospace; font-size: 13px; text-align: center; min-height: unset;
+}
+.ext-table .check-cell { text-align: center; }
+.ext-table .check-cell input[type=checkbox] { accent-color: var(--red); width: 16px; height: 16px; }
+.subcat td { font-size: 11px; font-weight: 600; background: #f0eeea; padding: 5px 7px; border: 1px solid var(--border); }
+.tipo-est-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.tipo-est-row > span { font-size: 11px; font-weight: 600; }
+.toggle-opts { display: flex; gap: 12px; }
+.toggle-opt { display: flex; align-items: center; gap: 5px; font-size: 12.5px; cursor: pointer; }
+.toggle-opt input[type=radio] { accent-color: var(--red); width: 14px; height: 14px; }
 
-  .esito-ok { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
-  .esito-ko { background: #fbe9e7; color: var(--red); border: 1px solid #ef9a9a; }
-  .esito-parz { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+/* ── Segnalazioni ── */
+.seg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 9px; }
+.seg-opt {
+  display: flex; align-items: center; gap: 9px; cursor: pointer; font-size: 13px;
+  padding: 8px 11px; border: 1.5px solid #f0d0d0;
+  background: #fff8f8; border-radius: var(--r); min-height: 40px;
+}
+.seg-opt input[type=checkbox] { accent-color: var(--red); width: 16px; height: 16px; flex-shrink: 0; }
+
+.stato-row {
+  display: flex; gap: 20px; padding: 9px 12px;
+  border: 1.5px solid var(--border); background: var(--section-bg);
+  border-radius: var(--r); margin-bottom: 11px;
+}
+
+/* ── Annotazioni ── */
+.annotazioni-box {
+  border: 1.5px solid var(--border); background: var(--section-bg);
+  padding: 11px; border-radius: var(--r);
+  min-height: 90px; font-size: 13px; line-height: 1.6; white-space: pre-wrap;
+}
+.annotazioni-box:focus { outline: none; border-color: var(--red); background: white; }
+.annotazioni-box:empty:before { content: attr(data-placeholder); color: #aaa; font-style: italic; }
+
+/* ── Firma boxes ── */
+.firma-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 16px; }
+.firma-box { display: flex; flex-direction: column; gap: 5px; }
+.firma-label { font-size: 9.5px; color: var(--mid); text-transform: uppercase; letter-spacing: .5px; font-weight: 600; }
+.firma-tap {
+  border: 2px dashed var(--border); border-radius: var(--r);
+  background: var(--section-bg); height: 76px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  position: relative;
+  -webkit-user-select: none; user-select: none;
+}
+.firma-tap:active { border-color: var(--red); background: var(--red-light); }
+.firma-tap.has-sig { border-style: solid; border-color: #bbb; background: white; }
+.firma-tap canvas { position: absolute; inset: 0; width: 100% !important; height: 100% !important; pointer-events: none; }
+.firma-tap-label { font-size: 11.5px; color: #bbb; font-style: italic; display: flex; align-items: center; gap: 6px; pointer-events: none; z-index: 1; }
+.firma-tap.has-sig .firma-tap-label { display: none; }
+.firma-edit-btn {
+  position: absolute; bottom: 4px; right: 6px;
+  font-size: 9.5px; color: var(--red); background: white;
+  border: 1px solid var(--border); border-radius: 3px;
+  padding: 1px 6px; cursor: pointer; z-index: 2; display: none;
+}
+.firma-tap.has-sig .firma-edit-btn { display: block; }
+.print-firma-area { border-bottom: 1px solid #aaa; height: 52px; margin-top: 3px; }
+
+/* ══════════ FIRMA MODAL ══════════ */
+#firma-modal {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.65); z-index: 99999;
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+  /* Safari iOS fix: usa visibility invece di display:none */
+  visibility: hidden; opacity: 0;
+  transition: opacity .2s, visibility .2s;
+  -webkit-transform: translateZ(0); transform: translateZ(0);
+}
+#firma-modal.open {
+  visibility: visible; opacity: 1;
+}
+.fmi {
+  background: white; border-radius: 10px;
+  width: 100%; max-width: 680px; padding: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+  box-shadow: 0 12px 60px rgba(0,0,0,.35);
+}
+.fmi-head { display: flex; align-items: center; justify-content: space-between; }
+.fmi-head h3 { font-size: 15px; font-weight: 600; }
+.fmi-head .xbtn { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--mid); line-height: 1; padding: 2px 8px; }
+#fmc-wrap {
+  border: 2px solid var(--border); border-radius: 6px;
+  background: #fefefe; position: relative; touch-action: none;
+  -webkit-user-select: none; user-select: none;
+}
+#fmc { display: block; width: 100%; height: 250px; touch-action: none; }
+.fmc-ph {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #ccc; font-style: italic; pointer-events: none;
+}
+.fmi-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.btn-clr { background: none; border: 1.5px solid var(--border); padding: 9px 18px; border-radius: var(--r); font-size: 13.5px; cursor: pointer; font-family: inherit; }
+.btn-cfm { background: var(--red); color: white; border: none; padding: 9px 22px; border-radius: var(--r); font-size: 13.5px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.btn-cfm:hover { background: var(--red-dark); }
+
+/* ══════════ PREVENTIVO BANNER ══════════ */
+#prev-banner {
+  background: linear-gradient(135deg, #1a1a1a, #2e2e2e);
+  color: white; border-radius: 6px; padding: 16px 20px;
+  margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+#prev-banner h3 { font-size: 13.5px; font-weight: 600; margin-bottom: 2px; }
+#prev-banner p  { font-size: 11px; color: #999; }
+#btn-crea-prev {
+  background: var(--red); color: white; border: none;
+  padding: 9px 16px; font-family: inherit; font-size: 13px; font-weight: 700;
+  border-radius: var(--r); cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background .15s;
+}
+#btn-crea-prev:hover { background: var(--red-dark); }
+
+/* ══════════ PREVENTIVO TABLE ══════════ */
+.preventivo-table { width: 100%; border-collapse: collapse; margin: 9px 0 14px; font-size: 13px; table-layout: fixed; }
+.preventivo-table th { background: var(--dark); color: white; padding: 7px 9px; text-align: left; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; overflow: hidden; }
+.preventivo-table td { border-bottom: 1px solid var(--border); padding: 7px 9px; vertical-align: middle; overflow: hidden; }
+.preventivo-table .tot-row td { font-weight: 600; background: var(--light); border-top: 2px solid var(--dark); }
+.preventivo-table .num { text-align: right; font-family: 'IBM Plex Mono', monospace; }
+.preventivo-table td input { border: none; background: transparent; font-family: inherit; font-size: 13px; outline: none; width: 100%; }
+.preventivo-table td input.ni { font-family: 'IBM Plex Mono', monospace; text-align: right; }
+.rm-btn { background: none; border: none; cursor: pointer; color: #bbb; font-size: 14px; padding: 0 4px; transition: color .15s; }
+.rm-btn:hover { color: var(--red); }
+.prev-note { border: 1.5px solid var(--border); background: var(--section-bg); padding: 11px; min-height: 65px; font-size: 13px; white-space: pre-wrap; border-radius: var(--r); }
+.prev-note:empty:before { content: "Note e condizioni..."; color: #aaa; font-style: italic; }
+
+/* ══════════ EXPORT BAR ══════════ */
+#export-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  z-index: 9000;
+  display: flex; flex-direction: column;
+  -webkit-transform: translateZ(0); transform: translateZ(0);
+}
+
+/* Tab handle */
+#export-tab {
+  background: var(--dark); color: white;
+  height: var(--bar-h); display: flex; align-items: center;
+  padding: 0 20px; cursor: pointer; user-select: none;
+  -webkit-user-select: none;
+  border-top: 2px solid #333;
+  justify-content: space-between;
+}
+.tab-left { display: flex; align-items: center; gap: 14px; }
+.tab-label { font-size: 11px; color: #888; letter-spacing: 1.5px; text-transform: uppercase; }
+.tab-summary { font-size: 13px; color: white; font-weight: 500; }
+.tab-arrow {
+  width: 20px; height: 20px; color: #888;
+  transition: transform .3s; flex-shrink: 0;
+}
+#export-bar.open .tab-arrow { transform: rotate(180deg); }
+
+/* Drawer */
+#export-drawer {
+  background: #111; border-top: 1px solid #2a2a2a;
+  padding: 16px 20px;
+  max-height: 0;
+  transform: translateY(100%);
+  transition: max-height .3s cubic-bezier(.4,0,.2,1), transform .3s cubic-bezier(.4,0,.2,1);
+  pointer-events: none;
+}
+#export-bar.open #export-drawer {
+  max-height: 260px;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.drawer-title { font-size: 10px; color: #666; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
+
+.section-cards { display: flex; gap: 10px; margin-bottom: 16px; }
+.sec-card {
+  flex: 1; border: 2px solid #2a2a2a; border-radius: 6px;
+  padding: 12px 14px; cursor: pointer;
+  transition: border-color .15s, background .15s;
+  display: flex; align-items: center; gap: 10px;
+  background: #1a1a1a;
+  -webkit-user-select: none; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.sec-card.selected { border-color: var(--red); background: #2a0f0e; }
+.sec-card .sc-check {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 2px solid #444; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, border-color .15s;
+}
+.sec-card.selected .sc-check { background: var(--red); border-color: var(--red); }
+.sc-check svg { display: none; }
+.sec-card.selected .sc-check svg { display: block; }
+.sec-card .sc-info h4 { font-size: 13px; font-weight: 600; color: white; }
+.sec-card .sc-info p  { font-size: 10.5px; color: #777; margin-top: 1px; }
+.sec-card.disabled { opacity: .35; pointer-events: none; }
+
+.drawer-actions { display: flex; gap: 9px; }
+.btn-pdf {
+  flex: 1; background: var(--red); color: white; border: none;
+  padding: 10px; font-family: inherit; font-size: 13.5px; font-weight: 600;
+  border-radius: var(--r); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: background .15s;
+}
+.btn-pdf:hover { background: var(--red-dark); }
+.btn-app {
+  flex: 1; background: #1e3a2a; color: #6fcf97;
+  border: 1px solid #2d5a3f; padding: 10px;
+  font-family: inherit; font-size: 13.5px; font-weight: 600;
+  border-radius: var(--r); cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+  transition: all .15s;
+}
+.btn-app:hover { background: #254d38; }
+
+/* ══════════ AI PANEL ══════════ */
+#ai-panel {
+  position: fixed; bottom: 56px; right: 0; width: 370px;
+  background: var(--ai-dark); color: white;
+  border-radius: 12px 0 0 0;
+  box-shadow: -4px -4px 30px rgba(0,0,0,.3);
+  z-index: 8999;
+  display: flex; flex-direction: column;
+  transition: height .3s ease;
+  height: 52px;
+  -webkit-transform: translateZ(0); transform: translateZ(0);
+}
+#ai-panel.open { height: 420px; }
+#ai-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 14px; height: 52px; cursor: pointer; flex-shrink: 0;
+  -webkit-user-select: none; user-select: none;
+  background: var(--ai-bg); border-radius: 12px 0 0 0;
+}
+#ai-toggle .ai-label { display: flex; align-items: center; gap: 9px; font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; font-weight: 600; color: var(--ai-accent); }
+.ai-dot { width: 7px; height: 7px; background: var(--ai-accent); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
+#ai-body { flex:1; display:flex; flex-direction:column; overflow:visible; padding:0 12px 12px; }
+#ai-messages {
+  flex:1; overflow-y:auto; padding:6px 2px;
+  display:flex; flex-direction:column; gap:8px;
+  scrollbar-width:thin; scrollbar-color:#7a3030 transparent;
+  -webkit-overflow-scrolling: touch;
+}
+.msg { padding:7px 11px; border-radius:8px; font-size:12px; line-height:1.5; max-width:92%; }
+.msg.user   { background:#6b1f1d; align-self:flex-end; color:#fdd; }
+.msg.ai     { background:#3a0f0e; align-self:flex-start; color:#f5ccc8; border:1px solid #5a1f1e; }
+.msg.system { background:transparent; color:#b06060; font-size:10px; text-align:center; align-self:center; font-style:italic; }
+#ai-input-row { display:flex; gap:7px; margin-top:7px; background:#3a0f0e; border-radius:8px; padding:5px 7px; align-items:center; }
+#ai-text { flex:1; background:transparent; border:none; color:white; font-family:inherit; font-size:12.5px; outline:none; resize:none; min-height:28px; max-height:65px; line-height:1.4; }
+#ai-text::placeholder { color:#7a3a3a; }
+.ai-btn { background:none; border:none; cursor:pointer; color:var(--ai-accent); padding:3px; border-radius:3px; display:flex; align-items:center; justify-content:center; transition:background .15s; }
+.ai-btn:hover { background:#5a1f1e; }
+.ai-btn svg { width:18px; height:18px; }
+.ai-btn.recording { color:#ff6b6b; animation:pulse 1s infinite; }
+#ai-actions { display:flex; gap:5px; flex-wrap:wrap; margin-top:6px; }
+.ai-chip { background:#5a1a18; border:1px solid #8a2a28; color:var(--ai-accent); font-size:10.5px; padding:3px 9px; border-radius:20px; cursor:pointer; white-space:nowrap; transition:background .15s; }
+.ai-chip:hover { background:#7a2220; }
+
+/* ══════════ TOAST ══════════ */
+#toast { position:fixed; top:18px; left:50%; transform:translateX(-50%) translateY(-80px); background:#1c1c1c; color:white; padding:9px 18px; border-radius:6px; font-size:12.5px; z-index:9999; transition:transform .3s ease; box-shadow:0 4px 20px rgba(0,0,0,.3); pointer-events:none; }
+#toast.show { transform:translateX(-50%) translateY(0); }
+#toast.error   { border-left:3px solid var(--red); }
+#toast.success { border-left:3px solid #2ecc71; }
+
+.spacer { height: 12px; }
+
+/* ── AI messages style ── */
+.msg { padding:7px 11px; border-radius:8px; font-size:12.5px; line-height:1.5; max-width:92%; word-wrap:break-word; }
+.msg.user   { background:#6b1f1d; align-self:flex-end; color:#fdd; }
+.msg.ai     { background:#3a0f0e; align-self:flex-start; color:#f5ccc8; border:1px solid #5a1f1e; }
+.msg.system { background:transparent; color:#b06060; font-size:10.5px; text-align:center; align-self:center; font-style:italic; }
+@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
 </style>
 </head>
 <body>
 
+<div id="toast"></div>
+
+<!-- ══ FIRMA MODAL ══ -->
+<div id="firma-modal">
+  <div class="fmi">
+    <div class="fmi-head">
+      <h3 id="fmi-title">Firma</h3>
+      <button class="xbtn" onclick="closeModal()">×</button>
+    </div>
+    <div id="fmc-wrap">
+      <canvas id="fmc"></canvas>
+      <div class="fmc-ph" id="fmc-ph">✍ Firma qui con il dito o il mouse</div>
+    </div>
+    <div class="fmi-actions">
+      <button class="btn-clr" onclick="clearFMC()">Cancella</button>
+      <button class="btn-cfm" onclick="confirmFirma()">✓ Conferma</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrapper">
 
-  <!-- toolbar stampa -->
-  <div class="print-bar no-print">
-    <button class="btn" onclick="window.history.back()">← Torna al CRM</button>
-    <button class="btn btn-red" onclick="window.print()">🖨 Stampa / PDF</button>
+<!-- ════════ SEZ. 1 – MANUTENZIONE ════════ -->
+<div class="page-wrap" id="sec1">
+
+  <div class="doc-header">
+    <div class="logo">
+      <h1>ROST81</h1>
+      <p>Antincendio e Sicurezza sul Lavoro</p>
+      <p>[www.rost81.it](https://www.rost81.it) · Tel. 06 97234064 · COLLEFERRO (Rm)</p>
+    </div>
+    <div class="doc-meta">
+      <div class="mf">
+        <label>N° Documento</label>
+        <input type="text" id="doc-num" readonly>
+      </div>
+      <div class="mf">
+        <label>Data intervento</label>
+        <input type="date" id="doc-data">
+      </div>
+    </div>
   </div>
 
-  <div class="page">
+  <div class="doc-title">Documento di Manutenzione</div>
 
-    <!-- INTESTAZIONE -->
-    <div class="header">
-      <div class="logo-area">
-        <h1>ROST 81</h1>
-        <p>Sicurezza sul lavoro · HSE · Antincendio · Formazione</p>
-        <p>Via Giotto 2 — 00034 Colleferro (RM) · P.IVA 10524751004</p>
-        <p>Tel. 06 97234064 · info@rost81.it</p>
+  <div class="section-block">
+    <div class="section-title">
+      Anagrafica Cliente
+      <span class="autofill-badge" id="autofill-badge">✓ Compilato automaticamente</span>
+    </div>
+    <div class="field required" id="f-azienda" style="margin-bottom:9px">
+      <label>Azienda</label>
+      <select id="cliente-select" onchange="autoFillCliente()">
+        <option value="">— Seleziona azienda —</option>
+      </select>
+      <span class="err-msg">Selezionare un'azienda</span>
+    </div>
+    <div class="grid-2">
+      <div class="field required" id="f-resp">
+        <label>Responsabile</label>
+        <input type="text" id="responsabile" oninput="checkFilled(this,'f-resp')">
+        <span class="err-msg">Campo obbligatorio</span>
       </div>
-      <div class="header-right">
-        <div class="doc-num" id="doc-num">MAN-2026-001</div>
-        <div>Data: <input type="date" id="data-doc" style="border:none;font-size:12px;color:var(--mid);width:130px" /></div>
-        <div style="margin-top:4px">Pag. 1 di 1</div>
+      <div class="field"><label>Partita IVA</label><input type="text" id="piva"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Indirizzo</label><input type="text" id="indirizzo"></div>
+      <div class="field"><label>Telefono</label><input type="text" id="telefono"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Email</label><input type="email" id="email"></div>
+      <div class="field"><label>PEC</label><input type="email" id="pec"></div>
+    </div>
+    <div class="field required" id="f-man" style="margin-bottom:4px">
+      <label>Manutentore</label>
+      <input type="text" id="manutentore" oninput="checkFilled(this,'f-man')">
+      <span class="err-msg">Campo obbligatorio</span>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Tipo di Intervento</div>
+    <div class="tipo-row">
+      <label class="radio-opt"><input type="radio" name="tipo" value="programmato" checked> Intervento programmato</label>
+      <label class="radio-opt"><input type="radio" name="tipo" value="straordinario"> Intervento straordinario</label>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Attività Svolte</div>
+    <div class="check-grid">
+      <label class="check-opt"><input type="checkbox" name="att" value="Controllo semestrale (UNI 9994-1)"> Controllo semestrale (UNI 9994-1)</label>
+      <label class="check-opt"><input type="checkbox" name="att" value="Installazione nuove attrezzature"> Installazione nuove attrezzature</label>
+      <label class="check-opt"><input type="checkbox" name="att" value="Ritiro estintori da revisionare"> Ritiro estintori da revisionare</label>
+      <label class="check-opt"><input type="checkbox" name="att" value="Consegna estintori revisionati"> Consegna estintori revisionati</label>
+      <label class="check-opt"><input type="checkbox" name="att" value="Prova impianto idrico antincendio"> Prova impianto idrico antincendio</label>
+      <label class="check-opt"><input type="checkbox" name="att" value="Manutenzione porte REI/vie di esodo"> Manutenzione porte REI / vie di esodo</label>
+    </div>
+    <div class="field"><label>Altro</label><input type="text" id="att-altro"></div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Anomalie Riscontrate – Estintori</div>
+    <table class="ext-table">
+      <colgroup>
+        <col style="width:30%"><col style="width:9%">
+        <col style="width:15%"><col style="width:15%"><col style="width:16%"><col style="width:15%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th>Tipo</th><th>Qtà</th>
+          <th class="check-cell">Manut.</th>
+          <th class="check-cell">Sotto pr.</th>
+          <th class="check-cell">Da revis.</th>
+          <th class="check-cell">Danneg.</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="subcat">
+          <td colspan="6">
+            <div class="tipo-est-row">
+              <span>Estintori –</span>
+              <div class="toggle-opts">
+                <label class="toggle-opt"><input type="radio" name="tipo-est1" value="polvere" checked onchange="updateTipoEst()"> Polvere</label>
+                <label class="toggle-opt"><input type="radio" name="tipo-est1" value="schiuma" onchange="updateTipoEst()"> Schiuma</label>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr><td><span class="est-label" data-kg="1">Polvere 1 kg</span></td><td><input type="number" min="0" data-ext="p1" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="p1" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="p1" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="p1" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="p1" data-tipo="dan"></td></tr>
+        <tr><td><span class="est-label" data-kg="2">Polvere 2 kg</span></td><td><input type="number" min="0" data-ext="p2" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="p2" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="p2" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="p2" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="p2" data-tipo="dan"></td></tr>
+        <tr><td><span class="est-label" data-kg="6">Polvere 6 kg</span></td><td><input type="number" min="0" data-ext="p6" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="p6" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="p6" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="p6" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="p6" data-tipo="dan"></td></tr>
+        <tr><td><span class="est-label" data-kg="9">Polvere 9 kg</span></td><td><input type="number" min="0" data-ext="p9" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="p9" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="p9" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="p9" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="p9" data-tipo="dan"></td></tr>
+        <tr class="subcat"><td colspan="6">Estintori a CO₂</td></tr>
+        <tr><td>CO₂ 2 kg</td><td><input type="number" min="0" data-ext="c2" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="c2" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="c2" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="c2" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="c2" data-tipo="dan"></td></tr>
+        <tr><td>CO₂ 5 kg</td><td><input type="number" min="0" data-ext="c5" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="c5" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="c5" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="c5" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="c5" data-tipo="dan"></td></tr>
+        <tr class="subcat"><td colspan="6">Estintori Carrellati</td></tr>
+        <tr><td>Carrellato 30 kg</td><td><input type="number" min="0" data-ext="k30" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="k30" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="k30" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="k30" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="k30" data-tipo="dan"></td></tr>
+        <tr><td>Carrellato 50 kg</td><td><input type="number" min="0" data-ext="k50" class="qta"></td><td class="check-cell"><input type="checkbox" data-ext="k50" data-tipo="man"></td><td class="check-cell"><input type="checkbox" data-ext="k50" data-tipo="sot"></td><td class="check-cell"><input type="checkbox" data-ext="k50" data-tipo="rev"></td><td class="check-cell"><input type="checkbox" data-ext="k50" data-tipo="dan"></td></tr>
+      </tbody>
+    </table>
+    <div class="grid-3">
+      <div class="field"><label>Naspo (qtà)</label><input type="number" min="0" id="naspo"></div>
+      <div class="field"><label>UNI 45 (qtà)</label><input type="number" min="0" id="uni45"></div>
+      <div class="field"><label>Cortesia 6 kg (qtà)</label><input type="number" min="0" id="cortesia"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Gruppo pressurizzazione</label>
+        <select id="gruppo-press"><option value="">— Nessun intervento —</option><option>Verificato – regolare</option><option>Verificato – con anomalie</option><option>Da revisionare</option></select>
+      </div>
+      <div class="field"><label>Porte REI</label>
+        <select id="porte-rei"><option value="">— Nessun intervento —</option><option>Verificate – regolari</option><option>Anomalie riscontrate</option><option>Da revisionare</option></select>
       </div>
     </div>
+    <div class="field"><label>Ricambi / altro</label><input type="text" id="ricambi-altro"></div>
+  </div>
 
-    <div class="doc-title">Rapporto di Manutenzione</div>
+  <div class="section-block">
+    <div class="section-title">Segnalazioni</div>
+    <div class="seg-grid">
+      <label class="seg-opt"><input type="checkbox" name="seg" value="Mantenere libere le vie di esodo"> Mantenere libere le vie di esodo</label>
+      <label class="seg-opt"><input type="checkbox" name="seg" value="Mantenere libere le attrezzature antincendio"> Mantenere libere le attrezzature</label>
+      <label class="seg-opt"><input type="checkbox" name="seg" value="Non bloccare autochiusura porte REI"> Non bloccare autochiusura porte REI</label>
+      <label class="seg-opt"><input type="checkbox" name="seg" value="Riparazione anomalie riscontrate"> Riparazione anomalie riscontrate</label>
+    </div>
+    <div class="field"><label>Altra segnalazione</label><input type="text" id="seg-altro"></div>
+  </div>
 
-    <!-- SEZIONE 1: CLIENTE -->
-    <div class="section">
-      <div class="section-title">1. Dati Cliente</div>
-      <div class="row-2">
-        <div class="field"><label>Ragione sociale / Cliente</label><input type="text" id="cliente" placeholder="es. Edilcantieri Srl"></div>
-        <div class="field"><label>Sede / Cantiere</label><input type="text" id="sede" placeholder="es. Via Roma 12, Colleferro"></div>
+  <div class="section-block">
+    <div class="section-title">Stato Intervento</div>
+    <div class="stato-row">
+      <label class="radio-opt"><input type="radio" name="stato" value="finito" checked> Intervento finito</label>
+      <label class="radio-opt"><input type="radio" name="stato" value="da_finire"> Intervento da finire</label>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Annotazioni</div>
+    <div id="annotazioni" class="annotazioni-box" contenteditable="true"
+         data-placeholder="Annotazioni generate dall'AI o inserite manualmente..."></div>
+  </div>
+
+  <div class="section-block">
+    <div class="firma-row">
+      <div class="firma-box">
+        <div class="firma-label">Firma del Manutentore</div>
+        <div class="firma-tap no-print" id="tap-man" onclick="openModal('firma-man','Firma del Manutentore')">
+          <canvas id="thumb-man"></canvas>
+          <div class="firma-tap-label">✍ Tocca per firmare</div>
+          <button class="firma-edit-btn" onclick="event.stopPropagation();openModal('firma-man','Firma del Manutentore')">Modifica</button>
+        </div>
+        <div class="print-firma-area" id="pf-man"></div>
       </div>
-      <div class="row-3">
-        <div class="field"><label>Referente</label><input type="text" id="referente" placeholder="Nome cognome"></div>
-        <div class="field"><label>Telefono</label><input type="text" id="tel" placeholder="es. 06 1234567"></div>
-        <div class="field"><label>Email</label><input type="text" id="email" placeholder="es. ufficio@azienda.it"></div>
+      <div class="firma-box">
+        <div class="firma-label">Firma del Cliente / Responsabile</div>
+        <div class="firma-tap no-print" id="tap-cli" onclick="openModal('firma-cli','Firma del Cliente')">
+          <canvas id="thumb-cli"></canvas>
+          <div class="firma-tap-label">✍ Tocca per firmare</div>
+          <button class="firma-edit-btn" onclick="event.stopPropagation();openModal('firma-cli','Firma del Cliente')">Modifica</button>
+        </div>
+        <div class="print-firma-area" id="pf-cli"></div>
       </div>
     </div>
+  </div>
 
-    <!-- SEZIONE 2: INTERVENTO -->
-    <div class="section">
-      <div class="section-title">2. Dati Intervento</div>
-      <div class="row-3">
-        <div class="field">
-          <label>Tipo intervento</label>
-          <select id="tipo">
-            <option value="">— seleziona —</option>
-            <option>Manutenzione programmata</option>
-            <option>Manutenzione straordinaria</option>
-            <option>Verifica periodica</option>
-            <option>Collaudo</option>
-            <option>Sostituzione componenti</option>
-            <option>Ricarica estintori</option>
-          </select>
+</div><!-- /sec1 -->
+
+<div id="prev-banner" class="no-print">
+  <div><h3>Preventivo di Spesa</h3><p>Genera con l'AI o crea manualmente. I dati del cliente vengono copiati in automatico.</p></div>
+  <button id="btn-crea-prev" onclick="creaPrev()">+ Crea Preventivo</button>
+</div>
+
+<!-- ════════ SEZ. 2 – PREVENTIVO ════════ -->
+<div class="page-wrap" id="sec2" style="display:none">
+
+  <div class="doc-header">
+    <div class="logo">
+      <h1>ROST81</h1>
+      <p>Antincendio e Sicurezza sul Lavoro</p>
+      <p>[www.rost81.it](https://www.rost81.it) · Tel. 06 97234064 · COLLEFERRO (Rm)</p>
+    </div>
+    <div class="doc-meta">
+      <div class="mf"><label>N° Preventivo</label><input type="text" id="prev-num" readonly></div>
+      <div class="mf"><label>Data</label><input type="date" id="prev-data"></div>
+    </div>
+  </div>
+
+  <div class="doc-title">Preventivo di Spesa</div>
+
+  <div class="section-block">
+    <div class="grid-2">
+      <div class="field"><label>Cliente</label><input type="text" id="prev-cliente"></div>
+      <div class="field"><label>Responsabile</label><input type="text" id="prev-responsabile"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Indirizzo</label><input type="text" id="prev-indirizzo"></div>
+      <div class="field"><label>Rif. documento</label><input type="text" id="prev-rif"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Email</label><input type="email" id="prev-email"></div>
+      <div class="field"><label>PEC</label><input type="email" id="prev-pec"></div>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Voci di Preventivo</div>
+    <table class="preventivo-table">
+      <colgroup><col style="width:42%"><col style="width:10%"><col style="width:18%"><col style="width:20%"><col style="width:10%"></colgroup>
+      <thead>
+        <tr><th>Descrizione</th><th>Qtà</th><th>Prezzo unit. €</th><th>Totale €</th><th class="no-print"></th></tr>
+      </thead>
+      <tbody id="prev-body"></tbody>
+      <tfoot>
+        <tr class="tot-row"><td colspan="3">Totale imponibile</td><td class="num" id="tot-imp">0,00</td><td class="no-print"></td></tr>
+        <tr class="tot-row"><td colspan="3">IVA 22%</td><td class="num" id="tot-iva">0,00</td><td class="no-print"></td></tr>
+        <tr class="tot-row"><td colspan="3"><strong>TOTALE</strong></td><td class="num" id="tot-tot"><strong>0,00</strong></td><td class="no-print"></td></tr>
+      </tfoot>
+    </table>
+    <div class="no-print" style="margin-bottom:12px">
+      <button onclick="addPrevRow()" style="background:none;border:1.5px dashed #bbb;padding:7px 14px;cursor:pointer;font-size:12.5px;color:#777;border-radius:var(--r);">+ Aggiungi voce</button>
+    </div>
+  </div>
+
+  <div class="section-block">
+    <div class="section-title">Note al Preventivo</div>
+    <div id="prev-note" class="prev-note" contenteditable="true"></div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="section-block">
+    <div class="firma-row">
+      <div class="firma-box">
+        <div class="firma-label">Firma ROST81</div>
+        <div class="firma-tap no-print" id="tap-rost" onclick="openModal('firma-rost','Firma ROST81')">
+          <canvas id="thumb-rost"></canvas>
+          <div class="firma-tap-label">✍ Tocca per firmare</div>
+          <button class="firma-edit-btn" onclick="event.stopPropagation();openModal('firma-rost','Firma ROST81')">Modifica</button>
         </div>
-        <div class="field"><label>Data intervento</label><input type="date" id="data-int"></div>
-        <div class="field"><label>Tecnico esecutore</label><input type="text" id="tecnico" placeholder="Nome cognome"></div>
+        <div class="print-firma-area" id="pf-rost"></div>
       </div>
-      <div class="field" style="margin-bottom:12px">
-        <label>Descrizione intervento</label>
-        <textarea id="descr" placeholder="Descrivi brevemente l'intervento eseguito..."></textarea>
+      <div class="firma-box">
+        <div class="firma-label">Accettazione Cliente</div>
+        <div class="firma-tap no-print" id="tap-acc" onclick="openModal('firma-acc','Accettazione Cliente')">
+          <canvas id="thumb-acc"></canvas>
+          <div class="firma-tap-label">✍ Tocca per firmare</div>
+          <button class="firma-edit-btn" onclick="event.stopPropagation();openModal('firma-acc','Accettazione Cliente')">Modifica</button>
+        </div>
+        <div class="print-firma-area" id="pf-acc"></div>
       </div>
     </div>
+  </div>
 
-    <!-- SEZIONE 3: CHECKLIST -->
-    <div class="section">
-      <div class="section-title">3. Checklist Verifiche</div>
-      <div class="checklist">
-        <div class="check-row-head">
-          <span>Voce</span><span>Esito</span><span>Conformità</span><span>Note</span>
-        </div>
-
-        <div class="check-row">
-          <span>Estintori — stato fisico e pressione</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Estintori — scadenza revisione</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Idranti / naspi — funzionamento</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Segnaletica emergenza — presenza e leggibilità</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Vie di esodo — sgombre e praticabili</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Illuminazione di emergenza</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>DPI — presenza e stato</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-
-        <div class="check-row">
-          <span>Documentazione (DVR, registri) — aggiornata</span>
-          <select><option>—</option><option>OK</option><option>KO</option><option>N/A</option></select>
-          <select><option>—</option><option>Conforme</option><option>Non conforme</option><option>N/A</option></select>
-          <input type="text" placeholder="note...">
-        </div>
-      </div>
-    </div>
-
-    <!-- SEZIONE 4: MATERIALI -->
-    <div class="section">
-      <div class="section-title">4. Materiali Utilizzati / Sostituiti</div>
-      <div class="field">
-        <textarea id="materiali" placeholder="es. Sostituzione manometro estintore CO2 5kg (n° 2 pz) · Ricarica polvere estintore 6kg (n° 1 pz) · Cartello uscita emergenza (n° 3 pz)" style="min-height:70px"></textarea>
-      </div>
-    </div>
-
-    <!-- SEZIONE 5: ESITO -->
-    <div class="section">
-      <div class="section-title">5. Esito Complessivo</div>
-      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
-          <input type="radio" name="esito" value="ok"> <span class="esito-badge esito-ok">✓ Conforme</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
-          <input type="radio" name="esito" value="parz"> <span class="esito-badge esito-parz">⚠ Parzialmente conforme</span>
-        </label>
-        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;text-transform:none;letter-spacing:0;font-weight:400">
-          <input type="radio" name="esito" value="ko"> <span class="esito-badge esito-ko">✕ Non conforme</span>
-        </label>
-      </div>
-      <div class="field" style="margin-top:12px">
-        <label>Osservazioni / Prescrizioni</label>
-        <textarea id="note-esito" placeholder="Indicare eventuali non conformità rilevate, azioni correttive richieste o prossimi interventi raccomandati..."></textarea>
-      </div>
-      <div class="field" style="margin-top:10px">
-        <label>Prossima verifica prevista</label>
-        <input type="date" id="prossima" style="max-width:200px">
-      </div>
-    </div>
-
-    <!-- SEZIONE 6: FIRME -->
-    <div class="section">
-      <div class="section-title">6. Firme</div>
-      <div class="row-2">
-        <div class="field">
-          <label>Tecnico ROST 81</label>
-          <div class="firma-box">Firma _________________________</div>
-          <div style="font-size:11px;color:var(--mid);margin-top:4px" id="firma-tecnico-nome"></div>
-        </div>
-        <div class="field">
-          <label>Cliente / Responsabile</label>
-          <div class="firma-box">Firma _________________________</div>
-          <div style="font-size:11px;color:var(--mid);margin-top:4px" id="firma-cliente-nome"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- footer -->
-    <div style="border-top:1px solid var(--border);padding-top:10px;display:flex;justify-content:space-between;font-size:10px;color:var(--mid)">
-      <span>ROST 81 Srl — Via Giotto 2, 00034 Colleferro (RM) — P.IVA 10524751004</span>
-      <span>Documento generato il <span id="footer-date"></span></span>
-    </div>
-
-  </div><!-- /page -->
+</div><!-- /sec2 -->
 </div><!-- /wrapper -->
 
+<!-- ════════ MODAL FIRMA ════════ -->
+<div id="firma-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:9999;padding:16px;align-items:center;justify-content:center;">
+  <div style="background:white;border-radius:10px;width:100%;max-width:680px;padding:18px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 60px rgba(0,0,0,.35);">
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <h3 id="fmi-title" style="font-size:15px;font-weight:600;">Firma</h3>
+      <button id="btn-close-modal" style="background:none;border:none;font-size:26px;cursor:pointer;color:#666;line-height:1;padding:0 6px;">×</button>
+    </div>
+    <div style="position:relative;border:2px solid #d8d5cf;border-radius:6px;background:#fefefe;touch-action:none;">
+      <canvas id="fmc" style="display:block;width:100%;height:250px;touch-action:none;cursor:crosshair;"></canvas>
+      <div id="fmc-ph" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;color:#ccc;font-style:italic;pointer-events:none;">✍ Firma qui con il dito</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button id="btn-clr" style="background:none;border:1.5px solid #d8d5cf;padding:10px 18px;border-radius:4px;font-size:14px;cursor:pointer;font-family:inherit;">Cancella</button>
+      <button id="btn-cfm" style="background:#b92b27;color:white;border:none;padding:10px 22px;border-radius:4px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;">✓ Conferma</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ BOTTOM BAR - unico container fixed ════════ -->
+<div id="bottom-bar" class="no-print" style="position:fixed;bottom:0;left:0;right:0;z-index:9000;display:flex;flex-direction:column;">
+
+  <!-- Riga tab: AI a sinistra, Esporta a destra -->
+  <div id="bottom-tabs" style="display:flex;height:52px;background:#1c1c1c;border-top:2px solid #2a2a2a;">
+
+    <!-- Tab AI -->
+    <button id="btn-ai-tab" onclick="toggleAI()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#4a0f0e;border:none;border-right:1px solid #2a2a2a;cursor:pointer;font-family:inherit;">
+      <div style="width:7px;height:7px;background:#ffb3b0;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;"></div>
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:#ffb3b0;">Agente AI</span>
+      <svg id="ai-arrow" style="margin-left:auto;width:16px;height:16px;color:#ffb3b0;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+    <!-- Tab Esporta -->
+    <button id="btn-exp-tab" onclick="toggleExport()" style="flex:1;display:flex;align-items:center;gap:10px;padding:0 16px;background:#1c1c1c;border:none;cursor:pointer;font-family:inherit;">
+      <svg style="width:15px;height:15px;color:#888;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span id="exp-tab-label" style="font-size:12px;color:#aaa;font-weight:500;">Esporta PDF</span>
+      <svg id="exp-arrow" style="margin-left:auto;width:16px;height:16px;color:#888;transition:transform .3s;flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+    </button>
+
+  </div>
+
+  <!-- Pannello AI (sopra i tab, scorre verso l'alto) -->
+  <div id="ai-panel" style="order:-2;background:#4a0f0e;max-height:0;overflow:hidden;transition:max-height .3s ease;">
+    <div style="display:flex;flex-direction:column;height:380px;padding:0 12px 12px;">
+      <div id="ai-messages" style="flex:1;overflow-y:auto;padding:8px 2px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;"></div>
+      <div id="ai-actions" style="display:flex;gap:5px;flex-wrap:wrap;margin:6px 0;">
+        <button onclick="chipClick('Genera il report annotazioni di manutenzione')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">📋 Report</button>
+        <button onclick="chipClick('Genera il preventivo di spesa')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">💶 Preventivo</button>
+        <button onclick="chipClick('Genera sia report che preventivo')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">⚡ Entrambi</button>
+        <button onclick="chipClick('Riassumi le anomalie riscontrate')" style="background:#5a1a18;border:1px solid #8a2a28;color:#ffb3b0;font-size:11px;padding:4px 10px;border-radius:20px;cursor:pointer;font-family:inherit;">🔍 Anomalie</button>
+      </div>
+      <div style="display:flex;gap:7px;background:#3a0f0e;border-radius:8px;padding:6px 8px;align-items:center;">
+        <textarea id="ai-text" placeholder="Scrivi o usa il microfono..." rows="1" style="flex:1;background:transparent;border:none;color:white;font-family:inherit;font-size:13px;outline:none;resize:none;min-height:28px;max-height:65px;line-height:1.4;"></textarea>
+        <button id="mic-btn" onclick="toggleMic()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="8" y1="22" x2="16" y2="22"/></svg>
+        </button>
+        <button onclick="sendMsg()" style="background:none;border:none;cursor:pointer;color:#ffb3b0;padding:3px;display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pannello Export (sopra i tab) -->
+  <div id="exp-panel" style="order:-1;background:#111;max-height:0;overflow:hidden;transition:max-height .3s ease;">
+    <div style="padding:16px 20px;">
+      <div style="font-size:10px;color:#666;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:12px;">Scegli cosa includere</div>
+      <div style="display:flex;gap:10px;margin-bottom:14px;">
+        <!-- Card Manutenzione -->
+        <button id="card-s1" onclick="toggleCard('s1')" style="flex:1;border:2px solid #b92b27;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#2a0f0e;font-family:inherit;text-align:left;">
+          <div id="chk-s1" style="width:18px;height:18px;border-radius:4px;background:#b92b27;border:2px solid #b92b27;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2 6 5 9 10 3"/></svg>
+          </div>
+          <div><div style="font-size:13px;font-weight:600;color:white;">Manutenzione</div><div style="font-size:10.5px;color:#777;margin-top:1px;">Documento + firme</div></div>
+        </button>
+        <!-- Card Preventivo -->
+        <button id="card-s2" onclick="toggleCard('s2')" disabled style="flex:1;border:2px solid #2a2a2a;border-radius:6px;padding:12px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;background:#1a1a1a;font-family:inherit;text-align:left;opacity:.4;">
+          <div id="chk-s2" style="width:18px;height:18px;border-radius:4px;background:transparent;border:2px solid #555;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+            <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5" style="display:none;"><polyline points="2 6 5 9 10 3"/></svg>
+          </div>
+          <div><div style="font-size:13px;font-weight:600;color:white;">Preventivo</div><div id="card-s2-sub" style="font-size:10.5px;color:#777;margin-top:1px;">Crea prima il preventivo</div></div>
+        </button>
+      </div>
+      <div style="display:flex;gap:9px;">
+        <button onclick="sendToApp()" style="flex:1;background:#1e3a2a;color:#6fcf97;border:1px solid #2d5a3f;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Invia a APP Client
+        </button>
+        <button onclick="exportPDF()" style="flex:1;background:#b92b27;color:white;border:none;padding:10px;font-family:inherit;font-size:13px;font-weight:600;border-radius:4px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Esporta PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /bottom-bar -->
+
+<!-- Toast -->
+<div id="toast" style="position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-80px);background:#1c1c1c;color:white;padding:9px 18px;border-radius:6px;font-size:13px;z-index:99999;transition:transform .3s ease;box-shadow:0 4px 20px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap;"></div>
+
+
 <script>
-  // data di oggi
-  const oggi = new Date().toISOString().split('T')[0];
-  document.getElementById('data-doc').value = oggi;
-  document.getElementById('data-int').value = oggi;
-  document.getElementById('footer-date').textContent = new Date().toLocaleDateString('it-IT');
+/* ══ SUPABASE ══ */
+const SUPA_URL = 'https://aswreslquvvpyevuhboi.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const H = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 
-  // numero documento progressivo (localStorage)
-  const key = 'rost81-man-counter';
-  let n = parseInt(localStorage.getItem(key) || '0') + 1;
-  localStorage.setItem(key, n);
-  document.getElementById('doc-num').textContent = 'MAN-' + new Date().getFullYear() + '-' + String(n).padStart(3,'0');
+/* ══ STATE ══ */
+let aiOpen = false;
+let expOpen = false;
+let mCtx, mDrawing = false, mMark = false, curFirma = null;
+const firmaData = {};
+const hist = [];
 
-  // aggiorna nome tecnico e cliente nelle firme
-  document.getElementById('tecnico').addEventListener('input', e => {
-    document.getElementById('firma-tecnico-nome').textContent = e.target.value;
+/* ══ CLIENTI DA SUPABASE ══ */
+let CRM = [];
+
+async function initClienti() {
+  const s = document.getElementById('cliente-select');
+  try {
+    const r = await fetch(SUPA_URL + '/rest/v1/rost81_clienti?select=id,nome,partita_iva,citta,provincia,telefono,email,pec,referente&order=nome.asc', {headers: H});
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    CRM = await r.json();
+    CRM.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.nome; s.appendChild(o);
+    });
+  } catch(e) {
+    console.error('Errore caricamento clienti:', e);
+    const o = document.createElement('option');
+    o.disabled = true; o.textContent = 'Errore caricamento clienti';
+    s.appendChild(o);
+  }
+}
+
+function autoFillCliente() {
+  const selId = document.getElementById('cliente-select').value;
+  const badge = document.getElementById('autofill-badge');
+  if(!selId) { badge.classList.remove('show'); return; }
+  const c = CRM.find(x => x.id === selId); if(!c) return;
+  const citta = [c.citta, c.provincia].filter(Boolean).join(' (') + (c.provincia ? ')' : '');
+  document.getElementById('piva').value        = c.partita_iva || '';
+  document.getElementById('indirizzo').value   = citta;
+  document.getElementById('telefono').value    = c.telefono || '';
+  document.getElementById('email').value       = c.email || '';
+  document.getElementById('pec').value         = c.pec || '';
+  document.getElementById('responsabile').value = c.referente || '';
+  badge.classList.add('show');
+  checkFilled(document.getElementById('cliente-select'), 'f-azienda');
+  checkFilled(document.getElementById('responsabile'), 'f-resp');
+}
+
+/* ══ NUMERAZIONE ══ */
+function initDocNum() {
+  const y = new Date().getFullYear();
+  const k = 'rost81_man_' + y;
+  const n = parseInt(localStorage.getItem(k) || '0') + 1;
+  localStorage.setItem(k, n);
+  document.getElementById('doc-num').value = 'MAN-' + y + '-' + String(n).padStart(4,'0');
+}
+
+/* ══ REQUIRED ══ */
+function checkFilled(el, fieldId) {
+  const f = document.getElementById(fieldId);
+  if(!f) return;
+  f.classList.toggle('filled', !!el.value.trim());
+}
+function initRequiredState() {
+  document.getElementById('responsabile').addEventListener('input', function(){ checkFilled(this,'f-resp'); });
+  document.getElementById('manutentore').addEventListener('input', function(){ checkFilled(this,'f-man'); });
+}
+
+/* ══ AI PANEL ══ */
+function toggleAI() {
+  aiOpen = !aiOpen;
+  if(aiOpen && expOpen) { expOpen = false; updateExpPanel(); }
+  const panel = document.getElementById('ai-panel');
+  const arrow = document.getElementById('ai-arrow');
+  panel.style.maxHeight = aiOpen ? '400px' : '0';
+  arrow.style.transform = aiOpen ? 'rotate(180deg)' : '';
+}
+
+/* ══ EXPORT PANEL ══ */
+function toggleExport() {
+  expOpen = !expOpen;
+  if(expOpen && aiOpen) { aiOpen = false; document.getElementById('ai-panel').style.maxHeight = '0'; document.getElementById('ai-arrow').style.transform = ''; }
+  updateExpPanel();
+}
+function updateExpPanel() {
+  const panel = document.getElementById('exp-panel');
+  const arrow = document.getElementById('exp-arrow');
+  panel.style.maxHeight = expOpen ? '300px' : '0';
+  arrow.style.transform = expOpen ? 'rotate(180deg)' : '';
+}
+
+/* ══ CARD SELEZIONE ══ */
+const cardState = { s1: true, s2: false };
+
+function toggleCard(sec) {
+  const card = document.getElementById('card-' + sec);
+  if(card.disabled) return;
+  cardState[sec] = !cardState[sec];
+  updateCard(sec);
+}
+
+function updateCard(sec) {
+  const card = document.getElementById('card-' + sec);
+  const chk  = document.getElementById('chk-' + sec);
+  const sel  = cardState[sec];
+  card.style.border = sel ? '2px solid #b92b27' : '2px solid #2a2a2a';
+  card.style.background = sel ? '#2a0f0e' : '#1a1a1a';
+  chk.style.background = sel ? '#b92b27' : 'transparent';
+  chk.style.borderColor = sel ? '#b92b27' : '#555';
+  chk.querySelector('svg').style.display = sel ? 'block' : 'none';
+}
+
+function enablePrevCard() {
+  const card = document.getElementById('card-s2');
+  card.disabled = false;
+  card.style.opacity = '1';
+  cardState.s2 = true;
+  updateCard('s2');
+  document.getElementById('card-s2-sub').textContent = 'Voci preventivo + firme';
+}
+
+/* ══ POLVERE/SCHIUMA ══ */
+function updateTipoEst() {
+  const t = document.querySelector('input[name="tipo-est1"]:checked').value;
+  document.querySelectorAll('.est-label').forEach(el => {
+    el.textContent = (t === 'schiuma' ? 'Schiuma' : 'Polvere') + ' ' + el.dataset.kg + ' kg';
   });
-  document.getElementById('cliente').addEventListener('input', e => {
-    document.getElementById('firma-cliente-nome').textContent = e.target.value;
+}
+
+/* ══ FIRMA MODAL ══ */
+function openModal(fid, title) {
+  curFirma = fid;
+  document.getElementById('fmi-title').textContent = title;
+  const modal = document.getElementById('firma-modal');
+  modal.style.display = 'flex';
+
+  const canvas = document.getElementById('fmc');
+  const ratio = window.devicePixelRatio || 1;
+  const w = Math.min(window.innerWidth - 64, 680);
+  const h = 250;
+  canvas.width  = w * ratio;
+  canvas.height = h * ratio;
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+
+  mCtx = canvas.getContext('2d');
+  mCtx.scale(ratio, ratio);
+  mCtx.strokeStyle = '#1a1a1a';
+  mCtx.lineWidth = 2.5;
+  mCtx.lineCap = 'round';
+  mCtx.lineJoin = 'round';
+  mMark = false;
+  mDrawing = false;
+  document.getElementById('fmc-ph').style.display = 'flex';
+
+  if(firmaData[fid]) {
+    const img = new Image();
+    img.onload = () => { mCtx.drawImage(img, 0, 0, w, h); mMark = true; document.getElementById('fmc-ph').style.display = 'none'; };
+    img.src = firmaData[fid];
+  }
+}
+
+function closeModal() {
+  document.getElementById('firma-modal').style.display = 'none';
+  curFirma = null;
+}
+
+function clearFMC() {
+  const c = document.getElementById('fmc'), ratio = window.devicePixelRatio || 1;
+  mCtx.clearRect(0, 0, c.width / ratio, c.height / ratio);
+  mMark = false;
+  document.getElementById('fmc-ph').style.display = 'flex';
+  if(curFirma) { delete firmaData[curFirma]; updateThumb(curFirma, null); }
+}
+
+function confirmFirma() {
+  if(!mMark || !curFirma) { closeModal(); return; }
+  firmaData[curFirma] = document.getElementById('fmc').toDataURL('image/png');
+  updateThumb(curFirma, firmaData[curFirma]);
+  closeModal();
+}
+
+function updateThumb(fid, url) {
+  const tapMap   = {'firma-man':'tap-man','firma-cli':'tap-cli','firma-rost':'tap-rost','firma-acc':'tap-acc'};
+  const thumbMap = {'firma-man':'thumb-man','firma-cli':'thumb-cli','firma-rost':'thumb-rost','firma-acc':'thumb-acc'};
+  const printMap = {'firma-man':'pf-man','firma-cli':'pf-cli','firma-rost':'pf-rost','firma-acc':'pf-acc'};
+  const tap   = document.getElementById(tapMap[fid]);
+  const thumb = document.getElementById(thumbMap[fid]);
+  const pa    = document.getElementById(printMap[fid]);
+  if(!tap) return;
+  if(url) {
+    const ratio = window.devicePixelRatio || 1;
+    thumb.width  = tap.offsetWidth * ratio;
+    thumb.height = 76 * ratio;
+    thumb.style.width  = tap.offsetWidth + 'px';
+    thumb.style.height = '76px';
+    const ctx = thumb.getContext('2d');
+    ctx.scale(ratio, ratio);
+    const img = new Image();
+    img.onload = () => ctx.drawImage(img, 0, 0, tap.offsetWidth, 76);
+    img.src = url;
+    tap.classList.add('has-sig');
+    if(pa) pa.innerHTML = `<img src="${url}" style="max-height:52px;max-width:100%;">`;
+  } else {
+    tap.classList.remove('has-sig');
+    if(thumb.getContext) thumb.getContext('2d').clearRect(0, 0, thumb.width, thumb.height);
+    if(pa) pa.innerHTML = '';
+  }
+}
+
+/* ══ CANVAS FIRMA DRAW ══ */
+function initFirmaCanvas() {
+  const canvas = document.getElementById('fmc');
+
+  function getPos(e) {
+    const r = canvas.getBoundingClientRect();
+    const s = e.touches ? e.touches[0] : e;
+    return { x: (s.clientX - r.left), y: (s.clientY - r.top) };
+  }
+
+  function onStart(e) {
+    e.preventDefault();
+    mDrawing = true;
+    const p = getPos(e);
+    mCtx.beginPath();
+    mCtx.moveTo(p.x, p.y);
+    if(!mMark) { mMark = true; document.getElementById('fmc-ph').style.display = 'none'; }
+  }
+  function onMove(e) {
+    e.preventDefault();
+    if(!mDrawing) return;
+    const p = getPos(e);
+    mCtx.lineTo(p.x, p.y);
+    mCtx.stroke();
+  }
+  function onEnd(e) { e.preventDefault(); mDrawing = false; }
+
+  canvas.addEventListener('mousedown',  onStart);
+  canvas.addEventListener('mousemove',  onMove);
+  canvas.addEventListener('mouseup',    onEnd);
+  canvas.addEventListener('mouseleave', onEnd);
+  canvas.addEventListener('touchstart', onStart, { passive: false });
+  canvas.addEventListener('touchmove',  onMove,  { passive: false });
+  canvas.addEventListener('touchend',   onEnd,   { passive: false });
+}
+
+/* ══ FIRMA TAP BOX — usa button invece di div ══ */
+function initFirmaTaps() {
+  const taps = [
+    { id:'tap-man',  fid:'firma-man',  title:'Firma del Manutentore' },
+    { id:'tap-cli',  fid:'firma-cli',  title:'Firma del Cliente' },
+    { id:'tap-rost', fid:'firma-rost', title:'Firma ROST81' },
+    { id:'tap-acc',  fid:'firma-acc',  title:'Accettazione Cliente' },
+  ];
+  taps.forEach(({ id, fid, title }) => {
+    const el = document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('click', function(e) {
+      if(e.target.classList.contains('firma-edit-btn')) return;
+      openModal(fid, title);
+    });
   });
+  // Modal close
+  document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+  document.getElementById('btn-clr').addEventListener('click', clearFMC);
+  document.getElementById('btn-cfm').addEventListener('click', confirmFirma);
+  document.getElementById('firma-modal').addEventListener('click', function(e) {
+    if(e.target === this) closeModal();
+  });
+}
+
+/* ══ FORM DATA ══ */
+function gv(id) { return (document.getElementById(id)||{}).value||''; }
+function gchecked(n) { return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(i=>i.value); }
+function gradio(n) { return (document.querySelector(`input[name="${n}"]:checked`)||{}).value||''; }
+
+function getFormData() {
+  const te = gradio('tipo-est1') === 'schiuma' ? 'Schiuma' : 'Polvere';
+  const nomi = {p1:`${te} 1kg`,p2:`${te} 2kg`,p6:`${te} 6kg`,p9:`${te} 9kg`,c2:'CO₂ 2kg',c5:'CO₂ 5kg',k30:'Carrellato 30kg',k50:'Carrellato 50kg'};
+  const tn = {man:'Manutenzione',sot:'Sotto pressione',rev:'Da revisionare',dan:'Danneggiati'};
+  const ext = {};
+  document.querySelectorAll('.qta').forEach(i => { const k=i.dataset.ext,q=parseInt(i.value)||0; if(q>0) ext[k]={qta:q,anomalie:[]}; });
+  document.querySelectorAll('[data-tipo]').forEach(i => { const k=i.dataset.ext; if(i.checked&&ext[k]) ext[k].anomalie.push(i.dataset.tipo); });
+  let es = '';
+  for(const [k,v] of Object.entries(ext)) { const an=v.anomalie.map(a=>tn[a]).join(', ')||'Nessuna'; es+=`\n  - ${nomi[k]}: ${v.qta} pz → ${an}`; }
+  const sel = document.getElementById('cliente-select');
+  return {
+    cliente:sel.options[sel.selectedIndex]?.text||'',
+    responsabile:gv('responsabile'), manutentore:gv('manutentore'),
+    indirizzo:gv('indirizzo'), piva:gv('piva'), email:gv('email'), pec:gv('pec'),
+    data:gv('doc-data'), docNum:gv('doc-num'),
+    tipoIntervento:gradio('tipo'), tipoEst:te,
+    attivita:gchecked('att').join(', ')||'Nessuna', attAltro:gv('att-altro'),
+    estintori:es||'\n  Nessun estintore',
+    naspo:gv('naspo'), uni45:gv('uni45'), cortesia:gv('cortesia'),
+    gruppoPress:gv('gruppo-press'), porteRei:gv('porte-rei'), ricambiAltro:gv('ricambi-altro'),
+    segnalazioni:gchecked('seg').join(' | ')||'Nessuna', segAltro:gv('seg-altro'),
+    stato:gradio('stato')
+  };
+}
+
+/* ══ VALIDAZIONE ══ */
+const REQUIRED = [{id:'cliente-select',fid:'f-azienda'},{id:'responsabile',fid:'f-resp'},{id:'manutentore',fid:'f-man'}];
+function validateForm() {
+  let ok = true;
+  REQUIRED.forEach(r => {
+    const el = document.getElementById(r.id);
+    const f  = document.getElementById(r.fid);
+    const empty = !el.value.trim();
+    if(f) f.classList.toggle('show-err', empty);
+    if(empty) ok = false;
+  });
+  return ok;
+}
+
+/* ══ PREVENTIVO ══ */
+function mostraPrev() {
+  const d = getFormData();
+  const sel = document.getElementById('cliente-select');
+  document.getElementById('prev-cliente').value      = sel.options[sel.selectedIndex]?.text||'';
+  document.getElementById('prev-responsabile').value = d.responsabile;
+  document.getElementById('prev-indirizzo').value    = d.indirizzo;
+  document.getElementById('prev-email').value        = d.email;
+  document.getElementById('prev-pec').value          = d.pec;
+  document.getElementById('prev-rif').value          = d.docNum ? 'Rif. '+d.docNum : '';
+  document.getElementById('prev-data').value         = d.data;
+  const y = new Date().getFullYear();
+  const k = 'rost81_prv_' + y;
+  const n = parseInt(localStorage.getItem(k)||'0') + 1;
+  localStorage.setItem(k, n);
+  document.getElementById('prev-num').value = 'PRV-'+y+'-'+String(n).padStart(4,'0');
+  document.getElementById('sec2').style.display = '';
+  document.getElementById('prev-banner').style.display = 'none';
+  enablePrevCard();
+  document.getElementById('sec2').scrollIntoView({behavior:'smooth', block:'start'});
+}
+function creaPrev() { mostraPrev(); }
+function clearPrevTable() { document.getElementById('prev-body').innerHTML=''; updateTotals(); }
+function addPrevRow(desc='', qta=1, prezzo=0) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td><input type="text" value="${desc}" oninput="updateTotals()"></td><td><input type="number" class="ni" value="${qta}" min="0" step="0.1" oninput="updateTotals()" style="width:48px"></td><td><input type="number" class="ni" value="${parseFloat(prezzo).toFixed(2)}" min="0" step="0.01" oninput="updateTotals()" style="width:80px"></td><td class="num tot-cell">${fmt((parseFloat(qta)||0)*(parseFloat(prezzo)||0))}</td><td class="no-print"><button class="rm-btn" onclick="this.closest('tr').remove();updateTotals()">✕</button></td>`;
+  document.getElementById('prev-body').appendChild(tr);
+  updateTotals();
+}
+function fmt(n) { return (n||0).toFixed(2).replace('.',','); }
+function updateTotals() {
+  let imp = 0;
+  document.querySelectorAll('#prev-body tr').forEach(tr => {
+    const ns = tr.querySelectorAll('input[type=number]');
+    if(ns.length >= 2) { const t=(parseFloat(ns[0].value)||0)*(parseFloat(ns[1].value)||0); const c=tr.querySelector('.tot-cell'); if(c)c.textContent=fmt(t); imp+=t; }
+  });
+  const iva = imp * .22;
+  document.getElementById('tot-imp').textContent = fmt(imp);
+  document.getElementById('tot-iva').textContent = fmt(iva);
+  document.getElementById('tot-tot').innerHTML = '<strong>'+fmt(imp+iva)+'</strong>';
+}
+
+/* ══ AI CHAT ══ */
+function buildSP(d) {
+  return `Sei l'agente AI di ROST81, antincendio e sicurezza sul lavoro.
+DATI: Cliente:${d.cliente||'—'} | Resp:${d.responsabile||'—'} | P.IVA:${d.piva||'—'} | Ind:${d.indirizzo||'—'} | Email:${d.email||'—'} | PEC:${d.pec||'—'} | Data:${d.data||'—'} | Doc:${d.docNum||'—'} | Manut:${d.manutentore||'—'} | Tipo:${d.tipoIntervento} | Attività:${d.attivita}${d.attAltro?' | '+d.attAltro:''} | Estintori(${d.tipoEst}):${d.estintori} | Naspo:${d.naspo||0} UNI45:${d.uni45||0} Cortesia:${d.cortesia||0} | Press:${d.gruppoPress||'—'} | REI:${d.porteRei||'—'} | Ricambi:${d.ricambiAltro||'—'} | Segn:${d.segnalazioni} | Stato:${d.stato}
+LISTINO: non disponibile. Usa prezzi medi italiani e segnalalo nelle note.
+OUTPUT: per annotazioni scrivi [ANNOTAZIONI:] poi testo. Per preventivo scrivi [PREVENTIVO:] poi JSON array puro {"descrizione":"...","qta":N,"prezzoUnit":N}. Se entrambi: prima annotazioni poi preventivo. Rispondi in italiano.`;
+}
+
+function addMsg(r, t) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + r;
+  d.textContent = t;
+  const msgs = document.getElementById('ai-messages');
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+  return d;
+}
+
+async function sendMsg() {
+  const ta = document.getElementById('ai-text');
+  const t = ta.value.trim(); if(!t) return;
+
+  // Recupera o chiedi la API key
+  let apiKey = localStorage.getItem('sentinel81_apikey');
+  if(!apiKey) {
+    apiKey = prompt('Inserisci la tua Anthropic API Key (verrà salvata localmente):');
+    if(!apiKey) return;
+    localStorage.setItem('sentinel81_apikey', apiKey.trim());
+    apiKey = apiKey.trim();
+  }
+
+  ta.value = '';
+  addMsg('user', t);
+  hist.push({role:'user', content:t});
+  const td = addMsg('ai', '⏳ Elaboro...');
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({model:'claude-sonnet-4-20250514', max_tokens:1000, system:buildSP(getFormData()), messages:hist})
+    });
+    if(!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      if(r.status === 401) {
+        localStorage.removeItem('sentinel81_apikey');
+        td.textContent = 'API Key non valida — sarà richiesta nuovamente al prossimo invio.';
+        return;
+      }
+      td.textContent = 'Errore API: ' + (err.error?.message || r.status);
+      return;
+    }
+    const data = await r.json();
+    const rep = data.content?.[0]?.text || 'Errore.';
+    td.remove(); addMsg('ai', rep);
+    hist.push({role:'assistant', content:rep});
+    parseAI(rep);
+  } catch(e) { td.textContent = 'Errore connessione: ' + e.message; }
+}
+
+function parseAI(t) {
+  const am = t.match(/\[ANNOTAZIONI:\]([\s\S]*?)(?=\[PREVENTIVO:|$)/i);
+  if(am) document.getElementById('annotazioni').innerText = am[1].trim();
+  const pm = t.match(/\[PREVENTIVO:\]([\s\S]*)/i);
+  if(pm) {
+    let j = pm[1].trim().replace(/```json|```/g,'').trim();
+    try { const rows=JSON.parse(j); mostraPrev(); clearPrevTable(); rows.forEach(r=>addPrevRow(r.descrizione,r.qta,r.prezzoUnit)); }
+    catch(e) { console.warn(e); }
+  }
+}
+
+function chipClick(t) { document.getElementById('ai-text').value=t; sendMsg(); }
+
+/* ══ MICROFONO ══ */
+let rec = null, isRec = false;
+function toggleMic() {
+  if(!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) { alert('Usa Chrome per il riconoscimento vocale.'); return; }
+  if(isRec) { rec.stop(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  rec = new SR(); rec.lang='it-IT'; rec.continuous=false; rec.interimResults=true;
+  const btn = document.getElementById('mic-btn');
+  rec.onstart  = () => { isRec=true; btn.style.color='#e74c3c'; addMsg('system','🎤 Ascolto...'); };
+  rec.onresult = e => { let f='',i=''; for(let j=e.resultIndex;j<e.results.length;j++) e.results[j].isFinal?f+=e.results[j][0].transcript:i+=e.results[j][0].transcript; document.getElementById('ai-text').value=f||i; };
+  rec.onend    = () => { isRec=false; btn.style.color='#ffb3b0'; const t=document.getElementById('ai-text').value.trim(); if(t)sendMsg(); };
+  rec.onerror  = e => { isRec=false; btn.style.color='#ffb3b0'; addMsg('system','Errore mic: '+e.error); };
+  rec.start();
+}
+
+/* ══ TOAST ══ */
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderLeft = type==='error' ? '3px solid #b92b27' : '3px solid #2ecc71';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => t.style.transform = 'translateX(-50%) translateY(-80px)', 3200);
+}
+
+/* ══ EXPORT PDF ══ */
+function exportPDF() {
+  if(!validateForm()) { showToast('Compila i campi obbligatori prima di esportare.','error'); return; }
+  const s1 = cardState.s1, s2 = cardState.s2;
+  if(!s1 && !s2) { showToast('Seleziona almeno una sezione.','error'); return; }
+  const sec1 = document.getElementById('sec1');
+  const sec2 = document.getElementById('sec2');
+  const wasHidden = sec2.style.display === 'none';
+  sec1.style.display = s1 ? '' : 'none';
+  if(s2) sec2.style.display = '';
+  expOpen = false; updateExpPanel();
+  setTimeout(() => {
+    window.print();
+    setTimeout(() => {
+      sec1.style.display = '';
+      if(wasHidden && !s2) sec2.style.display = 'none';
+    }, 700);
+  }, 150);
+}
+
+/* ══ INVIA APP ══ */
+async function sendToApp() {
+  if(!validateForm()) { showToast('Compila i campi obbligatori prima di inviare.','error'); return; }
+  const d = getFormData();
+  const payload = {tipo:'documento_manutenzione',docNum:d.docNum,data:d.data,cliente:d.cliente,responsabile:d.responsabile,email:d.email,pec:d.pec,annotazioni:document.getElementById('annotazioni').innerText,stato:d.stato,timestamp:new Date().toISOString()};
+  const EP = 'https://app.rost81.it/api/receive-document';
+  try {
+    showToast('⏳ Invio in corso...','success');
+    const r = await fetch(EP,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    r.ok ? showToast('✓ Inviato a APP Client!','success') : showToast('Endpoint da configurare.','error');
+  } catch(e) { showToast('Endpoint non attivo – da configurare.','error'); }
+}
+
+/* ══ INIT ══ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('doc-data').value = new Date().toISOString().split('T')[0];
+  initClienti();
+  initDocNum();
+  initRequiredState();
+  initFirmaCanvas();
+  initFirmaTaps();
+
+  // ai-text: invio con Enter
+  document.getElementById('ai-text').addEventListener('keydown', function(e) {
+    if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+  });
+
+  // Messaggio iniziale AI
+  addMsg('system', 'Agente pronto.');
+
+  // Padding bottom pagina = altezza bottom-bar
+  document.querySelector('.wrapper').style.paddingBottom = '72px';
+});
 </script>
+
 </body>
 </html>

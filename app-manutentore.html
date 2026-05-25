@@ -1232,7 +1232,7 @@ async function sendSentinelMsg(){
       headers:{
         'x-api-key':_sentinelApiKey,
         'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-allow-browser':'true',
+        'anthropic-dangerous-direct-browser-access':'true',
         'content-type':'application/json'
       },
       body:JSON.stringify({model:SENTINEL_MODEL,max_tokens:1500,system:sysPrompt,messages:msgs})

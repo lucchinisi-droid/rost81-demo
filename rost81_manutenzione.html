@@ -262,14 +262,8 @@ html, body {
 #firma-modal {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.65); z-index: 99999;
-  display: flex; align-items: center; justify-content: center; padding: 16px;
-  /* Safari iOS fix: usa visibility invece di display:none */
-  visibility: hidden; opacity: 0;
-  transition: opacity .2s, visibility .2s;
+  align-items: center; justify-content: center; padding: 16px;
   -webkit-transform: translateZ(0); transform: translateZ(0);
-}
-#firma-modal.open {
-  visibility: visible; opacity: 1;
 }
 .fmi {
   background: white; border-radius: 10px;
@@ -470,25 +464,7 @@ html, body {
 </head>
 <body>
 
-<div id="toast"></div>
 
-<!-- ══ FIRMA MODAL ══ -->
-<div id="firma-modal">
-  <div class="fmi">
-    <div class="fmi-head">
-      <h3 id="fmi-title">Firma</h3>
-      <button class="xbtn" onclick="closeModal()">×</button>
-    </div>
-    <div id="fmc-wrap">
-      <canvas id="fmc"></canvas>
-      <div class="fmc-ph" id="fmc-ph">✍ Firma qui con il dito o il mouse</div>
-    </div>
-    <div class="fmi-actions">
-      <button class="btn-clr" onclick="clearFMC()">Cancella</button>
-      <button class="btn-cfm" onclick="confirmFirma()">✓ Conferma</button>
-    </div>
-  </div>
-</div>
 
 <div class="wrapper">
 

@@ -1409,7 +1409,8 @@ function onNomeSelectChange(sel){
 async function salvaArticolo(){
   const sel=document.getElementById('n-nome-select');
   const custom=document.getElementById('n-nome-custom');
-  const nome=(sel.value==='__nuovo__'?custom.value:sel.value).trim();
+  // usa il campo testo se visibile (flusso da scheda o da selezione __nuovo__)
+  const nome=(custom.style.display!=='none' ? custom.value : sel.value).trim();
   if(!nome){showToast('Seleziona o inserisci il nome articolo','error');return;}
   const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino`,{
     method:'POST',headers:{...H,'Prefer':'return=minimal'},

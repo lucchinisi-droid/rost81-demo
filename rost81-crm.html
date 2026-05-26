@@ -124,6 +124,46 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .form-input:focus{border-color:var(--red)}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:100;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)} .toast.success{background:var(--green)} .toast.error{background:var(--red)}
+/* ── Sidebar sections ── */
+.sidebar nav{flex:1;overflow-y:auto;padding-bottom:8px}
+.nav-section-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text-hint);text-transform:uppercase;padding:16px 20px 5px;margin-top:2px}
+.nav-section-label.first{padding-top:4px}
+/* ── Calendar ── */
+.cal-header-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
+.cal-day-name{text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;padding:6px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{min-height:68px;border-radius:var(--radius-sm);padding:6px;background:var(--surface);border:1px solid var(--border);cursor:pointer;transition:all .12s;position:relative}
+.cal-cell:hover{border-color:var(--red);background:var(--red-light)}
+.cal-cell.other-month{background:var(--bg);opacity:.45}
+.cal-cell.today{border-color:var(--red);border-width:2px}
+.cal-cell.selected{background:var(--red-light);border-color:var(--red)}
+.cal-cell-num{font-size:12px;font-weight:600;color:var(--text);line-height:1}
+.cal-cell.today .cal-cell-num{color:var(--red)}
+.cal-dots{display:flex;flex-wrap:wrap;gap:2px;margin-top:4px}
+.cal-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.cal-dot.appuntamento{background:#2980b9}
+.cal-dot.corso{background:#e67e22}
+.cal-dot.scadenza{background:#c0392b}
+.cal-dot.altro{background:#9ca3af}
+.cal-event-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--radius-sm);margin-bottom:6px;border-left:3px solid transparent;background:var(--bg)}
+.cal-event-row.appuntamento{border-left-color:#2980b9}
+.cal-event-row.corso{border-left-color:#e67e22}
+.cal-event-row.scadenza{border-left-color:#c0392b}
+.cal-event-row.altro{border-left-color:#9ca3af}
+.cal-event-titolo{font-size:12px;font-weight:500;flex:1}
+.cal-event-ora{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
+.cal-event-del{background:none;border:none;color:var(--text-hint);cursor:pointer;font-size:14px;padding:0 2px;line-height:1}
+.cal-event-del:hover{color:var(--red)}
+/* ── Coming Soon ── */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px;text-align:center}
+.coming-soon-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
+.coming-soon-title{font-size:22px;font-weight:700;color:var(--text)}
+.coming-soon-sub{font-size:14px;color:var(--text-muted);max-width:360px;line-height:1.6}
+.coming-soon-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bg);color:var(--text-muted);border:1px solid var(--border-med)}
+/* ── Event modal ── */
+.ev-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
+.ev-modal.open{display:flex}
+.ev-box{background:var(--surface);border-radius:var(--radius);padding:24px;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.22)}
 </style>
 </head>
 <body>
@@ -134,13 +174,30 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div><div class="logo-text">ROST 81</div><div class="logo-sub">CRM Interno</div></div>
     </div>
     <nav>
+      <!-- ── S1: GESTIONE ── -->
+      <div class="nav-section-label first">Gestione</div>
       <div class="nav-item active" onclick="switchPanel('dashboard',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></div>
+      <div class="nav-item" onclick="switchPanel('calendario',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1" fill="currentColor" stroke="none"/></svg><span>Calendario</span></div>
       <div class="nav-item" onclick="switchPanel('clienti',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
-      <div class="nav-item" onclick="switchPanel('scadenze',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
+      <div class="nav-item" onclick="switchPanel('scadenze',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Magazzino</span><span class="nav-badge green" id="badge-scorte">0</span></div>
-      <div class="nav-item" onclick="switchPanel('doclavoro',this)" style="margin-top:12px;border-top:1px solid var(--border);padding-top:18px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>Documenti di Lavoro</span></div>
+
+      <!-- ── S2: OPERATIVITÀ ── -->
+      <div class="nav-section-label">Operatività</div>
+      <div class="nav-item" onclick="switchPanel('doclavoro',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg><span>Documenti di Lavoro</span></div>
       <div class="nav-item" onclick="switchPanel('appmanut',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>App Manutentore</span><span class="nav-badge purple" id="badge-operatori">0</span></div>
+      <div class="nav-item" onclick="switchPanel('appclient',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg><span>App Client</span></div>
+
+      <!-- ── S3: ANALYTICS ── -->
+      <div class="nav-section-label">Analytics</div>
+      <div class="nav-item" onclick="switchPanel('statistiche',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg><span>Statistiche</span></div>
+      <div class="nav-item" onclick="switchPanel('marketing',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><span>Marketing</span></div>
+
+      <!-- ── S4: INTELLIGENZA ARTIFICIALE ── -->
+      <div class="nav-section-label">AI</div>
+      <div class="nav-item" onclick="switchPanel('sentinel',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Sentinel-81</span></div>
+      <div class="nav-item" onclick="switchPanel('pepper',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7H3a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><path d="M5 14v7h14v-7"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg><span>Pepper</span></div>
     </nav>
     <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
   </aside>
@@ -174,7 +231,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 0</div></div>
         </div>
 
-        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div><button class="btn btn-sm" onclick="switchPanel('scadenze',document.querySelectorAll('.nav-item')[2])">Vedi tutte</button></div>
+        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div><button class="btn btn-sm" onclick="switchPanel('scadenze',document.querySelectorAll('.nav-item')[3])">Vedi tutte</button></div>
         <div class="alert-list" style="margin-bottom:0">
           <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Nessuna scadenza urgente</div>
         </div>
@@ -187,23 +244,23 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <span style="font-size:16px">📦</span>
           <div style="font-size:13px;font-weight:600;color:var(--text)">Magazzino</div>
           <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
-          <button class="btn btn-sm" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">Vai al magazzino</button>
+          <button class="btn btn-sm" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">Vai al magazzino</button>
         </div>
 
         <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
             <div class="stat-label">📦 Articoli totali</div>
             <div class="stat-val" id="dash-mag-tot">—</div>
           </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
             <div class="stat-label">🔴 In esaurimento</div>
             <div class="stat-val red" id="dash-mag-danger">—</div>
           </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
             <div class="stat-label">🟡 Sotto soglia</div>
             <div class="stat-val amber" id="dash-mag-warn">—</div>
           </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[4])">
+          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
             <div class="stat-label">🟢 In regola</div>
             <div class="stat-val green" id="dash-mag-ok">—</div>
           </div>
@@ -562,6 +619,109 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       </div>
 
+      <!-- CALENDARIO -->
+      <div id="panel-calendario" class="panel">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <button class="btn btn-sm" onclick="calPrev()">←</button>
+            <div id="cal-title" style="font-size:18px;font-weight:700;min-width:200px;text-align:center"></div>
+            <button class="btn btn-sm" onclick="calNext()">→</button>
+            <button class="btn btn-sm" onclick="calGoToday()" style="margin-left:4px">Oggi</button>
+          </div>
+          <button class="btn btn-sm btn-red" onclick="openEventModal()">+ Nuovo evento</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 296px;gap:20px;align-items:start">
+          <div>
+            <div class="cal-header-days">
+              <div class="cal-day-name">Lun</div><div class="cal-day-name">Mar</div><div class="cal-day-name">Mer</div>
+              <div class="cal-day-name">Gio</div><div class="cal-day-name">Ven</div>
+              <div class="cal-day-name" style="color:var(--amber)">Sab</div><div class="cal-day-name" style="color:var(--red)">Dom</div>
+            </div>
+            <div class="cal-grid" id="cal-grid"></div>
+          </div>
+          <div id="cal-day-panel" style="background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);min-height:200px">
+            <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px" id="cal-day-label">Seleziona un giorno</div>
+            <div id="cal-day-events"><div style="color:var(--text-hint);font-size:13px">—</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- APP CLIENT -->
+      <div id="panel-appclient" class="panel">
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">App Client</div>
+          <div class="coming-soon-sub">Portale dedicato ai clienti ROST 81 per visualizzare documenti, scadenze e rapporti in tempo reale.</div>
+        </div>
+      </div>
+
+      <!-- STATISTICHE -->
+      <div id="panel-statistiche" class="panel">
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">Statistiche</div>
+          <div class="coming-soon-sub">Dashboard analitica con trend di fatturato, clienti acquisiti, interventi per mese e KPI operativi.</div>
+        </div>
+      </div>
+
+      <!-- MARKETING -->
+      <div id="panel-marketing" class="panel">
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">Marketing</div>
+          <div class="coming-soon-sub">Campagne email, reminder automatici per rinnovi contratto e strumenti di comunicazione con i clienti.</div>
+        </div>
+      </div>
+
+      <!-- SENTINEL-81 -->
+      <div id="panel-sentinel" class="panel">
+        <div class="coming-soon">
+          <div class="coming-soon-icon" style="background:rgba(124,58,237,.08);color:#7c3aed"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div class="coming-soon-badge" style="color:#7c3aed;border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.06)">AI Tecnica</div>
+          <div class="coming-soon-title">Sentinel-81</div>
+          <div class="coming-soon-sub">Intelligenza artificiale specializzata in normativa HSE, antincendio e sicurezza sul lavoro. Consulta, analizza documenti tecnici e supporta le decisioni operative sul campo.</div>
+        </div>
+      </div>
+
+      <!-- PEPPER -->
+      <div id="panel-pepper" class="panel">
+        <div class="coming-soon">
+          <div class="coming-soon-icon" style="background:rgba(192,57,43,.07);color:var(--red)"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7H3a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><path d="M5 14v7h14v-7"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg></div>
+          <div class="coming-soon-badge" style="color:var(--red);border-color:rgba(192,57,43,.3);background:var(--red-light)">AI CRM</div>
+          <div class="coming-soon-title">Pepper</div>
+          <div class="coming-soon-sub">Assistente AI dedicata alla gestione del CRM. Compila schede cliente, suggerisce azioni, redige preventivi e mantiene aggiornato l'archivio in modo automatico.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- MODAL EVENTO CALENDARIO -->
+<div class="ev-modal" id="ev-modal">
+  <div class="ev-box">
+    <div style="font-size:15px;font-weight:700;margin-bottom:16px">Nuovo evento</div>
+    <div class="form-group"><label class="form-label">Titolo *</label><input type="text" class="form-input" id="ev-titolo" placeholder="Es. Corso antincendio Roma"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="form-group"><label class="form-label">Data *</label><input type="date" class="form-input" id="ev-data"></div>
+      <div class="form-group"><label class="form-label">Ora</label><input type="time" class="form-input" id="ev-ora"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tipo</label>
+      <select class="form-input" id="ev-tipo">
+        <option value="appuntamento">Appuntamento</option>
+        <option value="corso">Corso / Formazione</option>
+        <option value="scadenza">Scadenza</option>
+        <option value="altro">Altro</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Note</label><textarea class="form-input" id="ev-note" rows="2" style="resize:none" placeholder="Opzionale"></textarea></div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="closeEventModal()">Annulla</button>
+      <button class="btn btn-red" onclick="saveEvent()">Salva evento</button>
     </div>
   </div>
 </div>
@@ -1021,8 +1181,14 @@ function switchPanel(id,el){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  el.classList.add('active');
-  const labels={dashboard:'Dashboard',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore'};
+  if(el) el.classList.add('active');
+  const labels={
+    dashboard:'Dashboard',calendario:'Calendario',clienti:'Clienti',
+    scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',
+    doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore',
+    appclient:'App Client',statistiche:'Statistiche',marketing:'Marketing',
+    sentinel:'Sentinel-81',pepper:'Pepper'
+  };
   document.getElementById('page-title').textContent=labels[id]||id;
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
   if(id==='dashboard') loadDashboardMagazzino();
@@ -1031,6 +1197,7 @@ function switchPanel(id,el){
   if(id==='appmanut') loadOperatori();
   if(id==='preventivi') loadPreventivi();
   if(id==='doclavoro') loadArchivioDoc();
+  if(id==='calendario') initCalendario();
 }
 
 /* ══ PREVENTIVI ══ */
@@ -1582,6 +1749,147 @@ async function salvaModificheCliente(){
   }catch(e){showToast('Errore: '+e.message,'error');}
   finally{btn.disabled=false;btn.textContent='✓ Salva modifiche';}
 }
+
+/* ══════════════════════════════════════════
+   CALENDARIO
+══════════════════════════════════════════ */
+const CAL_STORE = 'rost81_cal';
+const CAL_MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
+                  'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+let calYear, calMonth, calSelectedDate;
+
+function calData(){
+  try{ return JSON.parse(localStorage.getItem(CAL_STORE)||'{}'); }
+  catch(e){ return {}; }
+}
+function calSave(data){ localStorage.setItem(CAL_STORE, JSON.stringify(data)); }
+function calKey(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
+
+function initCalendario(){
+  const now = new Date();
+  if(calYear===undefined){ calYear=now.getFullYear(); calMonth=now.getMonth(); }
+  renderCal();
+}
+
+function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); }
+function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal(); }
+function calGoToday(){ const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth(); renderCal(); selectCalDay(n.getFullYear(),n.getMonth(),n.getDate()); }
+
+function renderCal(){
+  document.getElementById('cal-title').textContent = CAL_MESI[calMonth]+' '+calYear;
+  const grid = document.getElementById('cal-grid');
+  const data = calData();
+  const today = new Date();
+  const firstDay = new Date(calYear, calMonth, 1);
+  const lastDay  = new Date(calYear, calMonth+1, 0);
+  // lunedì = 0, domenica = 6
+  let startDow = (firstDay.getDay()+6)%7; // monday-based
+  const cells = [];
+  // celle mese precedente
+  for(let i=0;i<startDow;i++){
+    const d = new Date(calYear, calMonth, -startDow+i+1);
+    cells.push({day:d.getDate(), month:d.getMonth(), year:d.getFullYear(), other:true});
+  }
+  // celle mese corrente
+  for(let d=1;d<=lastDay.getDate();d++){
+    cells.push({day:d, month:calMonth, year:calYear, other:false});
+  }
+  // celle mese successivo
+  const rem = 7 - (cells.length%7);
+  if(rem<7){ for(let i=1;i<=rem;i++){ const d=new Date(calYear,calMonth+1,i); cells.push({day:d.getDate(),month:d.getMonth(),year:d.getFullYear(),other:true}); } }
+
+  grid.innerHTML = cells.map(c=>{
+    const key = calKey(c.year,c.month,c.day);
+    const evs = data[key]||[];
+    const isToday = !c.other && c.year===today.getFullYear() && c.month===today.getMonth() && c.day===today.getDate();
+    const isSel = calSelectedDate===key;
+    const dots = evs.map(e=>`<div class="cal-dot ${e.tipo||'altro'}"></div>`).join('');
+    return `<div class="cal-cell${c.other?' other-month':''}${isToday?' today':''}${isSel?' selected':''}"
+      onclick="selectCalDay(${c.year},${c.month},${c.day})">
+      <div class="cal-cell-num">${c.day}</div>
+      <div class="cal-dots">${dots}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectCalDay(y,m,d){
+  calSelectedDate = calKey(y,m,d);
+  renderCal();
+  const data = calData();
+  const evs = data[calSelectedDate]||[];
+  const label = `${d} ${CAL_MESI[m]} ${y}`;
+  document.getElementById('cal-day-label').textContent = label;
+  const tipoLabel={appuntamento:'Appuntamento',corso:'Corso / Formazione',scadenza:'Scadenza',altro:'Altro'};
+  if(evs.length===0){
+    document.getElementById('cal-day-events').innerHTML='<div style="color:var(--text-hint);font-size:13px;padding:8px 0">Nessun evento — <span style="color:var(--red);cursor:pointer;text-decoration:underline" onclick="openEventModal()">+ Aggiungi</span></div>';
+  } else {
+    document.getElementById('cal-day-events').innerHTML = evs.map((e,i)=>`
+      <div class="cal-event-row ${e.tipo||'altro'}">
+        <div style="flex:1">
+          <div class="cal-event-titolo">${e.titolo}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${tipoLabel[e.tipo]||'Altro'}${e.ora?' · '+e.ora:''}</div>
+          ${e.note?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${e.note}</div>`:''}
+        </div>
+        <button class="cal-event-del" onclick="deleteEvent('${calSelectedDate}',${i})" title="Elimina">×</button>
+      </div>
+    `).join('')+'<div style="margin-top:8px"><span style="color:var(--red);cursor:pointer;font-size:12px;text-decoration:underline" onclick="openEventModal()">+ Aggiungi evento</span></div>';
+  }
+}
+
+function openEventModal(){
+  document.getElementById('ev-titolo').value='';
+  document.getElementById('ev-data').value= calSelectedDate||new Date().toISOString().slice(0,10);
+  document.getElementById('ev-ora').value='';
+  document.getElementById('ev-tipo').value='appuntamento';
+  document.getElementById('ev-note').value='';
+  document.getElementById('ev-modal').classList.add('open');
+  setTimeout(()=>document.getElementById('ev-titolo').focus(),80);
+}
+function closeEventModal(){ document.getElementById('ev-modal').classList.remove('open'); }
+
+function saveEvent(){
+  const titolo = document.getElementById('ev-titolo').value.trim();
+  if(!titolo){ showToast('Inserisci un titolo','error'); return; }
+  const data = document.getElementById('ev-data').value;
+  if(!data){ showToast('Inserisci una data','error'); return; }
+  const ev = {
+    id: Date.now().toString(36),
+    titolo,
+    tipo: document.getElementById('ev-tipo').value,
+    ora:  document.getElementById('ev-ora').value||'',
+    note: document.getElementById('ev-note').value.trim()
+  };
+  const store = calData();
+  if(!store[data]) store[data]=[];
+  store[data].push(ev);
+  calSave(store);
+  closeEventModal();
+  showToast('Evento salvato','success');
+  // aggiorna vista
+  const [yy,mm,dd] = data.split('-').map(Number);
+  if(yy===calYear && mm-1===calMonth){
+    renderCal();
+    if(calSelectedDate===data) selectCalDay(yy,mm-1,dd);
+  } else {
+    calYear=yy; calMonth=mm-1;
+    renderCal();
+    selectCalDay(yy,mm-1,dd);
+  }
+}
+
+function deleteEvent(dateKey,idx){
+  if(!confirm('Eliminare questo evento?')) return;
+  const store = calData();
+  if(store[dateKey]){ store[dateKey].splice(idx,1); if(store[dateKey].length===0) delete store[dateKey]; }
+  calSave(store);
+  showToast('Evento eliminato','success');
+  const [y,m,d]=dateKey.split('-').map(Number);
+  renderCal();
+  selectCalDay(y,m-1,d);
+}
+
+// chiudi modal ev cliccando fuori
+document.getElementById('ev-modal').addEventListener('click',function(e){if(e.target===this)closeEventModal();});
 
 </script>
 </body>

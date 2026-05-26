@@ -111,6 +111,29 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .mag-qty.ok{color:var(--green)} .mag-qty.warn{color:var(--amber)} .mag-qty.danger{color:var(--red)}
 .mag-soglia{font-size:11px;color:var(--text-muted);margin-top:2px}
 .mag-actions{display:flex;gap:6px;margin-top:12px}
+/* ── Stato estintore ── */
+.mag-stato-row{margin:8px 0 2px}
+.stato-sel{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:10px;border:1.5px solid;cursor:pointer;-webkit-appearance:none;appearance:none;outline:none;width:100%;text-align:center}
+.stato-sel[data-stato="NUOVO"]{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.stato-sel[data-stato="REVISIONATO"]{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.stato-sel[data-stato="DA REVISIONARE"]{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.stato-sel[data-stato="DA SMALTIRE"]{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.dark .stato-sel[data-stato="NUOVO"]{background:rgba(16,185,129,.18);color:#34d399;border-color:rgba(16,185,129,.35)}
+.dark .stato-sel[data-stato="REVISIONATO"]{background:rgba(59,130,246,.18);color:#60a5fa;border-color:rgba(59,130,246,.35)}
+.dark .stato-sel[data-stato="DA REVISIONARE"]{background:rgba(245,158,11,.18);color:#fbbf24;border-color:rgba(245,158,11,.35)}
+.dark .stato-sel[data-stato="DA SMALTIRE"]{background:rgba(239,68,68,.18);color:#f87171;border-color:rgba(239,68,68,.35)}
+/* ── Filtro pills stato ── */
+.stato-pill{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-hover);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+.stato-pill:hover{border-color:var(--primary)}
+.stato-pill.sp-active-tutti{background:var(--surface);color:var(--text);border-color:var(--primary)}
+.stato-pill.sp-active-nuovo{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.stato-pill.sp-active-revisionato{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.stato-pill.sp-active-da-revisionare{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.stato-pill.sp-active-da-smaltire{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.dark .stato-pill.sp-active-nuovo{background:rgba(16,185,129,.18);color:#34d399;border-color:rgba(16,185,129,.35)}
+.dark .stato-pill.sp-active-revisionato{background:rgba(59,130,246,.18);color:#60a5fa;border-color:rgba(59,130,246,.35)}
+.dark .stato-pill.sp-active-da-revisionare{background:rgba(245,158,11,.18);color:#fbbf24;border-color:rgba(245,158,11,.35)}
+.dark .stato-pill.sp-active-da-smaltire{background:rgba(239,68,68,.18);color:#f87171;border-color:rgba(239,68,68,.35)}
 .uscita-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:50;display:none;align-items:center;justify-content:center}
 .uscita-modal.open{display:flex}
 .nuovo-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:50;display:none;align-items:center;justify-content:center}
@@ -550,6 +573,14 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <button class="btn btn-sm btn-red" onclick="apriNuovoArticolo()">+ Articolo</button>
           </div>
         </div>
+        <!-- Filtro stato -->
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+          <button class="stato-pill sp-active-tutti" id="sp-tutti" onclick="setStatoFiltro(null)">● Tutti</button>
+          <button class="stato-pill" id="sp-nuovo" onclick="setStatoFiltro('NUOVO')">NUOVO</button>
+          <button class="stato-pill" id="sp-revisionato" onclick="setStatoFiltro('REVISIONATO')">REVISIONATO</button>
+          <button class="stato-pill" id="sp-da-revisionare" onclick="setStatoFiltro('DA REVISIONARE')">DA REVISIONARE</button>
+          <button class="stato-pill" id="sp-da-smaltire" onclick="setStatoFiltro('DA SMALTIRE')">DA SMALTIRE</button>
+        </div>
         <div id="mag-grid" class="mag-grid">
           <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Caricamento...</div>
         </div>
@@ -633,6 +664,15 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <input type="hidden" id="n-catalogo-id">
           <input type="hidden" id="n-taglia-val">
 
+          <div class="form-group">
+            <label class="form-label">Stato</label>
+            <select class="form-input" id="n-stato">
+              <option value="NUOVO">NUOVO</option>
+              <option value="REVISIONATO">REVISIONATO</option>
+              <option value="DA REVISIONARE">DA REVISIONARE</option>
+              <option value="DA SMALTIRE">DA SMALTIRE</option>
+            </select>
+          </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:10px">
             <div class="form-group"><label class="form-label">Quantità</label><input type="number" class="form-input" id="n-qty" min="0" value="0"></div>
             <div class="form-group"><label class="form-label">Soglia minima</label><input type="number" class="form-input" id="n-soglia" min="0" value="5"></div>
@@ -962,6 +1002,7 @@ function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(
 let magazzino=[];
 let clientiMap={};
 let magCatAttiva=null;
+let magStatoFiltro=null;
 
 const MAG_CATS=[
   {key:'estintori',     label:'Estintori'},
@@ -993,18 +1034,29 @@ function selectMagCat(cat){
 
 function renderMagGrid(){
   const grid=document.getElementById('mag-grid');
-  const list=magCatAttiva ? magazzino.filter(a=>a.categoria===magCatAttiva) : magazzino;
+  let list=magCatAttiva ? magazzino.filter(a=>a.categoria===magCatAttiva) : magazzino;
+  if(magStatoFiltro) list=list.filter(a=>(a.stato||'NUOVO')===magStatoFiltro);
   if(list.length===0){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Nessun articolo${magCatAttiva?' in questa categoria':''}</div>`;
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Nessun articolo${magCatAttiva?' in questa categoria':''}${magStatoFiltro?' con stato '+magStatoFiltro:''}</div>`;
     return;
   }
   grid.innerHTML=list.map(a=>{
-    const stato=statoQty(a.quantita,a.soglia_minima);
+    const sq=statoQty(a.quantita,a.soglia_minima);
+    const stato=a.stato||'NUOVO';
+    const statoKey=stato.toLowerCase().replace(/ /g,'-');
     return `
-    <div class="mag-card ${stato}">
-      <div class="mag-cat">${a.categoria||'Varie'}</div>
+    <div class="mag-card ${sq}">
+      <div class="mag-cat">${a.categoria||'Varie'}${a.taglia?` · <span style="font-family:'DM Mono',monospace;font-size:10px">${a.taglia}</span>`:''}</div>
       <div class="mag-nome">${a.nome}</div>
-      <div class="mag-qty ${stato}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
+      <div class="mag-stato-row">
+        <select class="stato-sel" data-stato="${stato}" onchange="cambiaStato('${a.id}',this.value,this)">
+          <option value="NUOVO" ${stato==='NUOVO'?'selected':''}>✦ NUOVO</option>
+          <option value="REVISIONATO" ${stato==='REVISIONATO'?'selected':''}>✓ REVISIONATO</option>
+          <option value="DA REVISIONARE" ${stato==='DA REVISIONARE'?'selected':''}>⚠ DA REVISIONARE</option>
+          <option value="DA SMALTIRE" ${stato==='DA SMALTIRE'?'selected':''}>✕ DA SMALTIRE</option>
+        </select>
+      </div>
+      <div class="mag-qty ${sq}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
       <div class="mag-soglia">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div>
       <div class="mag-actions">
         <button class="btn btn-sm btn-red" style="flex:1;justify-content:center" onclick="apriUscita('${a.id}','${a.nome.replace(/'/g,"\\'")}',${a.quantita})">↑ Uscita</button>
@@ -1012,6 +1064,29 @@ function renderMagGrid(){
       </div>
     </div>`;
   }).join('');
+}
+
+async function cambiaStato(id, nuovoStato, sel){
+  sel.dataset.stato=nuovoStato;
+  const art=magazzino.find(a=>a.id===id);
+  if(art) art.stato=nuovoStato;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${id}`,{
+    method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify({stato:nuovoStato})
+  });
+  if(r.ok) showToast(`✓ Stato: ${nuovoStato}`,'success');
+  else{ showToast('Errore aggiornamento stato','error'); loadMagazzino(); }
+}
+
+function setStatoFiltro(stato){
+  magStatoFiltro=stato;
+  // aggiorna pill attive
+  const pills={null:'tutti','NUOVO':'nuovo','REVISIONATO':'revisionato','DA REVISIONARE':'da-revisionare','DA SMALTIRE':'da-smaltire'};
+  Object.values(pills).forEach(k=>{ const el=document.getElementById('sp-'+k); if(el) el.className='stato-pill'; });
+  const key=pills[stato];
+  const active=document.getElementById('sp-'+key);
+  if(active) active.classList.add('sp-active-'+key);
+  renderMagGrid();
 }
 
 async function loadSidebarBadges(){
@@ -1298,6 +1373,7 @@ function chiudiNuovoModal(){
   document.getElementById('n-nome-custom').value='';
   document.getElementById('n-catalogo-id').value='';
   document.getElementById('n-taglia-val').value='';
+  document.getElementById('n-stato').value='NUOVO';
   document.getElementById('n-qty').value=0;
   document.getElementById('n-soglia').value=5;
   document.getElementById('n-unita').value='pz';
@@ -1426,8 +1502,9 @@ async function salvaArticolo(){
   if(!cat){showToast('Seleziona la categoria','error');return;}
   const catalogoId=document.getElementById('n-catalogo-id').value||null;
   const tagliaVal=document.getElementById('n-taglia-val').value||null;
+  const stato=document.getElementById('n-stato').value||'NUOVO';
   const body={
-    nome, categoria:cat,
+    nome, categoria:cat, stato,
     quantita:parseInt(document.getElementById('n-qty').value)||0,
     soglia_minima:parseInt(document.getElementById('n-soglia').value)||5,
     unita:document.getElementById('n-unita').value||'pz'

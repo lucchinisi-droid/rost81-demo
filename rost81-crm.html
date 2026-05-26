@@ -154,6 +154,15 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .cal-event-ora{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .cal-event-del{background:none;border:none;color:var(--text-hint);cursor:pointer;font-size:14px;padding:0 2px;line-height:1}
 .cal-event-del:hover{color:var(--red)}
+/* ── Magazzino category tabs ── */
+.mag-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.mag-cat-tab{background:var(--surface);border-radius:var(--radius);border:2px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;aspect-ratio:1;transition:all .15s;text-align:center;user-select:none}
+.mag-cat-tab:hover{border-color:var(--red);background:var(--red-light);transform:translateY(-1px)}
+.mag-cat-tab.active{border-color:var(--red);background:var(--red-light)}
+.mag-cat-tab-icon{color:var(--text-muted)}
+.mag-cat-tab.active .mag-cat-icon{color:var(--red)}
+.mag-cat-tab-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.2}
+.mag-cat-tab-count{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace}
 /* ── Coming Soon ── */
 .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px;text-align:center}
 .coming-soon-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
@@ -440,15 +449,64 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- MAGAZZINO -->
       <div id="panel-magazzino" class="panel">
-        <div id="scorte-alert" style="display:none;background:var(--red-light);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;display:none;align-items:center;gap:10px">
-          <span style="font-size:18px">⚠️</span>
+
+        <!-- Tab categorie 4+4 -->
+        <div class="mag-cat-grid">
+          <!-- riga 1 -->
+          <div class="mag-cat-tab" id="mct-estintori" onclick="selectMagCat('Estintori')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V5a5 5 0 0 1 10 0v6"/><rect x="3" y="11" width="18" height="11" rx="2"/><line x1="12" y1="15" x2="12" y2="19"/></svg></div>
+            <div class="mag-cat-tab-name">Estintori</div>
+            <div class="mag-cat-tab-count" id="mct-count-estintori">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-porte-rei" onclick="selectMagCat('Porte REI')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="1"/><path d="M3 12h18"/><circle cx="16.5" cy="9" r="1" fill="currentColor" stroke="none"/></svg></div>
+            <div class="mag-cat-tab-name">Porte REI</div>
+            <div class="mag-cat-tab-count" id="mct-count-porte-rei">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-idranti" onclick="selectMagCat('Idranti')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 C12 2 4 10 4 15a8 8 0 0 0 16 0C20 10 12 2 12 2z"/><line x1="12" y1="12" x2="12" y2="18"/></svg></div>
+            <div class="mag-cat-tab-name">Idranti</div>
+            <div class="mag-cat-tab-count" id="mct-count-idranti">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-primo-soccorso" onclick="selectMagCat('Primo Soccorso')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+            <div class="mag-cat-tab-name">Primo Soccorso</div>
+            <div class="mag-cat-tab-count" id="mct-count-primo-soccorso">—</div>
+          </div>
+          <!-- riga 2 -->
+          <div class="mag-cat-tab" id="mct-ferramenta" onclick="selectMagCat('Ferramenta')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+            <div class="mag-cat-tab-name">Ferramenta</div>
+            <div class="mag-cat-tab-count" id="mct-count-ferramenta">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-cartoleria" onclick="selectMagCat('Cartoleria')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><path d="M5 12l7-7 7 7"/></svg></div>
+            <div class="mag-cat-tab-name">Cartoleria</div>
+            <div class="mag-cat-tab-count" id="mct-count-cartoleria">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-abbigliamento" onclick="selectMagCat('Abbigliamento')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
+            <div class="mag-cat-tab-name">Abbigliamento</div>
+            <div class="mag-cat-tab-count" id="mct-count-abbigliamento">—</div>
+          </div>
+          <div class="mag-cat-tab" id="mct-varie" onclick="selectMagCat('Varie')">
+            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+            <div class="mag-cat-tab-name">Varie</div>
+            <div class="mag-cat-tab-count" id="mct-count-varie">—</div>
+          </div>
+        </div>
+
+        <!-- Alert scorte -->
+        <div id="scorte-alert" style="display:none;background:var(--red-light);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;align-items:center;gap:10px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div style="flex:1;font-size:13px;font-weight:500;color:#8b1a10" id="scorte-alert-text">Articoli sotto scorta minima</div>
         </div>
+
         <div class="section-head">
-          <div class="section-title">Giacenze magazzino</div>
+          <div class="section-title" id="mag-section-title">Tutti gli articoli</div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-sm" onclick="loadMagazzino()">↻ Aggiorna</button>
-            <button class="btn btn-sm btn-red" onclick="document.getElementById('nuovo-modal').classList.add('open')">+ Articolo</button>
+            <button class="btn btn-sm btn-red" onclick="apriNuovoArticolo()">+ Articolo</button>
           </div>
         </div>
         <div id="mag-grid" class="mag-grid">
@@ -506,7 +564,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           </div>
           <div class="form-group"><label class="form-label">Categoria</label>
             <select class="form-input" id="n-cat">
-              <option>Estintori</option><option>Segnaletica</option><option>DPI</option><option>Impianti</option><option>Manutenzione</option><option>Altro</option>
+              <option>Estintori</option><option>Porte REI</option><option>Idranti</option><option>Primo Soccorso</option>
+              <option>Ferramenta</option><option>Cartoleria</option><option>Abbigliamento</option><option>Varie</option>
             </select>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:10px">
@@ -837,6 +896,56 @@ function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(
 // ---- MAGAZZINO ----
 let magazzino=[];
 let clientiMap={};
+let magCatAttiva=null;
+
+const MAG_CATS=[
+  {key:'estintori',     label:'Estintori'},
+  {key:'porte-rei',     label:'Porte REI'},
+  {key:'idranti',       label:'Idranti'},
+  {key:'primo-soccorso',label:'Primo Soccorso'},
+  {key:'ferramenta',    label:'Ferramenta'},
+  {key:'cartoleria',    label:'Cartoleria'},
+  {key:'abbigliamento', label:'Abbigliamento'},
+  {key:'varie',         label:'Varie'}
+];
+
+function selectMagCat(cat){
+  magCatAttiva = (magCatAttiva===cat) ? null : cat;
+  // aggiorna stato visivo tab
+  document.querySelectorAll('.mag-cat-tab').forEach(t=>t.classList.remove('active'));
+  if(magCatAttiva){
+    const slug=magCatAttiva.toLowerCase().replace(/\s+/g,'-');
+    const tab=document.getElementById('mct-'+slug);
+    if(tab) tab.classList.add('active');
+  }
+  // aggiorna titolo sezione
+  document.getElementById('mag-section-title').textContent=
+    magCatAttiva ? magCatAttiva : 'Tutti gli articoli';
+  renderMagGrid();
+}
+
+function renderMagGrid(){
+  const grid=document.getElementById('mag-grid');
+  const list=magCatAttiva ? magazzino.filter(a=>a.categoria===magCatAttiva) : magazzino;
+  if(list.length===0){
+    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Nessun articolo${magCatAttiva?' in questa categoria':''}</div>`;
+    return;
+  }
+  grid.innerHTML=list.map(a=>{
+    const stato=statoQty(a.quantita,a.soglia_minima);
+    return `
+    <div class="mag-card ${stato}">
+      <div class="mag-cat">${a.categoria||'Varie'}</div>
+      <div class="mag-nome">${a.nome}</div>
+      <div class="mag-qty ${stato}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
+      <div class="mag-soglia">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div>
+      <div class="mag-actions">
+        <button class="btn btn-sm btn-red" style="flex:1;justify-content:center" onclick="apriUscita('${a.id}','${a.nome.replace(/'/g,"\\'")}',${a.quantita})">↑ Uscita</button>
+        <button class="btn btn-sm" onclick="eliminaArticolo('${a.id}')">×</button>
+      </div>
+    </div>`;
+  }).join('');
+}
 
 async function loadSidebarBadges(){
   const now=new Date();
@@ -1023,49 +1132,47 @@ async function loadClienteIds(){
   if(selPrev) selPrev.innerHTML='<option value="">— seleziona cliente —</option>'+opts;
 }
 
+function apriNuovoArticolo(){
+  // preseleziona la categoria attiva se presente
+  const sel=document.getElementById('n-cat');
+  if(sel && magCatAttiva) sel.value=magCatAttiva;
+  document.getElementById('nuovo-modal').classList.add('open');
+}
+
 function statoQty(qty,soglia){
   if(qty<=0) return 'danger';
   if(qty<=soglia) return 'warn';
   return 'ok';
 }
 
-function catIcon(cat){
-  const m={'Estintori':'🔥','Segnaletica':'🪧','DPI':'🦺','Impianti':'🔧','Manutenzione':'⚙️'};
-  return m[cat]||'📦';
-}
+function catIcon(cat){ return cat||'Varie'; }
 
 async function loadMagazzino(){
   const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?order=categoria,nome&select=*`,{headers:H});
   magazzino=await r.json();
   if(!magazzino||!Array.isArray(magazzino)) return;
 
-  const sot=magazzino.filter(a=>a.quantita<=a.soglia_minima);
+  // aggiorna contatori tab categorie
+  MAG_CATS.forEach(c=>{
+    const cnt=magazzino.filter(a=>a.categoria===c.label).length;
+    const el=document.getElementById('mct-count-'+c.key);
+    if(el) el.textContent=cnt>0?cnt+' art.':'vuota';
+  });
+
+  // badge sidebar
   const badge=document.getElementById('badge-scorte');
-  const alert=document.getElementById('scorte-alert');
-  badge.textContent=magazzino.length;
-  if(sot.length>0){
-    if(alert){ alert.style.display='flex'; document.getElementById('scorte-alert-text').textContent=`${sot.length} articol${sot.length>1?'i':'o'} sotto scorta minima`; }
-  } else {
-    if(alert) alert.style.display='none';
+  if(badge) badge.textContent=magazzino.length;
+
+  // alert scorte
+  const sot=magazzino.filter(a=>a.quantita<=a.soglia_minima);
+  const alertEl=document.getElementById('scorte-alert');
+  if(alertEl){
+    if(sot.length>0){ alertEl.style.display='flex'; document.getElementById('scorte-alert-text').textContent=`${sot.length} articol${sot.length>1?'i':'o'} sotto scorta minima`; }
+    else alertEl.style.display='none';
   }
 
-  const grid=document.getElementById('mag-grid');
   populateNomeSelect();
-  grid.innerHTML=magazzino.map(a=>{
-    const stato=statoQty(a.quantita,a.soglia_minima);
-    return `
-    <div class="mag-card ${stato}">
-      <div class="mag-cat">${catIcon(a.categoria)} ${a.categoria||'Altro'}</div>
-      <div class="mag-nome">${a.nome}</div>
-      <div class="mag-qty ${stato}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
-      <div class="mag-soglia">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div>
-      <div class="mag-actions">
-        <button class="btn btn-sm btn-red" style="flex:1;justify-content:center" onclick="apriUscita('${a.id}','${a.nome.replace(/'/g,"\\'")}',${a.quantita})">📤 Uscita</button>
-        <button class="btn btn-sm" onclick="eliminaArticolo('${a.id}')">🗑</button>
-      </div>
-    </div>`;
-  }).join('');
-
+  renderMagGrid();
   loadMovimenti();
 }
 

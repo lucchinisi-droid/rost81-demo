@@ -163,6 +163,36 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .mag-cat-tab.active .mag-cat-icon{color:var(--red)}
 .mag-cat-tab-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.2}
 .mag-cat-tab-count{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace}
+/* ── Scheda tecnica prodotto ── */
+.scheda-section{margin-bottom:20px}
+.scheda-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;margin-bottom:10px}
+.scheda-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s}
+.scheda-head:hover{background:var(--bg)}
+.scheda-codice{display:inline-block;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--red-light);color:var(--red);font-family:'DM Mono',monospace;flex-shrink:0}
+.scheda-head-name{font-size:14px;font-weight:600;flex:1}
+.scheda-head-specs{font-size:11px;color:var(--text-muted);display:flex;gap:14px;flex-shrink:0}
+.scheda-head-spec{display:flex;flex-direction:column;align-items:center;gap:1px}
+.scheda-head-spec-val{font-size:13px;font-weight:700;color:var(--text);font-family:'DM Mono',monospace}
+.scheda-head-spec-lbl{font-size:9px;text-transform:uppercase;letter-spacing:.05em}
+.scheda-chevron{color:var(--text-muted);transition:transform .2s;flex-shrink:0}
+.scheda-chevron.open{transform:rotate(180deg)}
+.scheda-body{border-top:1px solid var(--border);padding:16px 18px 18px;display:none}
+.scheda-body.open{display:block}
+.scheda-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:16px}
+.scheda-field{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px}
+.scheda-field-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);margin-bottom:4px}
+.scheda-field-val{font-size:13px;font-weight:500;color:var(--text)}
+.scheda-classes{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.scheda-class{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:var(--radius-sm);font-size:11px;font-weight:700;border:1.5px solid}
+.scheda-class.ok{background:#eafaf1;border-color:#27ae60;color:#145a32}
+.scheda-class.no{background:var(--bg);border-color:var(--border-med);color:var(--text-muted);text-decoration:line-through}
+.scheda-norms{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+.scheda-norm{display:inline-block;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:600;background:var(--blue-light);color:#1a4f72;border:1px solid rgba(41,128,185,.2)}
+.scheda-maint{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
+.scheda-maint-item{background:var(--bg);border-radius:var(--radius-sm);padding:10px 12px;border-left:3px solid var(--red)}
+.scheda-maint-freq{font-size:12px;font-weight:700;color:var(--red);margin-bottom:3px}
+.scheda-maint-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
+.scheda-warn{background:var(--amber-light);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#7d4a00;border-left:3px solid var(--amber);margin-top:12px;line-height:1.5}
 /* ── Coming Soon ── */
 .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px;text-align:center}
 .coming-soon-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
@@ -501,6 +531,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div style="flex:1;font-size:13px;font-weight:500;color:#8b1a10" id="scorte-alert-text">Articoli sotto scorta minima</div>
         </div>
+
+        <!-- Schede tecniche per categoria -->
+        <div id="mag-schede-section" class="scheda-section" style="display:none"></div>
 
         <div class="section-head">
           <div class="section-title" id="mag-section-title">Tutti gli articoli</div>
@@ -921,6 +954,8 @@ function selectMagCat(cat){
   // aggiorna titolo sezione
   document.getElementById('mag-section-title').textContent=
     magCatAttiva ? magCatAttiva : 'Tutti gli articoli';
+  // schede tecniche
+  renderSchedeProdotti(magCatAttiva);
   renderMagGrid();
 }
 
@@ -1132,11 +1167,127 @@ async function loadClienteIds(){
   if(selPrev) selPrev.innerHTML='<option value="">— seleziona cliente —</option>'+opts;
 }
 
+/* ══════════════════════════════════════════
+   SCHEDE TECNICHE PRODOTTI MAGAZZINO
+══════════════════════════════════════════ */
+const SCHEDE_PRODOTTI = {
+  'Estintori': [
+    {
+      codice: 'K5',
+      nome: 'Estintore a CO₂ — 5 kg',
+      tipo: 'CO₂ – Anidride carbonica',
+      carica: '5 kg',
+      pressione: '150 bar (20°C)',
+      efficacia: '89B (EN 3)',
+      gittata: '2 – 3 m',
+      scarica: '≈ 12 s',
+      peso_totale: '≈ 14,5 kg',
+      temp_impiego: '−30°C / +60°C',
+      classi_ok: ['B – Liquidi infiammabili', 'C – Gas infiammabili', 'E – Apparecchiature elettriche sotto tensione'],
+      classi_no: ['A – Solidi (legno, carta, plastica) — CO₂ si disperde troppo rapidamente', 'F – Olii da cucina'],
+      normativa: ['EN 3-7:2004 + A1:2007', 'D.M. 7 gennaio 2005', 'D.Lgs. 81/2008 – Art. 46', 'D.M. 10 marzo 1998', 'UNI 9994-1:2013'],
+      manutenzione: [
+        { freq: 'Ogni 6 mesi', desc: 'Sorveglianza — ispezione visiva: sigilli, manometro, posizione' },
+        { freq: 'Ogni 12 mesi', desc: 'Controllo periodico — verifica da tecnico manutentore abilitato' },
+        { freq: 'Ogni 6 anni', desc: 'Revisione — smontaggio, verifica di tutti i componenti e ricarica' },
+        { freq: 'Ogni 12 anni', desc: 'Collaudo — prova idraulica del corpo cilindrico (PED 2014/68/UE)' }
+      ],
+      avviso: '⚠ CO₂ non lascia residui — ideale per archivi, laboratori, server room e quadri elettrici. NON usare in spazi molto confinati: il gas riduce l\'ossigeno e può causare asfissia. Agente non conduttore di elettricità.',
+      note: 'Tubo flessibile certificato EN 853 / SAE 100 R1AT — Max WP 10,0 MPa. Identificazione interna ROST 81: K5.'
+    }
+  ]
+};
+
+function renderSchedeProdotti(cat){
+  const el = document.getElementById('mag-schede-section');
+  const schede = SCHEDE_PRODOTTI[cat];
+  if(!el) return;
+  if(!schede || schede.length===0){ el.style.display='none'; el.innerHTML=''; return; }
+  el.style.display='block';
+  el.innerHTML = '<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Schede Tecniche — '+cat+'</div>'
+    + schede.map((s,i)=>`
+    <div class="scheda-card">
+      <div class="scheda-head" onclick="toggleScheda('scheda-${i}')">
+        <span class="scheda-codice">${s.codice}</span>
+        <div class="scheda-head-name">${s.nome}</div>
+        <div class="scheda-head-specs">
+          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.carica}</span><span class="scheda-head-spec-lbl">Carica</span></div>
+          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.pressione.split(' ')[0]}</span><span class="scheda-head-spec-lbl">Pressione</span></div>
+          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.efficacia.split(' ')[0]}</span><span class="scheda-head-spec-lbl">Efficacia</span></div>
+        </div>
+        <svg class="scheda-chevron" id="chev-scheda-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="scheda-body" id="scheda-${i}">
+        <!-- Specs grid -->
+        <div class="scheda-row">
+          <div class="scheda-field"><div class="scheda-field-label">Tipo agente</div><div class="scheda-field-val">${s.tipo}</div></div>
+          <div class="scheda-field"><div class="scheda-field-label">Temperatura impiego</div><div class="scheda-field-val">${s.temp_impiego}</div></div>
+          <div class="scheda-field"><div class="scheda-field-label">Gittata</div><div class="scheda-field-val">${s.gittata}</div></div>
+          <div class="scheda-field"><div class="scheda-field-label">Tempo scarica</div><div class="scheda-field-val">${s.scarica}</div></div>
+          <div class="scheda-field"><div class="scheda-field-label">Peso totale</div><div class="scheda-field-val">${s.peso_totale}</div></div>
+          <div class="scheda-field"><div class="scheda-field-label">Certificazione</div><div class="scheda-field-val">${s.efficacia}</div></div>
+        </div>
+        <!-- Classi fuoco -->
+        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Classi di fuoco</div>
+        <div class="scheda-classes">
+          ${s.classi_ok.map(c=>`<span class="scheda-class ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${c}</span>`).join('')}
+          ${s.classi_no.map(c=>`<span class="scheda-class no">${c}</span>`).join('')}
+        </div>
+        <!-- Normativa -->
+        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Normativa di riferimento</div>
+        <div class="scheda-norms">${s.normativa.map(n=>`<span class="scheda-norm">${n}</span>`).join('')}</div>
+        <!-- Manutenzione -->
+        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Piano di manutenzione (UNI 9994-1)</div>
+        <div class="scheda-maint">${s.manutenzione.map(m=>`
+          <div class="scheda-maint-item">
+            <div class="scheda-maint-freq">${m.freq}</div>
+            <div class="scheda-maint-desc">${m.desc}</div>
+          </div>`).join('')}
+        </div>
+        <!-- Avviso -->
+        <div class="scheda-warn">${s.avviso}</div>
+        ${s.note?`<div style="font-size:11px;color:var(--text-hint);margin-top:10px;font-style:italic">${s.note}</div>`:''}
+        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center">
+          <button class="btn btn-sm btn-red" onclick="inserisciArticoloDaScheda('${s.codice}','${s.nome.replace(/'/g,"\\'")}','${cat}')">+ Aggiungi al magazzino</button>
+          <span style="font-size:11px;color:var(--text-muted)">Inserisce l'articolo con categoria e nome precompilati</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleScheda(id){
+  const body = document.getElementById(id);
+  const idx = id.split('-')[1];
+  const chev = document.getElementById('chev-'+id);
+  if(!body) return;
+  const open = body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open', open);
+}
+
 function apriNuovoArticolo(){
   // preseleziona la categoria attiva se presente
   const sel=document.getElementById('n-cat');
   if(sel && magCatAttiva) sel.value=magCatAttiva;
   document.getElementById('nuovo-modal').classList.add('open');
+}
+
+async function inserisciArticoloDaScheda(codice, nome, cat){
+  // Controlla se esiste già
+  const check = await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?nome=eq.${encodeURIComponent(nome)}&categoria=eq.${encodeURIComponent(cat)}&select=id`,{headers:H});
+  const exist = await check.json();
+  if(exist && exist.length>0){ showToast('Articolo già presente in magazzino','error'); return; }
+  // Apre modal precompilato
+  const selNome = document.getElementById('n-nome-select');
+  const inputCustom = document.getElementById('n-nome-custom');
+  const selCat = document.getElementById('n-cat');
+  if(selNome){ selNome.style.display='none'; }
+  if(inputCustom){ inputCustom.style.display='block'; inputCustom.value=nome; }
+  if(selCat) selCat.value=cat;
+  document.getElementById('n-qty').value=2;   // 2 pezzi come da foto
+  document.getElementById('n-soglia').value=1;
+  document.getElementById('n-unita').value='pz';
+  document.getElementById('nuovo-modal').classList.add('open');
+  showToast('Compila quantità e soglia, poi clicca Aggiungi','success');
 }
 
 function statoQty(qty,soglia){

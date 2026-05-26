@@ -1280,7 +1280,7 @@ async function inserisciArticoloDaScheda(codice, nome, cat){
   const selNome = document.getElementById('n-nome-select');
   const inputCustom = document.getElementById('n-nome-custom');
   const selCat = document.getElementById('n-cat');
-  if(selNome){ selNome.style.display='none'; }
+  if(selNome){ selNome.value='__nuovo__'; selNome.style.display='none'; }
   if(inputCustom){ inputCustom.style.display='block'; inputCustom.value=nome; }
   if(selCat) selCat.value=cat;
   document.getElementById('n-qty').value=2;   // 2 pezzi come da foto

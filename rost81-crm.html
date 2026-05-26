@@ -193,6 +193,14 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .scheda-maint-freq{font-size:12px;font-weight:700;color:var(--red);margin-bottom:3px}
 .scheda-maint-desc{font-size:11px;color:var(--text-muted);line-height:1.4}
 .scheda-warn{background:var(--amber-light);border-radius:var(--radius-sm);padding:10px 14px;font-size:12px;color:#7d4a00;border-left:3px solid var(--amber);margin-top:12px;line-height:1.5}
+.scheda-taglie-wrap{background:var(--bg);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:16px}
+.scheda-taglie-table{width:100%;border-collapse:collapse;font-size:12px}
+.scheda-taglie-table th{background:var(--border);padding:6px 10px;text-align:left;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.scheda-taglie-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.scheda-taglie-table tr:last-child td{border-bottom:none}
+.scheda-taglie-table tr:hover td{background:var(--surface)}
+.scheda-taglie-table .cod{font-family:'DM Mono',monospace;font-size:10px;background:var(--red-light);color:var(--red);padding:2px 6px;border-radius:10px}
+.scheda-taglie-table .carr{font-size:9px;background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:10px;font-weight:600}
 /* ── Coming Soon ── */
 .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px;text-align:center}
 .coming-soon-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
@@ -585,22 +593,46 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- MODALE NUOVO ARTICOLO -->
       <div class="nuovo-modal" id="nuovo-modal">
-        <div class="uscita-box">
+        <div class="uscita-box" style="width:460px">
           <div class="uscita-title">Nuovo articolo</div>
           <div class="uscita-sub">Aggiungi un articolo al magazzino</div>
+
+          <!-- Livello 1: Categoria -->
           <div class="form-group">
-            <label class="form-label">Nome articolo</label>
-            <select class="form-input" id="n-nome-select" onchange="onNomeSelectChange(this)">
-              <option value="">— Seleziona articolo —</option>
-            </select>
-            <input type="text" class="form-input" id="n-nome-custom" placeholder="Nome nuovo articolo..." style="display:none;margin-top:8px">
-          </div>
-          <div class="form-group"><label class="form-label">Categoria</label>
-            <select class="form-input" id="n-cat">
+            <label class="form-label">Categoria</label>
+            <select class="form-input" id="n-cat" onchange="onCatChange(this.value)">
+              <option value="">— Seleziona categoria —</option>
               <option>Estintori</option><option>Porte REI</option><option>Idranti</option><option>Primo Soccorso</option>
               <option>Ferramenta</option><option>Cartoleria</option><option>Abbigliamento</option><option>Varie</option>
             </select>
           </div>
+
+          <!-- Livello 2: Tipo agente (da catalogo) -->
+          <div class="form-group" id="n-agente-group" style="display:none">
+            <label class="form-label">Tipo prodotto</label>
+            <select class="form-input" id="n-agente" onchange="onAgenteChange(this.value)">
+              <option value="">— Seleziona tipo —</option>
+            </select>
+          </div>
+
+          <!-- Livello 3: Taglia / Modello -->
+          <div class="form-group" id="n-taglia-group" style="display:none">
+            <label class="form-label">Taglia / Modello</label>
+            <select class="form-input" id="n-taglia" onchange="onTagliaChange(this.value)">
+              <option value="">— Seleziona taglia —</option>
+            </select>
+          </div>
+
+          <!-- Nome (auto-riempito o manuale) -->
+          <div class="form-group" id="n-nome-group" style="display:none">
+            <label class="form-label">Nome articolo</label>
+            <input type="text" class="form-input" id="n-nome-custom" placeholder="Nome articolo...">
+          </div>
+          <!-- campi legacy nascosti (compatibilità) -->
+          <select id="n-nome-select" style="display:none"></select>
+          <input type="hidden" id="n-catalogo-id">
+          <input type="hidden" id="n-taglia-val">
+
           <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:10px">
             <div class="form-group"><label class="form-label">Quantità</label><input type="number" class="form-input" id="n-qty" min="0" value="0"></div>
             <div class="form-group"><label class="form-label">Soglia minima</label><input type="number" class="form-input" id="n-soglia" min="0" value="5"></div>
@@ -608,7 +640,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           </div>
           <div style="display:flex;gap:8px;margin-top:4px">
             <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaArticolo()">+ Aggiungi</button>
-            <button class="btn" onclick="document.getElementById('nuovo-modal').classList.remove('open')">Annulla</button>
+            <button class="btn" onclick="chiudiNuovoModal()">Annulla</button>
           </div>
         </div>
       </div>
@@ -1170,124 +1202,245 @@ async function loadClienteIds(){
 /* ══════════════════════════════════════════
    SCHEDE TECNICHE PRODOTTI MAGAZZINO
 ══════════════════════════════════════════ */
-const SCHEDE_PRODOTTI = {
-  'Estintori': [
-    {
-      codice: 'K5',
-      nome: 'Estintore a CO₂ — 5 kg',
-      tipo: 'CO₂ – Anidride carbonica',
-      carica: '5 kg',
-      pressione: '150 bar (20°C)',
-      efficacia: '89B (EN 3)',
-      gittata: '2 – 3 m',
-      scarica: '≈ 12 s',
-      peso_totale: '≈ 14,5 kg',
-      temp_impiego: '−30°C / +60°C',
-      classi_ok: ['B – Liquidi infiammabili', 'C – Gas infiammabili', 'E – Apparecchiature elettriche sotto tensione'],
-      classi_no: ['A – Solidi (legno, carta, plastica) — CO₂ si disperde troppo rapidamente', 'F – Olii da cucina'],
-      normativa: ['EN 3-7:2004 + A1:2007', 'D.M. 7 gennaio 2005', 'D.Lgs. 81/2008 – Art. 46', 'D.M. 10 marzo 1998', 'UNI 9994-1:2013'],
-      manutenzione: [
-        { freq: 'Ogni 6 mesi', desc: 'Sorveglianza — ispezione visiva: sigilli, manometro, posizione' },
-        { freq: 'Ogni 12 mesi', desc: 'Controllo periodico — verifica da tecnico manutentore abilitato' },
-        { freq: 'Ogni 6 anni', desc: 'Revisione — smontaggio, verifica di tutti i componenti e ricarica' },
-        { freq: 'Ogni 12 anni', desc: 'Collaudo — prova idraulica del corpo cilindrico (PED 2014/68/UE)' }
-      ],
-      avviso: '⚠ CO₂ non lascia residui — ideale per archivi, laboratori, server room e quadri elettrici. NON usare in spazi molto confinati: il gas riduce l\'ossigeno e può causare asfissia. Agente non conduttore di elettricità.',
-      note: 'Tubo flessibile certificato EN 853 / SAE 100 R1AT — Max WP 10,0 MPa. Identificazione interna ROST 81: K5.'
-    }
-  ]
-};
+/* ══════════════════════════════════════════
+   CATALOGO PRODOTTI (da Supabase)
+══════════════════════════════════════════ */
+let catalogo = [];
 
+async function loadCatalogo(){
+  try{
+    const r = await fetch(`${SUPA_URL}/rest/v1/rost81_catalogo?order=macrocategoria,agente&select=*`,{headers:H});
+    const data = await r.json();
+    catalogo = Array.isArray(data) ? data : [];
+  }catch(e){ catalogo=[]; }
+}
+
+/* ── Dropdown a 3 livelli: Categoria → Tipo → Taglia ── */
+function onCatChange(cat){
+  const agenteGroup = document.getElementById('n-agente-group');
+  const tagliaGroup = document.getElementById('n-taglia-group');
+  const nomeGroup   = document.getElementById('n-nome-group');
+  const agenteSel   = document.getElementById('n-agente');
+  document.getElementById('n-catalogo-id').value='';
+  document.getElementById('n-taglia-val').value='';
+  tagliaGroup.style.display='none';
+  nomeGroup.style.display='none';
+  const items = catalogo.filter(c=>c.macrocategoria===cat);
+  if(items.length>0){
+    agenteSel.innerHTML='<option value="">— Seleziona tipo —</option>';
+    items.forEach(c=>{
+      const o=document.createElement('option');
+      o.value=c.id; o.textContent=c.agente;
+      agenteSel.appendChild(o);
+    });
+    const oc=document.createElement('option');
+    oc.value='__custom__'; oc.textContent='✏ Prodotto personalizzato';
+    agenteSel.appendChild(oc);
+    agenteGroup.style.display='block';
+  } else {
+    agenteGroup.style.display='none';
+    nomeGroup.style.display='block';
+    document.getElementById('n-nome-custom').value='';
+  }
+}
+
+function onAgenteChange(val){
+  const tagliaGroup=document.getElementById('n-taglia-group');
+  const nomeGroup=document.getElementById('n-nome-group');
+  const tagliaSel=document.getElementById('n-taglia');
+  document.getElementById('n-taglia-val').value='';
+  if(val==='__custom__'){
+    tagliaGroup.style.display='none';
+    nomeGroup.style.display='block';
+    document.getElementById('n-nome-custom').value='';
+    document.getElementById('n-catalogo-id').value='';
+    return;
+  }
+  if(!val){ tagliaGroup.style.display='none'; nomeGroup.style.display='none'; return; }
+  const item=catalogo.find(c=>c.id===val);
+  if(!item||!item.taglie||item.taglie.length===0){
+    tagliaGroup.style.display='none'; nomeGroup.style.display='block'; return;
+  }
+  tagliaSel.innerHTML='<option value="">— Seleziona taglia/modello —</option>';
+  item.taglie.forEach((t,i)=>{
+    const o=document.createElement('option');
+    o.value=i;
+    const badge=t.codice?` (${t.codice})`:'';
+    const tipo=t.tipo==='carrellato'?' — Carrellato':'';
+    o.textContent=`${t.taglia}${badge}${tipo} — ${t.efficacia||''}`;
+    tagliaSel.appendChild(o);
+  });
+  document.getElementById('n-catalogo-id').value=val;
+  tagliaGroup.style.display='block';
+  nomeGroup.style.display='none';
+}
+
+function onTagliaChange(idx){
+  if(idx===''){return;}
+  const agenteId=document.getElementById('n-agente').value;
+  const item=catalogo.find(c=>c.id===agenteId);
+  if(!item||!item.taglie) return;
+  const t=item.taglie[parseInt(idx)];
+  if(!t) return;
+  document.getElementById('n-taglia-val').value=t.taglia;
+  document.getElementById('n-nome-custom').value=t.nome||`${item.agente} ${t.taglia}`;
+  document.getElementById('n-nome-group').style.display='block';
+  document.getElementById('n-unita').value='pz';
+}
+
+function chiudiNuovoModal(){
+  document.getElementById('nuovo-modal').classList.remove('open');
+  // reset form
+  document.getElementById('n-cat').value='';
+  document.getElementById('n-agente-group').style.display='none';
+  document.getElementById('n-taglia-group').style.display='none';
+  document.getElementById('n-nome-group').style.display='none';
+  document.getElementById('n-nome-custom').value='';
+  document.getElementById('n-catalogo-id').value='';
+  document.getElementById('n-taglia-val').value='';
+  document.getElementById('n-qty').value=0;
+  document.getElementById('n-soglia').value=5;
+  document.getElementById('n-unita').value='pz';
+}
+
+/* ── Schede tecniche da catalogo Supabase ── */
 function renderSchedeProdotti(cat){
-  const el = document.getElementById('mag-schede-section');
-  const schede = SCHEDE_PRODOTTI[cat];
+  const el=document.getElementById('mag-schede-section');
   if(!el) return;
-  if(!schede || schede.length===0){ el.style.display='none'; el.innerHTML=''; return; }
+  const items=catalogo.filter(c=>c.macrocategoria===cat);
+  if(!items.length){ el.style.display='none'; el.innerHTML=''; return; }
   el.style.display='block';
-  el.innerHTML = '<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Schede Tecniche — '+cat+'</div>'
-    + schede.map((s,i)=>`
-    <div class="scheda-card">
-      <div class="scheda-head" onclick="toggleScheda('scheda-${i}')">
-        <span class="scheda-codice">${s.codice}</span>
-        <div class="scheda-head-name">${s.nome}</div>
-        <div class="scheda-head-specs">
-          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.carica}</span><span class="scheda-head-spec-lbl">Carica</span></div>
-          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.pressione.split(' ')[0]}</span><span class="scheda-head-spec-lbl">Pressione</span></div>
-          <div class="scheda-head-spec"><span class="scheda-head-spec-val">${s.efficacia.split(' ')[0]}</span><span class="scheda-head-spec-lbl">Efficacia</span></div>
+  el.innerHTML='<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Schede Tecniche — '+cat+'</div>'
+    +items.map((s,i)=>{
+      const taglie=s.taglie||[];
+      const mant=s.piano_manutenzione||[];
+      return `
+      <div class="scheda-card">
+        <div class="scheda-head" onclick="toggleScheda('sc-${i}')">
+          <div class="scheda-head-name">${s.nome}</div>
+          <div class="scheda-head-specs">
+            <div class="scheda-head-spec"><span class="scheda-head-spec-val">${taglie.length}</span><span class="scheda-head-spec-lbl">Taglie</span></div>
+            <div class="scheda-head-spec"><span class="scheda-head-spec-val">${(s.classi_ok||[]).length}</span><span class="scheda-head-spec-lbl">Classi OK</span></div>
+          </div>
+          <svg class="scheda-chevron" id="chev-sc-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
         </div>
-        <svg class="scheda-chevron" id="chev-scheda-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-      </div>
-      <div class="scheda-body" id="scheda-${i}">
-        <!-- Specs grid -->
-        <div class="scheda-row">
-          <div class="scheda-field"><div class="scheda-field-label">Tipo agente</div><div class="scheda-field-val">${s.tipo}</div></div>
-          <div class="scheda-field"><div class="scheda-field-label">Temperatura impiego</div><div class="scheda-field-val">${s.temp_impiego}</div></div>
-          <div class="scheda-field"><div class="scheda-field-label">Gittata</div><div class="scheda-field-val">${s.gittata}</div></div>
-          <div class="scheda-field"><div class="scheda-field-label">Tempo scarica</div><div class="scheda-field-val">${s.scarica}</div></div>
-          <div class="scheda-field"><div class="scheda-field-label">Peso totale</div><div class="scheda-field-val">${s.peso_totale}</div></div>
-          <div class="scheda-field"><div class="scheda-field-label">Certificazione</div><div class="scheda-field-val">${s.efficacia}</div></div>
+        <div class="scheda-body" id="sc-${i}">
+          <!-- Classi fuoco -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Classi di fuoco</div>
+          <div class="scheda-classes">
+            ${(s.classi_ok||[]).map(c=>`<span class="scheda-class ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${c}</span>`).join('')}
+            ${(s.classi_no||[]).map(c=>`<span class="scheda-class no">${c}</span>`).join('')}
+          </div>
+          <!-- Tabella taglie -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Taglie disponibili</div>
+          <div class="scheda-taglie-wrap">
+            <table class="scheda-taglie-table">
+              <thead><tr><th>Taglia</th><th>Cod.</th><th>Tipo</th><th>Pressione</th><th>Efficacia</th><th>Gittata</th><th>Scarica</th><th>Peso tot.</th></tr></thead>
+              <tbody>${taglie.map(t=>`
+                <tr>
+                  <td style="font-weight:600">${t.taglia}</td>
+                  <td>${t.codice?`<span class="cod">${t.codice}</span>`:'—'}</td>
+                  <td>${t.tipo==='carrellato'?'<span class="carr">Carrellato</span>':'<span style="font-size:10px;color:var(--text-muted)">Portatile</span>'}</td>
+                  <td style="font-family:\'DM Mono\',monospace;font-size:11px">${t.pressione||'—'}</td>
+                  <td style="font-weight:600">${t.efficacia||'—'}</td>
+                  <td>${t.gittata||'—'}</td>
+                  <td>${t.scarica||'—'}</td>
+                  <td>${t.peso||'—'}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          <!-- Normativa -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Normativa di riferimento</div>
+          <div class="scheda-norms">${(s.normativa||[]).map(n=>`<span class="scheda-norm">${n}</span>`).join('')}</div>
+          <!-- Manutenzione -->
+          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Piano di manutenzione (UNI 9994-1)</div>
+          <div class="scheda-maint">${mant.map(m=>`
+            <div class="scheda-maint-item">
+              <div class="scheda-maint-freq">${m.freq}</div>
+              <div class="scheda-maint-desc">${m.desc}</div>
+            </div>`).join('')}
+          </div>
+          ${s.avviso?`<div class="scheda-warn">⚠ ${s.avviso}</div>`:''}
+          ${s.note_tecniche?`<div style="font-size:11px;color:var(--text-hint);margin-top:10px;font-style:italic">${s.note_tecniche}</div>`:''}
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center">
+            <button class="btn btn-sm btn-red" onclick="apriNuovoArticoloConAgente('${s.id}','${cat}')">+ Aggiungi al magazzino</button>
+            <span style="font-size:11px;color:var(--text-muted)">Seleziona la taglia e inserisci la quantità</span>
+          </div>
         </div>
-        <!-- Classi fuoco -->
-        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Classi di fuoco</div>
-        <div class="scheda-classes">
-          ${s.classi_ok.map(c=>`<span class="scheda-class ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${c}</span>`).join('')}
-          ${s.classi_no.map(c=>`<span class="scheda-class no">${c}</span>`).join('')}
-        </div>
-        <!-- Normativa -->
-        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Normativa di riferimento</div>
-        <div class="scheda-norms">${s.normativa.map(n=>`<span class="scheda-norm">${n}</span>`).join('')}</div>
-        <!-- Manutenzione -->
-        <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Piano di manutenzione (UNI 9994-1)</div>
-        <div class="scheda-maint">${s.manutenzione.map(m=>`
-          <div class="scheda-maint-item">
-            <div class="scheda-maint-freq">${m.freq}</div>
-            <div class="scheda-maint-desc">${m.desc}</div>
-          </div>`).join('')}
-        </div>
-        <!-- Avviso -->
-        <div class="scheda-warn">${s.avviso}</div>
-        ${s.note?`<div style="font-size:11px;color:var(--text-hint);margin-top:10px;font-style:italic">${s.note}</div>`:''}
-        <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center">
-          <button class="btn btn-sm btn-red" onclick="inserisciArticoloDaScheda('${s.codice}','${s.nome.replace(/'/g,"\\'")}','${cat}')">+ Aggiungi al magazzino</button>
-          <span style="font-size:11px;color:var(--text-muted)">Inserisce l'articolo con categoria e nome precompilati</span>
-        </div>
-      </div>
-    </div>`).join('');
+      </div>`;
+    }).join('');
 }
 
 function toggleScheda(id){
-  const body = document.getElementById(id);
-  const idx = id.split('-')[1];
-  const chev = document.getElementById('chev-'+id);
+  const body=document.getElementById(id);
+  const chev=document.getElementById('chev-'+id);
   if(!body) return;
-  const open = body.classList.toggle('open');
-  if(chev) chev.classList.toggle('open', open);
+  const open=body.classList.toggle('open');
+  if(chev) chev.classList.toggle('open',open);
 }
 
 function apriNuovoArticolo(){
-  // preseleziona la categoria attiva se presente
-  const sel=document.getElementById('n-cat');
-  if(sel && magCatAttiva) sel.value=magCatAttiva;
+  chiudiNuovoModal();
+  const catSel=document.getElementById('n-cat');
+  if(magCatAttiva){ catSel.value=magCatAttiva; onCatChange(magCatAttiva); }
   document.getElementById('nuovo-modal').classList.add('open');
 }
 
+function apriNuovoArticoloConAgente(catalogoId, cat){
+  chiudiNuovoModal();
+  const catSel=document.getElementById('n-cat');
+  catSel.value=cat;
+  onCatChange(cat);
+  setTimeout(()=>{
+    const agenteSel=document.getElementById('n-agente');
+    agenteSel.value=catalogoId;
+    onAgenteChange(catalogoId);
+    document.getElementById('nuovo-modal').classList.add('open');
+  },50);
+}
+
 async function inserisciArticoloDaScheda(codice, nome, cat){
-  // Controlla se esiste già
-  const check = await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?nome=eq.${encodeURIComponent(nome)}&categoria=eq.${encodeURIComponent(cat)}&select=id`,{headers:H});
-  const exist = await check.json();
-  if(exist && exist.length>0){ showToast('Articolo già presente in magazzino','error'); return; }
-  // Apre modal precompilato
-  const selNome = document.getElementById('n-nome-select');
-  const inputCustom = document.getElementById('n-nome-custom');
-  const selCat = document.getElementById('n-cat');
-  if(selNome){ selNome.value='__nuovo__'; selNome.style.display='none'; }
-  if(inputCustom){ inputCustom.style.display='block'; inputCustom.value=nome; }
-  if(selCat) selCat.value=cat;
-  document.getElementById('n-qty').value=2;   // 2 pezzi come da foto
-  document.getElementById('n-soglia').value=1;
-  document.getElementById('n-unita').value='pz';
-  document.getElementById('nuovo-modal').classList.add('open');
-  showToast('Compila quantità e soglia, poi clicca Aggiungi','success');
+  // Retrocompatibilità — ora usa apriNuovoArticoloConAgente
+  chiudiNuovoModal();
+  const catSel=document.getElementById('n-cat');
+  catSel.value=cat; onCatChange(cat);
+  const item=catalogo.find(c=>c.macrocategoria===cat&&(c.agente.includes('CO')||c.agente.includes(codice)));
+  if(item){
+    setTimeout(()=>{
+      document.getElementById('n-agente').value=item.id;
+      onAgenteChange(item.id);
+      document.getElementById('nuovo-modal').classList.add('open');
+    },50);
+  } else {
+    document.getElementById('n-nome-custom').value=nome;
+    document.getElementById('n-nome-group').style.display='block';
+    document.getElementById('nuovo-modal').classList.add('open');
+  }
+}
+
+async function salvaArticolo(){
+  const nome=document.getElementById('n-nome-custom').value.trim();
+  if(!nome){showToast('Seleziona tipo e taglia del prodotto','error');return;}
+  const cat=document.getElementById('n-cat').value;
+  if(!cat){showToast('Seleziona la categoria','error');return;}
+  const catalogoId=document.getElementById('n-catalogo-id').value||null;
+  const tagliaVal=document.getElementById('n-taglia-val').value||null;
+  const body={
+    nome, categoria:cat,
+    quantita:parseInt(document.getElementById('n-qty').value)||0,
+    soglia_minima:parseInt(document.getElementById('n-soglia').value)||5,
+    unita:document.getElementById('n-unita').value||'pz'
+  };
+  if(catalogoId) body.catalogo_id=catalogoId;
+  if(tagliaVal) body.taglia=tagliaVal;
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino`,{
+    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    body:JSON.stringify(body)
+  });
+  chiudiNuovoModal();
+  if(r.ok){showToast('✓ Articolo aggiunto','success');loadMagazzino();}
+  else showToast('Errore salvataggio','error');
 }
 
 function statoQty(qty,soglia){
@@ -1322,7 +1475,7 @@ async function loadMagazzino(){
     else alertEl.style.display='none';
   }
 
-  populateNomeSelect();
+  await loadCatalogo();
   renderMagGrid();
   loadMovimenti();
 }
@@ -1386,47 +1539,6 @@ async function registraUscita(){
   }
 }
 
-async function populateNomeSelect(){
-  const sel=document.getElementById('n-nome-select');
-  const nomi=[...new Set(magazzino.map(a=>a.nome))].sort();
-  sel.innerHTML='<option value="">— Seleziona articolo —</option>';
-  nomi.forEach(n=>{
-    const o=document.createElement('option');
-    o.value=n; o.textContent=n;
-    sel.appendChild(o);
-  });
-  const ins=document.createElement('option');
-  ins.value='__nuovo__'; ins.textContent='✏ Inserisci nuovo';
-  sel.appendChild(ins);
-}
-
-function onNomeSelectChange(sel){
-  const custom=document.getElementById('n-nome-custom');
-  custom.style.display=sel.value==='__nuovo__'?'block':'none';
-  if(sel.value==='__nuovo__') custom.focus();
-}
-
-async function salvaArticolo(){
-  const sel=document.getElementById('n-nome-select');
-  const custom=document.getElementById('n-nome-custom');
-  // usa il campo testo se visibile (flusso da scheda o da selezione __nuovo__)
-  const nome=(custom.style.display!=='none' ? custom.value : sel.value).trim();
-  if(!nome){showToast('Seleziona o inserisci il nome articolo','error');return;}
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino`,{
-    method:'POST',headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({
-      nome:nome,
-      categoria:document.getElementById('n-cat').value,
-      quantita:parseInt(document.getElementById('n-qty').value)||0,
-      soglia_minima:parseInt(document.getElementById('n-soglia').value)||5,
-      unita:document.getElementById('n-unita').value||'pz'
-    })
-  });
-  document.getElementById('nuovo-modal').classList.remove('open');
-  sel.value=''; custom.value=''; custom.style.display='none';
-  if(r.ok){showToast('✓ Articolo aggiunto','success');loadMagazzino();}
-  else showToast('Errore salvataggio','error');
-}
 
 async function eliminaArticolo(id){
   if(!confirm('Eliminare questo articolo dal magazzino?')) return;

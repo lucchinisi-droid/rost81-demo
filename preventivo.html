@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ROST81 – Preventivo di Spesa</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;600&display=swap');
+
+:root {
+  --red: #b92b27; --red-dark: #8a1f1c; --red-light: #fdf0f0;
+  --dark: #1c1c1c; --mid: #666; --light: #f4f3f0;
+  --border: #d8d5cf; --section-bg: #faf9f7; --r: 4px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { font-family: 'IBM Plex Sans', sans-serif; background: var(--light); color: var(--dark); font-size: 15px; line-height: 1.5; }
+
+@media print {
+  @page { size: A4 portrait; margin: 12mm; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { font-size: 9pt; background: white; }
+  .no-print { display: none !important; }
+  .wrapper { padding: 0; max-width: 100%; }
+  .page-wrap { box-shadow: none !important; border: none !important; padding: 0 !important; }
+  .section-title { font-size: 7pt !important; padding: 3pt 7pt !important; }
+  .field label { font-size: 6.5pt !important; }
+  .field input, .field select { font-size: 8.5pt !important; padding: 2pt 5pt !important; min-height: unset !important; }
+  .prev-table th { font-size: 7pt !important; padding: 3pt 6pt !important; }
+  .prev-table td { font-size: 8.5pt !important; padding: 3pt 6pt !important; }
+}
+
+.wrapper { max-width: 800px; margin: 0 auto; padding: 20px 14px 80px; }
+.page-wrap { background: white; box-shadow: 0 2px 18px rgba(0,0,0,.08); padding: 24px 28px; margin-bottom: 14px; border-radius: 6px; }
+
+/* Header */
+.doc-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 3px solid var(--red); padding-bottom: 12px; margin-bottom: 16px; gap: 12px; }
+.logo h1 { font-family: 'IBM Plex Mono', monospace; font-size: 24px; color: var(--red); letter-spacing: -1px; font-weight: 600; }
+.logo p  { font-size: 10.5px; color: var(--mid); margin-top: 1px; }
+.doc-meta { text-align: right; flex-shrink: 0; }
+.doc-meta .mf { margin-bottom: 5px; }
+.doc-meta label { font-size: 9.5px; color: var(--mid); text-transform: uppercase; letter-spacing: .5px; display: block; margin-bottom: 1px; }
+.doc-meta input { border: none; border-bottom: 1.5px solid #ccc; background: transparent; font-size: 12.5px; font-family: 'IBM Plex Sans', sans-serif; text-align: right; outline: none; width: 155px; color: var(--dark); padding: 2px 0; }
+.doc-meta input:focus { border-bottom-color: var(--red); }
+.doc-meta input[readonly] { cursor: default; font-family: 'IBM Plex Mono', monospace; color: var(--red); font-weight: 600; }
+.doc-title { text-align: center; font-size: 12.5px; font-weight: 600; letter-spacing: 2.5px; text-transform: uppercase; padding: 7px 0; border-bottom: 1px solid var(--border); margin-bottom: 18px; }
+
+/* Section */
+.section-title { background: var(--dark); color: white; font-size: 9.5px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; padding: 5px 11px; margin: 16px 0 11px; border-radius: 3px; }
+
+/* Grids */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 9px; }
+
+/* Fields */
+.field { display: flex; flex-direction: column; gap: 3px; }
+.field label { font-size: 10px; font-weight: 600; color: var(--mid); text-transform: uppercase; letter-spacing: .4px; }
+.field input[type=text], .field input[type=date], .field input[type=email], .field select, .field textarea {
+  border: 1.5px solid var(--border); background: var(--section-bg);
+  padding: 8px 10px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13.5px; color: var(--dark); border-radius: var(--r);
+  outline: none; transition: border-color .15s; min-height: 40px;
+  -webkit-appearance: none; width: 100%;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--red); background: white; }
+
+/* Preventivo table */
+.prev-table { width: 100%; border-collapse: collapse; margin: 8px 0 4px; font-size: 13px; }
+.prev-table th { background: var(--dark); color: white; padding: 7px 9px; text-align: left; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; }
+.prev-table td { border-bottom: 1px solid var(--border); padding: 7px 9px; vertical-align: middle; }
+.prev-table .tot-row td { font-weight: 600; background: var(--light); border-top: 2px solid var(--dark); }
+.prev-table .num { text-align: right; font-family: 'IBM Plex Mono', monospace; }
+.prev-table td input { border: none; background: transparent; font-family: inherit; font-size: 13px; outline: none; width: 100%; color: var(--dark); }
+.prev-table td input.ni { font-family: 'IBM Plex Mono', monospace; text-align: right; }
+.prev-table td input:focus { background: var(--red-light); border-radius: 2px; }
+.rm-btn { background: none; border: none; cursor: pointer; color: #bbb; font-size: 14px; padding: 0 4px; transition: color .15s; }
+.rm-btn:hover { color: var(--red); }
+
+/* Note */
+.note-box { border: 1.5px solid var(--border); background: var(--section-bg); padding: 11px; min-height: 70px; font-size: 13px; border-radius: var(--r); font-family: 'IBM Plex Sans', sans-serif; resize: vertical; width: 100%; outline: none; }
+.note-box:focus { border-color: var(--red); background: white; }
+
+/* Bottom bar */
+#bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #1c1c1c; border-top: 2px solid #2a2a2a; padding: 0 20px; height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.bar-info { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #666; }
+.bar-info span { color: #ffb3b0; font-weight: 600; }
+.bar-btns { display: flex; gap: 8px; }
+.btn-bar { padding: 8px 18px; border-radius: var(--r); font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+.btn-bar-out { background: white; color: var(--dark); }
+.btn-bar-pdf { background: var(--red); color: white; }
+.btn-bar-pdf:hover { background: var(--red-dark); }
+
+/* Toast */
+#toast { position: fixed; top: 18px; left: 50%; transform: translateX(-50%) translateY(-80px); background: #1c1c1c; color: white; padding: 9px 18px; border-radius: 6px; font-size: 13px; z-index: 9999; transition: transform .3s ease; box-shadow: 0 4px 20px rgba(0,0,0,.3); pointer-events: none; white-space: nowrap; }
+#toast.show { transform: translateX(-50%) translateY(0); }
+#toast.error { border-left: 3px solid var(--red); }
+#toast.success { border-left: 3px solid #2ecc71; }
+
+/* Placeholder banner */
+.draft-banner { background: linear-gradient(135deg, #1a1a1a, #2e2e2e); color: white; border-radius: 6px; padding: 14px 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; }
+.draft-banner .db-icon { font-size: 22px; flex-shrink: 0; }
+.draft-banner h3 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+.draft-banner p  { font-size: 11px; color: #999; }
+
+@media (max-width: 600px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .page-wrap { padding: 16px; }
+  .doc-header { flex-direction: column; }
+  .doc-meta { text-align: left; }
+}
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="wrapper">
+
+  <!-- Draft banner -->
+  <div class="draft-banner no-print">
+    <div class="db-icon">📄</div>
+    <div>
+      <h3>Fac-simile Preventivo — ROST 81</h3>
+      <p>Compila le voci, clicca <strong style="color:#ffb3b0">Esporta PDF</strong> per stampare e archiviare sul CRM automaticamente.</p>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+
+    <!-- Header -->
+    <div class="doc-header">
+      <div class="logo">
+        <h1>ROST81</h1>
+        <p>Antincendio e Sicurezza sul Lavoro</p>
+        <p>www.rost81.it · Tel. 06 97234064 · COLLEFERRO (Rm)</p>
+      </div>
+      <div class="doc-meta">
+        <div class="mf"><label>N° Preventivo</label><input type="text" id="prev-num" readonly></div>
+        <div class="mf"><label>Data</label><input type="date" id="prev-data"></div>
+        <div class="mf"><label>Valido fino al</label><input type="date" id="prev-scadenza"></div>
+      </div>
+    </div>
+
+    <div class="doc-title">Preventivo di Spesa</div>
+
+    <!-- Dati cliente -->
+    <div class="section-title">Dati Cliente</div>
+    <div class="field" style="margin-bottom:9px">
+      <label>Azienda</label>
+      <select id="cliente-select" onchange="autoFillCliente()">
+        <option value="">— Seleziona azienda —</option>
+      </select>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Responsabile</label><input type="text" id="responsabile" placeholder="Nome cognome"></div>
+      <div class="field"><label>Partita IVA</label><input type="text" id="piva"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Indirizzo</label><input type="text" id="indirizzo"></div>
+      <div class="field"><label>Telefono</label><input type="text" id="telefono"></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Email</label><input type="email" id="email"></div>
+      <div class="field"><label>PEC</label><input type="email" id="pec"></div>
+    </div>
+
+    <!-- Voci -->
+    <div class="section-title">Voci di Preventivo</div>
+    <table class="prev-table">
+      <colgroup><col style="width:45%"><col style="width:10%"><col style="width:18%"><col style="width:18%"><col style="width:9%" class="no-print"></colgroup>
+      <thead>
+        <tr><th>Descrizione</th><th>Qtà</th><th>Prezzo unit. €</th><th>Totale €</th><th class="no-print"></th></tr>
+      </thead>
+      <tbody id="prev-body"></tbody>
+      <tfoot>
+        <tr class="tot-row"><td colspan="3">Totale imponibile</td><td class="num" id="tot-imp">0,00</td><td class="no-print"></td></tr>
+        <tr class="tot-row"><td colspan="3">IVA 22%</td><td class="num" id="tot-iva">0,00</td><td class="no-print"></td></tr>
+        <tr class="tot-row"><td colspan="3"><strong>TOTALE</strong></td><td class="num" id="tot-tot"><strong>0,00</strong></td><td class="no-print"></td></tr>
+      </tfoot>
+    </table>
+    <div class="no-print" style="margin-bottom:14px">
+      <button onclick="addRow()" style="background:none;border:1.5px dashed #bbb;padding:7px 14px;cursor:pointer;font-size:12.5px;color:#777;border-radius:var(--r);font-family:inherit;">+ Aggiungi voce</button>
+    </div>
+
+    <!-- Note -->
+    <div class="section-title">Note e Condizioni</div>
+    <textarea id="note" class="note-box" placeholder="es. Offerta valida 30 giorni · Pagamento a 30 gg data fattura · Prezzi IVA esclusa..."></textarea>
+
+    <!-- Firme (stampa) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:28px">
+      <div>
+        <div style="font-size:9.5px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:6px">Firma ROST81</div>
+        <div style="border-bottom:1px solid #aaa;height:52px;"></div>
+      </div>
+      <div>
+        <div style="font-size:9.5px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;font-weight:600;margin-bottom:6px">Accettazione Cliente</div>
+        <div style="border-bottom:1px solid #aaa;height:52px;"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="border-top:1px solid var(--border);padding-top:8px;margin-top:20px;display:flex;justify-content:space-between;font-size:10px;color:var(--mid)">
+      <span>ROST 81 Srl · Via Giotto 2, 00034 Colleferro (RM) · P.IVA 10524751004</span>
+      <span id="footer-date"></span>
+    </div>
+
+  </div><!-- /page-wrap -->
+</div><!-- /wrapper -->
+
+<!-- Bottom bar -->
+<div id="bottom-bar" class="no-print">
+  <div class="bar-info">N° <span id="bar-num">—</span> · Totale <span id="bar-tot">€ 0,00</span></div>
+  <div class="bar-btns">
+    <button class="btn-bar btn-bar-out" onclick="window.history.back()">← CRM</button>
+    <button class="btn-bar btn-bar-pdf" onclick="esportaPDF()">⬇ Esporta PDF</button>
+  </div>
+</div>
+
+<script>
+const SUPA_URL = 'https://aswreslquvvpyevuhboi.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+const H = {'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
+
+let CRM = [];
+
+/* ── Init ── */
+document.addEventListener('DOMContentLoaded', () => {
+  const oggi = new Date().toISOString().split('T')[0];
+  document.getElementById('prev-data').value = oggi;
+  // Scadenza default +30 giorni
+  const sc = new Date(); sc.setDate(sc.getDate()+30);
+  document.getElementById('prev-scadenza').value = sc.toISOString().split('T')[0];
+  document.getElementById('footer-date').textContent = 'Generato il ' + new Date().toLocaleDateString('it-IT');
+  initNumero();
+  initClienti();
+  addRow('Controllo e manutenzione estintori', 1, 0);
+  addRow('', 1, 0);
+});
+
+/* ── Numero progressivo ── */
+function initNumero() {
+  const y = new Date().getFullYear();
+  const k = 'rost81_prv_' + y;
+  const n = parseInt(localStorage.getItem(k)||'0') + 1;
+  localStorage.setItem(k, n);
+  const num = 'PRV-' + y + '-' + String(n).padStart(4,'0');
+  document.getElementById('prev-num').value = num;
+  document.getElementById('bar-num').textContent = num;
+}
+
+/* ── Clienti da Supabase ── */
+async function initClienti() {
+  const s = document.getElementById('cliente-select');
+  try {
+    const r = await fetch(SUPA_URL+'/rest/v1/rost81_clienti?select=id,nome,partita_iva,citta,provincia,telefono,email,pec,referente&order=nome.asc', {headers:H});
+    CRM = await r.json();
+    CRM.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id; o.textContent = c.nome; s.appendChild(o);
+    });
+  } catch(e) { console.error('Clienti:', e); }
+}
+
+function autoFillCliente() {
+  const selId = document.getElementById('cliente-select').value;
+  if(!selId) return;
+  const c = CRM.find(x => x.id === selId); if(!c) return;
+  const citta = [c.citta, c.provincia].filter(Boolean).join(' (') + (c.provincia?')':'');
+  document.getElementById('piva').value        = c.partita_iva || '';
+  document.getElementById('indirizzo').value   = citta;
+  document.getElementById('telefono').value    = c.telefono || '';
+  document.getElementById('email').value       = c.email || '';
+  document.getElementById('pec').value         = c.pec || '';
+  document.getElementById('responsabile').value = c.referente || '';
+}
+
+/* ── Righe preventivo ── */
+function addRow(desc='', qta=1, prezzo=0) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="text" value="${desc}" placeholder="Descrizione voce..." oninput="updateTotals()"></td>
+    <td><input type="number" class="ni" value="${qta}" min="0" step="0.1" oninput="updateTotals()" style="width:52px"></td>
+    <td><input type="number" class="ni" value="${parseFloat(prezzo).toFixed(2)}" min="0" step="0.01" oninput="updateTotals()" style="width:90px"></td>
+    <td class="num tot-cell">${fmt((parseFloat(qta)||0)*(parseFloat(prezzo)||0))}</td>
+    <td class="no-print"><button class="rm-btn" onclick="this.closest('tr').remove();updateTotals()">✕</button></td>`;
+  document.getElementById('prev-body').appendChild(tr);
+  updateTotals();
+}
+
+function fmt(n) { return (n||0).toFixed(2).replace('.',','); }
+
+function updateTotals() {
+  let imp = 0;
+  document.querySelectorAll('#prev-body tr').forEach(tr => {
+    const ns = tr.querySelectorAll('input[type=number]');
+    if(ns.length >= 2) {
+      const t = (parseFloat(ns[0].value)||0)*(parseFloat(ns[1].value)||0);
+      const c = tr.querySelector('.tot-cell'); if(c) c.textContent = fmt(t);
+      imp += t;
+    }
+  });
+  const iva = imp * .22;
+  document.getElementById('tot-imp').textContent = fmt(imp);
+  document.getElementById('tot-iva').textContent = fmt(iva);
+  document.getElementById('tot-tot').innerHTML = '<strong>'+fmt(imp+iva)+'</strong>';
+  document.getElementById('bar-tot').textContent = '€ '+fmt(imp+iva);
+}
+
+/* ── Toast ── */
+function showToast(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = type === 'error' ? 'error show' : 'success show';
+  setTimeout(() => t.className = '', 3200);
+}
+
+/* ── Snapshot HTML per Supabase ── */
+function buildSnapshot() {
+  const sel = document.getElementById('cliente-select');
+  const clienteNome = sel.options[sel.selectedIndex]?.text || '';
+  const prevNum = document.getElementById('prev-num').value;
+  const prevData = document.getElementById('prev-data').value;
+  const prevScad = document.getElementById('prev-scadenza').value;
+  const totImp = document.getElementById('tot-imp').textContent;
+  const totIva = document.getElementById('tot-iva').textContent;
+  const totTot = document.getElementById('tot-tot').textContent;
+  const note = (document.getElementById('note').value||'').replace(/</g,'&lt;').replace(/\n/g,'<br>');
+  let righe = '';
+  document.querySelectorAll('#prev-body tr').forEach(tr => {
+    const ins = tr.querySelectorAll('input');
+    if(ins.length >= 3) {
+      const desc = ins[0]?.value||'', qta = ins[1]?.value||'', pr = ins[2]?.value||'';
+      const tot = (parseFloat(qta)||0)*(parseFloat(pr)||0);
+      righe += `<tr><td>${desc}</td><td style="text-align:right">${qta}</td><td style="text-align:right">€ ${parseFloat(pr||0).toFixed(2).replace('.',',')}</td><td style="text-align:right">€ ${tot.toFixed(2).replace('.',',')}</td></tr>`;
+    }
+  });
+  const css = `body{font-family:Arial,sans-serif;max-width:800px;margin:0 auto;padding:24px;font-size:13px}h1{color:#b92b27;font-size:17px;border-bottom:2.5px solid #b92b27;padding-bottom:8px;margin-bottom:16px}h2{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:#666;margin:16px 0 6px;border-bottom:1px solid #eee;padding-bottom:3px}table{width:100%;border-collapse:collapse;margin:6px 0 12px}td,th{padding:6px 9px;border:1px solid #ddd;font-size:12px}th{background:#f2f0ec;font-weight:600;text-align:left}.mono{font-family:'Courier New',monospace;font-weight:600;color:#b92b27}.tot{font-weight:600;background:#f9f9f9}footer{margin-top:32px;font-size:10px;color:#aaa;border-top:1px solid #eee;padding-top:8px}`;
+  return `<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>${prevNum}</title><style>${css}</style></head><body>
+<h1>ROST81 — Preventivo di Spesa</h1>
+<table><tr><th>N° Preventivo</th><td class="mono">${prevNum}</td><th>Data</th><td>${prevData}</td></tr>
+<tr><th>Valido fino al</th><td>${prevScad}</td><th>Cliente</th><td>${clienteNome}</td></tr>
+<tr><th>Responsabile</th><td>${document.getElementById('responsabile').value||'—'}</td><th>P.IVA</th><td>${document.getElementById('piva').value||'—'}</td></tr>
+<tr><th>Indirizzo</th><td colspan="3">${document.getElementById('indirizzo').value||'—'}</td></tr></table>
+<h2>Voci di preventivo</h2>
+<table><thead><tr><th>Descrizione</th><th style="text-align:right">Qtà</th><th style="text-align:right">Prezzo unit.</th><th style="text-align:right">Totale</th></tr></thead>
+<tbody>${righe}</tbody>
+<tfoot><tr class="tot"><td colspan="3">Imponibile</td><td style="text-align:right">€ ${totImp}</td></tr>
+<tr class="tot"><td colspan="3">IVA 22%</td><td style="text-align:right">€ ${totIva}</td></tr>
+<tr class="tot"><td colspan="3"><strong>TOTALE</strong></td><td style="text-align:right"><strong>€ ${totTot}</strong></td></tr></tfoot></table>
+${note?`<h2>Note e Condizioni</h2><p>${note}</p>`:''}
+<footer>ROST 81 Srl — Via Giotto 2, 00034 Colleferro (RM) — P.IVA 10524751004 — Tel. 06 97234064</footer>
+</body></html>`;
+}
+
+/* ── Salva su Supabase ── */
+async function salvaSuSupabase() {
+  const sel = document.getElementById('cliente-select');
+  const clienteId = sel.value || null;
+  const prevNum = document.getElementById('prev-num').value;
+  const prevData = document.getElementById('prev-data').value;
+  const anno = new Date().getFullYear();
+  const totStr = document.getElementById('tot-tot').textContent.replace(',','.').replace(/[^\d.]/g,'');
+  const importo = parseFloat(totStr)||0;
+  const path = `preventivi/${anno}/${prevNum}.html`;
+  try {
+    const up = await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`, {
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'text/html;charset=utf-8','x-upsert':'true'},
+      body: buildSnapshot()
+    });
+    const url = `${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`;
+    await fetch(`${SUPA_URL}/rest/v1/rost81_preventivi`, {
+      method:'POST', headers:{...H,'Prefer':'return=minimal'},
+      body: JSON.stringify({cliente_id:clienteId, numero:prevNum, data:prevData, importo_totale:importo, url: up.ok?url:null})
+    });
+    showToast('✓ Salvato sul CRM','success');
+  } catch(e) {
+    console.error(e);
+    showToast('Errore salvataggio CRM','error');
+  }
+}
+
+/* ── Esporta PDF ── */
+function esportaPDF() {
+  salvaSuSupabase();
+  setTimeout(() => window.print(), 200);
+}
+</script>
+</body>
+</html>

@@ -1159,7 +1159,7 @@ function _dashTable(list, showScad=false){
     const nameStyle=deb?'color:var(--red);font-weight:600':'';
     const pagBadge=deb
       ?'<span style="background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">⚠ DEBITORE</span>'
-      :'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600">✓ Reg.</span>';
+      :'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600">✓ Regolare</span>';
     const scadTd=showScad?`<td style="padding:5px 10px;font-size:11px">${c.data_scadenza_contratto?new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT'):'—'}</td>`:'';
     return `<tr style="${rowBg}">
       <td style="padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>

@@ -1161,7 +1161,7 @@ function _dashTable(list, showScad=false){
       ?'<span style="background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">⚠ DEBITORE</span>'
       :'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600">✓ Regolare</span>';
     const scadTd=showScad?`<td style="padding:5px 10px;font-size:11px">${c.data_scadenza_contratto?new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT'):'—'}</td>`:'';
-    return `<tr style="${rowBg}">
+    return `<tr style="${rowBg};cursor:pointer" onclick="openClienteFromDash('${c.id}')">
       <td style="padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
       <td style="padding:5px 10px;${nameStyle}">${c.nome}</td>
       <td style="padding:5px 10px;font-size:11px;color:var(--text-muted)">${c.citta||'—'}</td>
@@ -1234,6 +1234,22 @@ function toggleDashCard(type){
 function closeDashCard(){
   document.getElementById('dash-card-detail').style.display='none';
   _dashCardOpen=null;
+}
+
+async function openClienteFromDash(id){
+  // Cerca prima in _clientiData (menu Clienti già caricato)
+  let c=_clientiData.find(x=>x.id===id);
+  if(!c){
+    // Fetch completo da Supabase con mesi
+    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?id=eq.${id}&select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
+    const data=await r.json();
+    if(data&&data[0]){
+      c=data[0];
+      // Aggiungi in cache locale così successive aperture sono istantanee
+      _clientiData.push(c);
+    }
+  }
+  if(c) openClienteDrawer(c);
 }
 
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};

@@ -292,18 +292,22 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
         </div>
 
-        <div class="stat-row">
-          <div class="stat-card"><div class="stat-label">Clienti attivi</div><div class="stat-val" id="dash-clienti-tot">0</div></div>
-          <div class="stat-card"><div class="stat-label">Scadenze critiche</div><div class="stat-val red">0</div></div>
-          <div class="stat-card"><div class="stat-label">Entro 30gg</div><div class="stat-val amber">0</div></div>
-          <div class="stat-card"><div class="stat-label">In regola</div><div class="stat-val green">0</div></div>
-          <div class="stat-card"><div class="stat-label">Preventivi</div><div class="stat-val blue">0</div></div>
-          <div class="stat-card"><div class="stat-label">Pipeline</div><div class="stat-val sm blue">€ 0</div></div>
+        <div class="stat-row" id="dash-cards-row">
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('attivi')"><div class="stat-label">Clienti attivi</div><div class="stat-val" id="dash-clienti-tot">…</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('scad-contratto')"><div class="stat-label">Scadenze contratto</div><div class="stat-val red" id="dash-scad-contratto">…</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('pagamenti-scaduti')"><div class="stat-label">Pagamenti scaduti</div><div class="stat-val amber" id="dash-pagamenti-scaduti">…</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('in-regola')"><div class="stat-label">In regola</div><div class="stat-val green" id="dash-in-regola">…</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('preventivi')"><div class="stat-label">Preventivi</div><div class="stat-val blue" id="dash-prev-count">…</div></div>
+          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('pipeline')"><div class="stat-label">Pipeline</div><div class="stat-val sm blue" id="dash-pipeline">…</div></div>
         </div>
 
-        <div class="section-head"><div class="section-title">⚠ Scadenze urgenti</div><button class="btn btn-sm" onclick="switchPanel('scadenze',document.querySelectorAll('.nav-item')[3])">Vedi tutte</button></div>
-        <div class="alert-list" style="margin-bottom:0">
-          <div style="text-align:center;padding:20px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Nessuna scadenza urgente</div>
+        <!-- DETAIL PANEL — aperto dal click sulle card -->
+        <div id="dash-card-detail" style="display:none;background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-top:10px;margin-bottom:4px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:13px;font-weight:600;color:var(--text)" id="dash-detail-title">—</div>
+            <button class="btn btn-sm" onclick="closeDashCard()">✕</button>
+          </div>
+          <div id="dash-detail-body"></div>
         </div>
 
         <!-- ── DIVISORE ── -->
@@ -1108,8 +1112,128 @@ async function loadSidebarBadges(){
   document.getElementById('badge-preventivi').textContent=0;
   document.getElementById('badge-scorte').textContent=nM;
   document.getElementById('badge-operatori').textContent=nO;
-  const el=document.getElementById('dash-clienti-tot');
-  if(el) el.textContent=nC;
+  // dash clienti aggiornato da loadDashboardClienti
+}
+
+/* ══ DASHBOARD CLIENTI & SCADENZE ══════════════════════════════ */
+let _dashClienti=[], _dashPrev=[], _dashCardOpen=null;
+
+async function loadDashboardClienti(){
+  const oggi=new Date();
+  const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
+  const [rC,rP]=await Promise.all([
+    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,codice,nome,citta,provincia,pagamento,stato,data_scadenza_contratto&limit=500`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=id,numero,stato,totale,rost81_clienti(nome)&order=created_at.desc`,{headers:H})
+  ]);
+  _dashClienti=await rC.json(); if(!Array.isArray(_dashClienti)) _dashClienti=[];
+  _dashPrev=await rP.json();    if(!Array.isArray(_dashPrev))    _dashPrev=[];
+
+  const attivi        =_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO');
+  const scadContratto =_dashClienti.filter(c=>{
+    if(!c.data_scadenza_contratto) return false;
+    return new Date(c.data_scadenza_contratto)<=tra30;
+  });
+  const debitori =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='DEBITORE');
+  const inRegola =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='REGOLARE');
+  const prevAperti=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
+  const pipeline  =_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato))
+                             .reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
+
+  document.getElementById('dash-clienti-tot').textContent=attivi.length;
+  document.getElementById('dash-scad-contratto').textContent=scadContratto.length;
+  document.getElementById('dash-pagamenti-scaduti').textContent=debitori.length;
+  document.getElementById('dash-in-regola').textContent=inRegola.length;
+  document.getElementById('dash-prev-count').textContent=prevAperti.length;
+  document.getElementById('dash-pipeline').textContent='€ '+pipeline.toLocaleString('it-IT',{maximumFractionDigits:0});
+  // aggiorna anche badge sidebar
+  const bEl=document.getElementById('badge-clienti');
+  if(bEl) bEl.textContent=attivi.length;
+}
+
+function _dashTable(list, showScad=false){
+  if(!list.length) return '<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun elemento.</div>';
+  const thScad=showScad?'<th style="padding:5px 10px">Scadenza</th>':'';
+  const rows=list.map((c,i)=>{
+    const deb=(c.pagamento||'REGOLARE')==='DEBITORE';
+    const rowBg=i%2===0?'':'background:var(--bg)';
+    const nameStyle=deb?'color:var(--red);font-weight:600':'';
+    const pagBadge=deb
+      ?'<span style="background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">⚠ DEBITORE</span>'
+      :'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600">✓ Reg.</span>';
+    const scadTd=showScad?`<td style="padding:5px 10px;font-size:11px">${c.data_scadenza_contratto?new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT'):'—'}</td>`:'';
+    return `<tr style="${rowBg}">
+      <td style="padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
+      <td style="padding:5px 10px;${nameStyle}">${c.nome}</td>
+      <td style="padding:5px 10px;font-size:11px;color:var(--text-muted)">${c.citta||'—'}</td>
+      ${scadTd}
+      <td style="padding:5px 10px">${pagBadge}</td>
+    </tr>`;
+  }).join('');
+  const thScadH=showScad?'<th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Scadenza</th>':'';
+  return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">
+    <thead><tr style="border-bottom:2px solid var(--border)">
+      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Cod.</th>
+      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Cliente</th>
+      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Città</th>
+      ${thScadH}
+      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Pagamento</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table></div>`;
+}
+
+function toggleDashCard(type){
+  const panel=document.getElementById('dash-card-detail');
+  if(_dashCardOpen===type){ panel.style.display='none'; _dashCardOpen=null; return; }
+  _dashCardOpen=type;
+  const oggi=new Date();
+  const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
+  const titles={
+    'attivi':'Clienti attivi',
+    'scad-contratto':'Scadenze contratto (entro 30 giorni)',
+    'pagamenti-scaduti':'Pagamenti scaduti — Debitori',
+    'in-regola':'Pagamenti in regola',
+    'preventivi':'Preventivi aperti',
+    'pipeline':'Pipeline commerciale'
+  };
+  document.getElementById('dash-detail-title').textContent=titles[type]||type;
+  let html='';
+  if(type==='attivi'){
+    html=_dashTable(_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO'));
+  } else if(type==='scad-contratto'){
+    const list=_dashClienti.filter(c=>c.data_scadenza_contratto&&new Date(c.data_scadenza_contratto)<=tra30);
+    html=list.length?_dashTable(list,true):'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessuna scadenza contratto nei prossimi 30 giorni.</div>';
+  } else if(type==='pagamenti-scaduti'){
+    const list=_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='DEBITORE');
+    html=list.length?_dashTable(list):'<div style="color:var(--green);font-size:13px;padding:8px 0">✓ Nessun debitore.</div>';
+  } else if(type==='in-regola'){
+    html=_dashTable(_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='REGOLARE'));
+  } else if(type==='preventivi'){
+    const list=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
+    html=list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)${i===0?';border-top:1px solid var(--border)':''}">
+      <span style="font-size:12px">${p.rost81_clienti?.nome||'—'}</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg);color:var(--text-muted)">${p.stato}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
+      </div></div>`).join('')
+      :'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun preventivo aperto.</div>';
+  } else if(type==='pipeline'){
+    const list=_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato));
+    const tot=list.reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
+    html=`<div style="font-size:26px;font-weight:700;color:var(--blue);margin-bottom:12px">€ ${tot.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>`
+      +(list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px">${p.rost81_clienti?.nome||'—'}</span>
+        <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
+      </div>`).join('')
+      :'<div style="color:var(--text-muted);font-size:13px">Nessun preventivo in pipeline.</div>');
+  }
+  document.getElementById('dash-detail-body').innerHTML=html;
+  panel.style.display='block';
+}
+
+function closeDashCard(){
+  document.getElementById('dash-card-detail').style.display='none';
+  _dashCardOpen=null;
 }
 
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
@@ -1628,7 +1752,7 @@ function switchPanel(id,el){
   };
   document.getElementById('page-title').textContent=labels[id]||id;
   if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
-  if(id==='dashboard') loadDashboardMagazzino();
+  if(id==='dashboard'){ loadDashboardMagazzino(); loadDashboardClienti(); closeDashCard(); }
   if(id==='clienti') loadClienti();
   if(id==='scadenze') loadScadenze();
   if(id==='appmanut') loadOperatori();
@@ -2083,6 +2207,7 @@ async function loadRinnovi(){
 
 loadDashboardMagazzino();
 loadSidebarBadges();
+loadDashboardClienti();
 
 // ---- DRAWER ANAGRAFICA CLIENTE ----
 let _clienteEditId=null;

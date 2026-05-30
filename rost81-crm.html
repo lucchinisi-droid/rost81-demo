@@ -359,8 +359,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div style="display:flex;align-items:center;gap:10px">
             <div class="section-title">Tutti i clienti</div>
             <div style="display:flex;gap:4px">
-              <button class="btn btn-sm sort-btn active" id="sort-n"    onclick="setSortKey('n')">N</button>
-              <button class="btn btn-sm sort-btn"        id="sort-cod"  onclick="setSortKey('cod')">COD</button>
+              <button class="btn btn-sm sort-btn active" id="sort-cod"  onclick="setSortKey('cod')">COD</button>
               <button class="btn btn-sm sort-btn"        id="sort-nome" onclick="setSortKey('nome')">Cliente</button>
               <button class="btn btn-sm" id="filter-debitori" onclick="toggleDebitori()" style="margin-left:6px;border-color:var(--amber);color:var(--amber)">⚠ Debitori</button>
             </div>
@@ -376,8 +375,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         <div id="form-nuovo-cliente" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
           <div style="font-size:13px;font-weight:600;margin-bottom:16px">Nuovo cliente</div>
 
-          <div style="display:grid;grid-template-columns:80px 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-            <div class="form-group"><label class="form-label">N</label><input type="number" class="form-input" id="nc-n" placeholder="32"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
             <div class="form-group"><label class="form-label">Codice</label><input type="text" class="form-input" id="nc-cod" placeholder="COD-001"></div>
             <div class="form-group"><label class="form-label">Ragione sociale *</label><input type="text" class="form-input" id="nc-nome" placeholder="Mario Rossi Srl"></div>
             <div class="form-group"><label class="form-label">P.IVA</label><input type="text" class="form-input" id="nc-piva" placeholder="IT12345678901"></div>
@@ -427,9 +425,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Prov.</th><th>Interventi</th><th>Note</th></tr></thead>
+            <thead><tr><th>Cod.</th><th>Cliente</th><th>Città</th><th>Prov.</th><th>Interventi</th><th>Note</th></tr></thead>
             <tbody id="clienti-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
             </tbody>
           </table>
         </div>
@@ -463,9 +461,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           </div>
           <div class="table-wrap">
             <table>
-              <thead><tr><th style="width:36px"></th><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
+              <thead><tr><th style="width:36px"></th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th>Mesi contratto</th></tr></thead>
               <tbody id="scad-mese-tbody">
-                <tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+                <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
               </tbody>
             </table>
           </div>
@@ -475,9 +473,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         <div id="scad-panel-rinnovi" style="display:none">
           <div class="table-wrap">
             <table>
-              <thead><tr><th>N</th><th>Cod.</th><th>Cliente</th><th>Città</th><th>Scadenza contratto</th><th>Giorni</th></tr></thead>
+              <thead><tr><th>Cod.</th><th>Cliente</th><th>Città</th><th>Scadenza contratto</th><th>Giorni</th></tr></thead>
               <tbody id="scad-rinnovi-tbody">
-                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+                <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
               </tbody>
             </table>
           </div>
@@ -905,8 +903,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
   <div class="drawer-body">
     <div class="d-section">Identificazione</div>
-    <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="form-group"><label class="form-label">N</label><input type="number" class="form-input" id="d-n"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div class="form-group"><label class="form-label">Codice</label><input type="text" class="form-input" id="d-cod"></div>
       <div class="form-group"><label class="form-label">Ragione sociale</label><input type="text" class="form-input" id="d-nome"></div>
     </div>
@@ -1117,7 +1114,7 @@ async function loadSidebarBadges(){
 
 const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
 let _clientiData=[];
-let _sortKey='n';
+let _sortKey='cod';
 let _filterDebitori=false;
 
 function toggleDebitori(){
@@ -1144,10 +1141,6 @@ function setSortKey(key){
 
 function sortedData(data){
   return [...data].sort((a,b)=>{
-    if(_sortKey==='n'){
-      const an=a.numero_n??99999, bn=b.numero_n??99999;
-      return an-bn;
-    }
     if(_sortKey==='cod'){
       const ac=(a.codice||'zzz').toLowerCase(), bc=(b.codice||'zzz').toLowerCase();
       return ac.localeCompare(bc,'it');
@@ -1165,7 +1158,6 @@ function applyFilterAndSort(){
     (c.nome||'').toLowerCase().includes(q)||
     (c.citta||'').toLowerCase().includes(q)||
     (c.codice||'').toLowerCase().includes(q)||
-    String(c.numero_n||'').includes(q)||
     (c.partita_iva||'').toLowerCase().includes(q)
   );
   renderClienti(sortedData(data));
@@ -1209,8 +1201,6 @@ async function salvaNuovoCliente(){
       telefono_referente:document.getElementById('nc-tel-referente').value.trim()||null,
       note:document.getElementById('nc-note').value.trim()||null,
     };
-    const nVal=document.getElementById('nc-n').value;
-    if(nVal) body.numero_n=parseInt(nVal);
     const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti`,{
       method:'POST',headers:{...H,'Prefer':'return=representation'},
       body:JSON.stringify(body)
@@ -1228,7 +1218,7 @@ async function salvaNuovoCliente(){
     }
     showToast(`✓ ${nome} aggiunto`,'success');
     // reset form
-    ['nc-n','nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-pec','nc-referente','nc-tel-referente','nc-note'].forEach(id=>document.getElementById(id).value='');
+    ['nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-pec','nc-referente','nc-tel-referente','nc-note'].forEach(id=>document.getElementById(id).value='');
     document.querySelectorAll('#nc-mesi-wrap input').forEach(cb=>{cb.checked=false;highlightMese(cb.value,false);});
     document.getElementById('form-nuovo-cliente').style.display='none';
     loadClienti();
@@ -1250,7 +1240,6 @@ function renderClienti(data){
       : `<span style="font-size:11px;color:var(--text-muted)">${c.note||'—'}</span>`;
     const rowStyle=debitore?'font-weight:600;color:var(--red)':'';
     return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')" style="${rowStyle}">
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
       <td><div class="td-name" style="${rowStyle}">${c.nome}</div>${c.citta?`<div class="td-sub">${c.citta} (${c.provincia||''})</div>`:''}</td>
       <td style="font-size:12px">${c.citta||'—'}</td>
@@ -1923,7 +1912,7 @@ async function loadAgendaMese(){
   const visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
 
   const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
-  clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
+  clientiMese.sort((a,b)=>(a.nome||'').localeCompare(b.nome||'','it'));
   _scadClientiMese=clientiMese;
   _scadVisitatiSet=visitatiSet;
 
@@ -1949,7 +1938,6 @@ async function loadAgendaMese(){
       :`<div class="td-name">${c.nome}</div>`;
     return `<tr style="${rowStyle}">
       <td onclick="toggleVisita('${c.id}',${visitato})" style="cursor:pointer;text-align:center;padding:10px 8px;width:44px">${led}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer">${nomeCell}</td>
       <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.citta||'—'}</td>
@@ -1977,7 +1965,6 @@ function exportScadenzePDF(){
     const debitore=c.note&&c.note.includes('DEBITORE');
     const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>({1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'}[m]||m)).join(' · ');
     return `<tr style="${visitato?'opacity:.5':''}${debitore?';border-left:3px solid #c0392b':''}">
-      <td style="font-family:monospace;font-size:10px;color:#888">${c.numero_n||'—'}</td>
       <td style="font-family:monospace;font-size:10px;color:#888">${c.codice||'—'}</td>
       <td style="${debitore?'color:#c0392b;font-weight:700':''}">${c.nome}${debitore?' <span style="background:#fde8e6;color:#8b1a10;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">⚠ DEBITORE</span>':''}</td>
       <td>${c.citta||'—'}</td>
@@ -2020,7 +2007,7 @@ function exportScadenzePDF(){
   ${debitori>0?`<div class="stat"><div class="stat-n" style="color:#c0392b">${debitori}</div><div class="stat-l">Debitori</div></div>`:''}
 </div>
 <table>
-  <thead><tr><th>N</th><th>COD</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th style="text-align:center">Visita</th><th>Mesi contratto</th></tr></thead>
+  <thead><tr><th>COD</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th style="text-align:center">Visita</th><th>Mesi contratto</th></tr></thead>
   <tbody>${righe}</tbody>
 </table>
 <div class="footer">ROST 81 Srl — Documento generato automaticamente dal CRM interno</div>
@@ -2054,7 +2041,7 @@ async function toggleVisita(clienteId, visitatoAttuale){
 }
 
 async function loadRinnovi(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,numero_n,codice,nome,citta,data_scadenza_contratto&data_scadenza_contratto=not.is.null&order=data_scadenza_contratto`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,codice,nome,citta,data_scadenza_contratto&data_scadenza_contratto=not.is.null&order=data_scadenza_contratto`,{headers:H});
   const data=await r.json();
   const today=new Date(); today.setHours(0,0,0,0);
   const relevant=(data||[]).filter(c=>{
@@ -2076,7 +2063,6 @@ async function loadRinnovi(){
     else if(diff<=60) badge=`<span class="badge badge-amber">${diff} giorni</span>`;
     else              badge=`<span class="badge badge-green">${diff} giorni</span>`;
     return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')">
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.numero_n||'—'}</td>
       <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
       <td class="td-name">${c.nome}</td>
       <td style="font-size:12px">${c.citta||'—'}</td>
@@ -2111,7 +2097,6 @@ function openClienteDrawer(c){
   document.getElementById('drawer-title').textContent=c.nome;
   document.getElementById('drawer-sub').textContent=[c.citta,c.provincia].filter(Boolean).join(' · ')||'';
   // Identificazione
-  document.getElementById('d-n').value=c.numero_n??'';
   document.getElementById('d-cod').value=c.codice||'';
   document.getElementById('d-nome').value=c.nome||'';
   document.getElementById('d-piva').value=c.partita_iva||'';
@@ -2156,7 +2141,6 @@ async function salvaModificheCliente(){
   const btn=document.getElementById('btn-salva-drawer');
   btn.disabled=true;btn.textContent='Salvataggio…';
   try{
-    const nVal=document.getElementById('d-n').value;
     const body={
       nome,
       codice:document.getElementById('d-cod').value.trim()||null,
@@ -2172,7 +2156,6 @@ async function salvaModificheCliente(){
       data_scadenza_contratto:document.getElementById('d-scadenza').value||null,
       note:document.getElementById('d-note').value.trim()||null,
     };
-    if(nVal!=='') body.numero_n=parseInt(nVal);
     const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?id=eq.${_clienteEditId}`,{
       method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
       body:JSON.stringify(body)

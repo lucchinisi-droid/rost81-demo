@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROST 81 — Dashboard Mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --red:#c0392b;--red2:#e74c3c;--navy:#0f172a;--slate:#1e293b;
+  --blue:#1d4ed8;--green:#16a34a;--amber:#d97706;--purple:#7c3aed;
+  --cyan:#0891b2;--teal:#0d9488;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:#f1f5f9;overflow-x:hidden;}
+
+/* ─── SWITCHER BAR ─────────────────────────────────────────────── */
+.switcher{
+  position:fixed;top:0;left:0;right:0;z-index:999;
+  background:var(--navy);padding:10px 28px;
+  display:flex;align-items:center;gap:16px;
+  box-shadow:0 2px 20px rgba(0,0,0,.4);
+}
+.switcher-logo{color:var(--red);font-weight:800;font-size:15px;letter-spacing:-.3px;}
+.switcher-logo span{color:rgba(255,255,255,.4);font-weight:400;font-size:11px;margin-left:6px;}
+.switcher-tabs{display:flex;gap:3px;background:rgba(255,255,255,.08);padding:3px;border-radius:10px;margin-left:auto;}
+.stab{padding:5px 18px;border-radius:8px;border:none;background:transparent;
+  color:rgba(255,255,255,.55);font-size:11px;font-weight:600;cursor:pointer;
+  transition:.2s;font-family:'DM Sans',sans-serif;letter-spacing:.02em;}
+.stab.active{background:white;color:var(--navy);}
+.switcher-note{color:rgba(255,255,255,.35);font-size:10px;margin-left:12px;}
+
+.mock{display:none;padding-top:52px;min-height:100vh;}
+.mock.active{display:block;}
+
+/* ════════════════════════════════════════════════════════
+   MOCKUP A — ORBIT  (light, radial, planets)
+════════════════════════════════════════════════════════ */
+#mock-a{background:linear-gradient(145deg,#fafbff 0%,#eef2ff 60%,#fdf2f2 100%);}
+
+.orbit-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  padding:44px 24px 60px;
+}
+.orbit-hdr{text-align:center;margin-bottom:52px;}
+.orbit-hdr h1{font-size:26px;font-weight:800;color:var(--navy);letter-spacing:-.5px;}
+.orbit-hdr p{color:#64748b;font-size:12px;margin-top:5px;}
+.orbit-date{display:inline-block;background:rgba(192,57,43,.1);color:var(--red);
+  font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;
+  text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;}
+
+.orbit-stage{position:relative;width:540px;height:540px;flex-shrink:0;}
+
+/* rings */
+.o-ring{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  border-radius:50%;border:1px dashed;}
+.o-ring-1{width:340px;height:340px;border-color:rgba(192,57,43,.15);}
+.o-ring-2{width:490px;height:490px;border-color:rgba(29,78,216,.10);}
+
+/* hub */
+.o-hub{
+  position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);
+  width:116px;height:116px;
+  background:var(--red);border-radius:50%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 0 0 14px rgba(192,57,43,.12),0 0 0 28px rgba(192,57,43,.05),
+             0 12px 40px rgba(192,57,43,.35);
+  z-index:20;cursor:default;
+}
+.o-hub-name{color:white;font-weight:800;font-size:16px;letter-spacing:-.3px;}
+.o-hub-num{color:white;font-weight:700;font-size:36px;line-height:1;margin-top:2px;}
+.o-hub-lbl{color:rgba(255,255,255,.65);font-size:9px;text-transform:uppercase;letter-spacing:.08em;}
+
+/* nodes */
+.o-node{
+  position:absolute;
+  width:76px;height:76px;
+  background:white;
+  border-radius:20px;
+  box-shadow:0 4px 18px rgba(0,0,0,.09);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s;
+  z-index:10;
+}
+.o-node:hover{transform:translate(var(--tx),var(--ty)) scale(1.14)!important;
+  box-shadow:0 10px 36px rgba(0,0,0,.18);}
+.o-node.dev{opacity:.38;filter:grayscale(.6);}
+.o-node-icon{font-size:24px;}
+.o-node-lbl{font-size:7.5px;font-weight:700;color:#64748b;
+  text-transform:uppercase;letter-spacing:.05em;margin-top:4px;text-align:center;line-height:1.1;}
+.o-badge{
+  position:absolute;top:-7px;right:-7px;
+  border-radius:12px;padding:2px 7px;
+  font-size:10px;font-weight:700;color:white;min-width:20px;text-align:center;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+
+/* SVG connector */
+.orbit-svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;}
+
+/* detail card */
+.orbit-detail{
+  margin-top:40px;width:100%;max-width:680px;
+  background:white;border-radius:24px;
+  padding:24px 28px;
+  box-shadow:0 8px 48px rgba(0,0,0,.09);
+  display:none;
+  border-left:4px solid var(--red);
+}
+.orbit-detail.vis{display:block;animation:pop .3s ease;}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.od-head{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.od-icon{font-size:28px;}
+.od-title{font-size:17px;font-weight:700;color:var(--navy);}
+.od-sub{font-size:12px;color:#64748b;}
+.od-close{margin-left:auto;background:none;border:none;cursor:pointer;font-size:18px;color:#94a3b8;}
+.od-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.od-kpi{background:#f8fafc;border-radius:14px;padding:14px;text-align:center;}
+.od-kpi-n{font-size:28px;font-weight:700;}
+.od-kpi-l{font-size:10px;color:#64748b;margin-top:2px;text-transform:uppercase;letter-spacing:.05em;}
+.od-dev{text-align:center;padding:20px;color:#94a3b8;font-size:12px;}
+.od-dev strong{display:block;font-size:14px;margin-bottom:4px;color:#64748b;}
+
+/* bottom row for dev categories */
+.orbit-bottom{
+  margin-top:28px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;
+}
+.ob-chip{
+  background:white;border-radius:14px;padding:10px 16px;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:0 2px 10px rgba(0,0,0,.07);
+  opacity:.45;font-size:11px;font-weight:600;color:#64748b;cursor:default;
+}
+.ob-chip span{font-size:16px;}
+.ob-tag{background:#f1f5f9;color:#94a3b8;font-size:9px;padding:2px 6px;
+  border-radius:6px;font-weight:700;text-transform:uppercase;margin-left:4px;}
+
+
+/* ════════════════════════════════════════════════════════
+   MOCKUP B — BENTO  (white/glass, asymmetric grid)
+════════════════════════════════════════════════════════ */
+#mock-b{background:#f1f5f9;}
+
+.bento-wrap{max-width:1160px;margin:0 auto;padding:44px 28px 60px;}
+.bento-hdr{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:24px;}
+.bento-hdr-left h1{font-size:24px;font-weight:800;color:var(--navy);letter-spacing:-.4px;}
+.bento-hdr-left p{font-size:12px;color:#64748b;margin-top:2px;}
+.bento-time{font-family:'DM Mono',monospace;font-size:12px;color:#94a3b8;}
+
+.bento-grid{display:grid;
+  grid-template-columns:repeat(12,1fr);
+  grid-template-rows:auto;
+  gap:16px;}
+
+/* card base */
+.bc{background:white;border-radius:24px;padding:22px 24px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);
+  transition:transform .2s,box-shadow .2s;cursor:pointer;overflow:hidden;position:relative;}
+.bc:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(0,0,0,.10);}
+
+/* grid placement */
+.bc-hero  {grid-column:span 5;grid-row:span 2;background:var(--navy);color:white;}
+.bc-clienti{grid-column:span 4;}
+.bc-comm  {grid-column:span 3;}
+.bc-ops   {grid-column:span 4;}
+.bc-mag   {grid-column:span 3;}
+.bc-fat   {grid-column:span 3;opacity:.5;}
+.bc-pag   {grid-column:span 3;opacity:.5;}
+.bc-acq   {grid-column:span 3;opacity:.5;}
+.bc-ops2  {grid-column:span 3;}
+.bc-ai    {grid-column:span 3;opacity:.5;}
+.bc-alt   {grid-column:span 3;opacity:.5;}
+.bc-anal  {grid-column:span 3;opacity:.5;}
+
+.bc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;color:#94a3b8;margin-bottom:8px;}
+.bc-hero .bc-lbl{color:rgba(255,255,255,.45);}
+.bc-num{font-size:40px;font-weight:800;color:var(--navy);line-height:1;}
+.bc-hero .bc-num{font-size:56px;color:white;}
+.bc-sub{font-size:11px;color:#64748b;margin-top:4px;}
+.bc-hero .bc-sub{color:rgba(255,255,255,.55);}
+
+.bc-hero-greeting{font-size:13px;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:6px;}
+.bc-hero-date{font-size:11px;color:rgba(255,255,255,.35);font-family:'DM Mono',monospace;margin-top:12px;}
+.bc-hero-accent{
+  position:absolute;right:-30px;bottom:-30px;
+  width:160px;height:160px;
+  background:var(--red);border-radius:50%;
+  opacity:.25;
+}
+
+/* mini bars */
+.mini-bars{display:flex;gap:3px;align-items:flex-end;height:32px;margin-top:14px;}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;min-height:4px;
+  background:linear-gradient(to top,var(--blue),rgba(29,78,216,.4));}
+
+/* progress ring */
+.pring{display:flex;align-items:center;gap:10px;margin-top:12px;}
+.pring svg{transform:rotate(-90deg);}
+.pring-info{flex:1;}
+.pring-label{font-size:10px;color:#64748b;}
+.pring-val{font-size:18px;font-weight:700;color:var(--navy);}
+
+/* tags */
+.bc-tags{display:flex;gap:6px;margin-top:12px;flex-wrap:wrap;}
+.tag{font-size:9px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.04em;}
+.tag-g{background:#d1fae5;color:#065f46;}
+.tag-r{background:#fee2e2;color:#991b1b;}
+.tag-a{background:#fef3c7;color:#92400e;}
+.tag-b{background:#dbeafe;color:#1e40af;}
+
+.bc-dev-badge{
+  position:absolute;top:14px;right:14px;
+  background:#f1f5f9;color:#94a3b8;
+  font-size:8px;font-weight:700;padding:3px 8px;border-radius:8px;
+  text-transform:uppercase;letter-spacing:.05em;
+}
+
+/* spark line */
+.sparkline{margin-top:12px;}
+.sparkline svg{width:100%;height:32px;}
+
+/* trend */
+.trend{display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;margin-top:8px;}
+.trend-up{background:#d1fae5;color:#16a34a;}
+.trend-dn{background:#fee2e2;color:#991b1b;}
+.trend-nt{background:#f1f5f9;color:#64748b;}
+
+/* big icon */
+.bc-icon{font-size:36px;margin-bottom:8px;}
+
+
+/* ════════════════════════════════════════════════════════
+   MOCKUP C — COMMAND  (dark, radar, gauges, neon)
+════════════════════════════════════════════════════════ */
+#mock-c{background:#06090f;}
+
+.cmd-wrap{max-width:1200px;margin:0 auto;padding:44px 28px 60px;}
+
+/* header */
+.cmd-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.cmd-logo{display:flex;align-items:center;gap:12px;}
+.cmd-logo-box{width:38px;height:38px;background:var(--red);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:13px;color:white;letter-spacing:-.5px;}
+.cmd-logo-text h2{font-size:16px;font-weight:700;color:white;letter-spacing:-.3px;}
+.cmd-logo-text p{font-size:10px;color:rgba(255,255,255,.35);}
+.cmd-live{display:flex;align-items:center;gap:6px;
+  font-size:10px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;}
+.cmd-dot{width:7px;height:7px;background:#22c55e;border-radius:50%;
+  box-shadow:0 0 8px #22c55e;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* grid */
+.cmd-grid{display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  grid-template-rows:auto;
+  gap:14px;}
+
+/* card base */
+.cc{
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:20px;padding:22px;
+  transition:border-color .2s,background .2s;cursor:pointer;position:relative;
+  overflow:hidden;
+}
+.cc:hover{border-color:rgba(192,57,43,.4);background:rgba(192,57,43,.04);}
+.cc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);
+}
+
+.cc-main{grid-column:span 2;grid-row:span 2;}
+.cc-stat{grid-column:span 1;}
+.cc-full{grid-column:span 3;}
+
+.cc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.10em;color:rgba(255,255,255,.3);margin-bottom:14px;}
+.cc-num{font-size:48px;font-weight:800;color:white;line-height:1;letter-spacing:-2px;}
+.cc-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:6px;}
+
+/* glow accent */
+.cc-glow{
+  position:absolute;right:-40px;top:-40px;
+  width:140px;height:140px;border-radius:50%;
+  background:var(--red);filter:blur(60px);opacity:.15;pointer-events:none;
+}
+
+/* radar chart */
+.radar-wrap{display:flex;align-items:center;gap:28px;}
+.radar-legend{flex:1;}
+.radar-item{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.radar-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.radar-name{font-size:11px;color:rgba(255,255,255,.6);flex:1;}
+.radar-pct{font-size:11px;font-weight:600;color:white;font-family:'DM Mono',monospace;}
+
+/* donut gauge */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.gauge-num{font-size:22px;font-weight:700;text-align:center;}
+.gauge-lbl{font-size:9px;color:rgba(255,255,255,.35);text-align:center;
+  text-transform:uppercase;letter-spacing:.06em;}
+
+/* status grid */
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px;}
+.status-item{
+  background:rgba(255,255,255,.04);border-radius:12px;padding:12px;
+  border:1px solid rgba(255,255,255,.06);text-align:center;
+}
+.status-item-icon{font-size:18px;margin-bottom:4px;}
+.status-item-val{font-size:20px;font-weight:700;color:white;}
+.status-item-lbl{font-size:8px;color:rgba(255,255,255,.35);
+  text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+
+/* neon bar */
+.neon-bars{margin-top:12px;}
+.neon-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.neon-bar-lbl{font-size:10px;color:rgba(255,255,255,.5);width:80px;text-align:right;}
+.neon-bar-track{flex:1;height:6px;background:rgba(255,255,255,.07);border-radius:3px;}
+.neon-bar-fill{height:100%;border-radius:3px;position:relative;}
+.neon-bar-fill::after{content:'';position:absolute;right:0;top:-3px;
+  width:12px;height:12px;border-radius:50%;background:inherit;
+  box-shadow:0 0 10px currentColor,0 0 20px currentColor;opacity:.8;}
+.neon-bar-val{font-size:10px;color:rgba(255,255,255,.6);
+  font-family:'DM Mono',monospace;width:28px;}
+
+/* activity feed */
+.feed{margin-top:0;}
+.feed-item{display:flex;gap:10px;align-items:flex-start;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);}
+.feed-item:last-child{border-bottom:none;}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;}
+.feed-text{font-size:11px;color:rgba(255,255,255,.5);flex:1;line-height:1.4;}
+.feed-time{font-size:9px;color:rgba(255,255,255,.25);font-family:'DM Mono',monospace;flex-shrink:0;}
+
+/* dev overlay */
+.cc-dev{
+  position:absolute;inset:0;
+  background:rgba(6,9,15,.7);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  backdrop-filter:blur(2px);border-radius:20px;
+}
+.cc-dev-tag{
+  background:rgba(255,255,255,.07);color:rgba(255,255,255,.35);
+  font-size:9px;font-weight:700;padding:5px 12px;border-radius:10px;
+  text-transform:uppercase;letter-spacing:.08em;border:1px solid rgba(255,255,255,.1);
+}
+.cc-dev-icon{font-size:28px;margin-bottom:8px;opacity:.3;}
+
+/* ═══ SHARED UTILS ═══ */
+.flex{display:flex;}.gap-8{gap:8px;}.gap-12{gap:12px;}.mt-8{margin-top:8px;}.mt-12{margin-top:12px;}.mt-16{margin-top:16px;}
+.col{flex-direction:column;}.ai-c{align-items:center;}.jc-sb{justify-content:space-between;}
+</style>
+</head>
+<body>
+
+<!-- ── SWITCHER ── -->
+<div class="switcher">
+  <div class="switcher-logo">ROST 81 <span>CRM Intelligence Platform</span></div>
+  <div class="switcher-tabs">
+    <button class="stab active" onclick="show('a')">🪐  A — Orbit</button>
+    <button class="stab"        onclick="show('b')">⬛  B — Bento</button>
+    <button class="stab"        onclick="show('c')">🌑  C — Command</button>
+  </div>
+  <span class="switcher-note">Mockup solo visivo — dati reali ROST 81</span>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     MOCKUP A — ORBIT
+══════════════════════════════════════════════════════ -->
+<div id="mock-a" class="mock active">
+<div class="orbit-wrap">
+
+  <div class="orbit-hdr">
+    <div class="orbit-date">Sabato 31 Maggio 2026</div>
+    <h1>Buongiorno, ROST 81</h1>
+    <p>Tutto sotto controllo · 54 clienti attivi · 5 scadenze giugno</p>
+  </div>
+
+  <div class="orbit-stage" id="orbit-stage">
+    <!-- rings -->
+    <div class="o-ring o-ring-1"></div>
+    <div class="o-ring o-ring-2"></div>
+    <!-- SVG connectors drawn by JS -->
+    <svg class="orbit-svg" id="orbit-svg"></svg>
+    <!-- hub -->
+    <div class="o-hub">
+      <div class="o-hub-name">ROST 81</div>
+      <div class="o-hub-num">54</div>
+      <div class="o-hub-lbl">Clienti attivi</div>
+    </div>
+    <!-- nodes injected by JS -->
+  </div>
+
+  <!-- detail panel -->
+  <div class="orbit-detail" id="orbit-detail">
+    <div class="od-head">
+      <div class="od-icon" id="od-icon">👤</div>
+      <div><div class="od-title" id="od-title">Clienti</div>
+           <div class="od-sub" id="od-sub">Anagrafica e scadenze contratti</div></div>
+      <button class="od-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div id="od-body"></div>
+  </div>
+
+  <!-- bottom dev chips -->
+  <div class="orbit-bottom">
+    <div class="ob-chip"><span>🧾</span> Fatturazione <span class="ob-tag">Dev</span></div>
+    <div class="ob-chip"><span>💳</span> Pagamenti <span class="ob-tag">Dev</span></div>
+    <div class="ob-chip"><span>🛒</span> Acquisti <span class="ob-tag">Dev</span></div>
+    <div class="ob-chip"><span>📊</span> Analytics <span class="ob-tag">Dev</span></div>
+    <div class="ob-chip"><span>🤖</span> AI <span class="ob-tag">Dev</span></div>
+    <div class="ob-chip"><span>⋯</span> Altro <span class="ob-tag">Dev</span></div>
+  </div>
+
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     MOCKUP B — BENTO
+══════════════════════════════════════════════════════ -->
+<div id="mock-b" class="mock">
+<div class="bento-wrap">
+
+  <div class="bento-hdr">
+    <div class="bento-hdr-left">
+      <h1>Dashboard</h1>
+      <p>Panoramica operativa · tutto aggiornato in tempo reale</p>
+    </div>
+    <div class="bento-time" id="bento-time">—</div>
+  </div>
+
+  <div class="bento-grid">
+
+    <!-- HERO -->
+    <div class="bc bc-hero">
+      <div class="bc-dev-badge" style="display:none"></div>
+      <div class="bc-hero-greeting">👋 Bentornato, ROST 81</div>
+      <div class="bc-lbl">Clienti totali</div>
+      <div class="bc-num">54</div>
+      <div class="bc-sub">+23 importati questa settimana</div>
+      <div class="bc-tags" style="margin-top:14px">
+        <span class="tag tag-g">47 Regolari</span>
+        <span class="tag tag-r">7 Debitori</span>
+      </div>
+      <div class="bc-hero-date" id="hero-date">—</div>
+      <div class="bc-hero-accent"></div>
+      <!-- mini sparkline -->
+      <svg style="width:100%;height:40px;margin-top:18px;overflow:visible">
+        <polyline points="0,35 20,28 40,30 60,20 80,22 100,15 120,18 140,10 160,12"
+          fill="none" stroke="rgba(255,255,255,.2)" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="160" cy="12" r="4" fill="rgba(255,255,255,.6)"/>
+      </svg>
+    </div>
+
+    <!-- CLIENTI -->
+    <div class="bc bc-clienti" onclick="toggleBento(this,'Clienti')">
+      <div class="bc-lbl">👤 Clienti</div>
+      <div class="bc-num" style="font-size:38px;color:var(--navy)">54</div>
+      <div class="pring" style="margin-top:14px">
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="22" r="18" fill="none" stroke="#e2e8f0" stroke-width="4"/>
+          <circle cx="22" cy="22" r="18" fill="none" stroke="var(--green)" stroke-width="4"
+            stroke-dasharray="113" stroke-dashoffset="16" stroke-linecap="round"/>
+        </svg>
+        <div class="pring-info">
+          <div class="pring-val" style="color:var(--green)">87%</div>
+          <div class="pring-label">In regola</div>
+        </div>
+      </div>
+      <div class="bc-tags">
+        <span class="tag tag-g">47 Regolari</span>
+        <span class="tag tag-r">7 Debitori</span>
+      </div>
+    </div>
+
+    <!-- COMMERCIALE -->
+    <div class="bc bc-comm" onclick="toggleBento(this,'Commerciale')">
+      <div class="bc-lbl">📋 Commerciale</div>
+      <div class="bc-num" style="font-size:38px;color:var(--blue)">0</div>
+      <div class="bc-sub">Preventivi aperti</div>
+      <div class="trend trend-nt">→ Pipeline € 0</div>
+    </div>
+
+    <!-- OPERATIVITÀ -->
+    <div class="bc bc-ops" onclick="toggleBento(this,'Operatività')">
+      <div class="bc-lbl">🔧 Operatività</div>
+      <div class="bc-num" style="font-size:38px;color:var(--red)">5</div>
+      <div class="bc-sub">Visite da fare · Giugno 2026</div>
+      <div class="mini-bars" style="margin-top:12px">
+        <div class="mini-bar" style="height:60%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+        <div class="mini-bar" style="height:80%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+        <div class="mini-bar" style="height:40%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+        <div class="mini-bar" style="height:70%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+        <div class="mini-bar" style="height:55%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+        <div class="mini-bar" style="height:90%;background:linear-gradient(to top,var(--red),rgba(192,57,43,.3))"></div>
+      </div>
+    </div>
+
+    <!-- MAGAZZINO -->
+    <div class="bc bc-mag" onclick="toggleBento(this,'Magazzino')">
+      <div class="bc-lbl">📦 Magazzino</div>
+      <div class="bc-num" style="font-size:38px;color:var(--purple)">2</div>
+      <div class="bc-sub">Articoli in DB</div>
+      <div class="trend trend-nt" style="margin-top:8px">✓ Nessun esaurimento</div>
+    </div>
+
+    <!-- FATTURAZIONE dev -->
+    <div class="bc bc-fat">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">🧾</div>
+      <div class="bc-lbl">Fatturazione</div>
+      <div class="bc-sub" style="font-size:10px">FE · SDI · Aruba API</div>
+    </div>
+
+    <!-- PAGAMENTI dev -->
+    <div class="bc bc-pag">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">💳</div>
+      <div class="bc-lbl">Pagamenti</div>
+      <div class="bc-sub" style="font-size:10px">Scadenzario · Prima nota</div>
+    </div>
+
+    <!-- ACQUISTI dev -->
+    <div class="bc bc-acq">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">🛒</div>
+      <div class="bc-lbl">Acquisti</div>
+      <div class="bc-sub" style="font-size:10px">Fornitori · Ordini · Fatture passive</div>
+    </div>
+
+    <!-- OPERATORI -->
+    <div class="bc bc-ops2" onclick="toggleBento(this,'Operatori')">
+      <div class="bc-lbl">👷 Operatori</div>
+      <div class="bc-num" style="font-size:38px;color:var(--purple)">1</div>
+      <div class="bc-sub">Attivi in campo</div>
+      <div class="trend trend-up" style="margin-top:8px">↑ App Manutentore attiva</div>
+    </div>
+
+    <!-- AI dev -->
+    <div class="bc bc-ai">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">🤖</div>
+      <div class="bc-lbl">AI — Sentinel + Pepper</div>
+      <div class="bc-sub" style="font-size:10px">Agenti intelligenti integrati</div>
+    </div>
+
+    <!-- ANALYTICS dev -->
+    <div class="bc bc-anal">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">📊</div>
+      <div class="bc-lbl">Analytics</div>
+      <div class="bc-sub" style="font-size:10px">KPI · Report · Trend</div>
+    </div>
+
+    <!-- ALTRO dev -->
+    <div class="bc bc-alt">
+      <div class="bc-dev-badge">In Sviluppo</div>
+      <div class="bc-icon">⋯</div>
+      <div class="bc-lbl">Altro</div>
+      <div class="bc-sub" style="font-size:10px">Formazione · DPI · HSE doc</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════
+     MOCKUP C — COMMAND CENTER
+══════════════════════════════════════════════════════ -->
+<div id="mock-c" class="mock">
+<div class="cmd-wrap">
+
+  <div class="cmd-hdr">
+    <div class="cmd-logo">
+      <div class="cmd-logo-box">R81</div>
+      <div class="cmd-logo-text">
+        <h2>ROST 81 Command</h2>
+        <p>CRM Intelligence Platform · Colleferro RM</p>
+      </div>
+    </div>
+    <div class="cmd-live">
+      <div class="cmd-dot"></div>
+      <span id="cmd-time">—</span>
+    </div>
+  </div>
+
+  <div class="cmd-grid">
+
+    <!-- RADAR (main 2×2) -->
+    <div class="cc cc-main">
+      <div class="cc-glow"></div>
+      <div class="cc-lbl">Salute operativa — Radar Aree</div>
+      <div class="radar-wrap">
+        <svg width="220" height="220" viewBox="0 0 220 220" id="radar-svg">
+          <!-- background pentagons -->
+          <g transform="translate(110,110)" stroke="rgba(255,255,255,.08)" fill="none" stroke-width="1">
+            <polygon id="rg5" points="0,-90 85.6,-27.9 52.9,73.1 -52.9,73.1 -85.6,-27.9"/>
+            <polygon id="rg4" points="0,-72 68.4,-22.3 42.3,58.5 -42.3,58.5 -68.4,-22.3"/>
+            <polygon id="rg3" points="0,-54 51.3,-16.7 31.7,43.9 -31.7,43.9 -51.3,-16.7"/>
+            <polygon id="rg2" points="0,-36 34.2,-11.2 21.2,29.2 -21.2,29.2 -34.2,-11.2"/>
+            <polygon id="rg1" points="0,-18 17.1,-5.6 10.6,14.6 -10.6,14.6 -17.1,-5.6"/>
+            <!-- axes -->
+            <line x1="0" y1="0" x2="0" y2="-90" stroke="rgba(255,255,255,.15)"/>
+            <line x1="0" y1="0" x2="85.6" y2="-27.9" stroke="rgba(255,255,255,.15)"/>
+            <line x1="0" y1="0" x2="52.9" y2="73.1" stroke="rgba(255,255,255,.15)"/>
+            <line x1="0" y1="0" x2="-52.9" y2="73.1" stroke="rgba(255,255,255,.15)"/>
+            <line x1="0" y1="0" x2="-85.6" y2="-27.9" stroke="rgba(255,255,255,.15)"/>
+          </g>
+          <!-- data polygon (87%,20%,75%,50%,80%) -->
+          <g transform="translate(110,110)">
+            <polygon id="radar-data"
+              points="0,-78.3 17.1,-5.6 39.7,54.8 -26.5,36.6 -68.5,-22.3"
+              fill="rgba(192,57,43,.25)" stroke="var(--red)" stroke-width="2" stroke-linejoin="round">
+              <animate attributeName="opacity" values="0;1" dur=".8s" fill="freeze"/>
+            </polygon>
+            <!-- dots -->
+            <circle cx="0" cy="-78.3" r="4" fill="var(--red)"/>
+            <circle cx="17.1" cy="-5.6" r="4" fill="var(--blue)"/>
+            <circle cx="39.7" cy="54.8" r="4" fill="var(--amber)"/>
+            <circle cx="-26.5" cy="36.6" r="4" fill="var(--purple)"/>
+            <circle cx="-68.5" cy="-22.3" r="4" fill="var(--green)"/>
+          </g>
+          <!-- labels -->
+          <text x="110" y="16" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="9" font-family="DM Sans">Clienti</text>
+          <text x="200" y="82" text-anchor="start" fill="rgba(255,255,255,.5)" font-size="9" font-family="DM Sans">Comm.</text>
+          <text x="168" y="188" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="9" font-family="DM Sans">Operatività</text>
+          <text x="52" y="188" text-anchor="middle" fill="rgba(255,255,255,.5)" font-size="9" font-family="DM Sans">Magazzino</text>
+          <text x="14" y="82" text-anchor="end" fill="rgba(255,255,255,.5)" font-size="9" font-family="DM Sans">Operatori</text>
+        </svg>
+        <div class="radar-legend">
+          <div class="radar-item"><div class="radar-dot" style="background:var(--red)"></div><div class="radar-name">Clienti</div><div class="radar-pct">87%</div></div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--blue)"></div><div class="radar-name">Commerciale</div><div class="radar-pct">20%</div></div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--amber)"></div><div class="radar-name">Operatività</div><div class="radar-pct">75%</div></div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--purple)"></div><div class="radar-name">Magazzino</div><div class="radar-pct">50%</div></div>
+          <div class="radar-item"><div class="radar-dot" style="background:var(--green)"></div><div class="radar-name">Operatori</div><div class="radar-pct">80%</div></div>
+        </div>
+      </div>
+      <!-- neon bars -->
+      <div class="cc-lbl" style="margin-top:20px;margin-bottom:4px">Attività per area</div>
+      <div class="neon-bars">
+        <div class="neon-bar-row"><span class="neon-bar-lbl">Clienti</span><div class="neon-bar-track"><div class="neon-bar-fill" style="width:87%;background:var(--red);box-shadow:0 0 8px var(--red)"></div></div><span class="neon-bar-val">87</span></div>
+        <div class="neon-bar-row"><span class="neon-bar-lbl">Operatività</span><div class="neon-bar-track"><div class="neon-bar-fill" style="width:75%;background:var(--amber);box-shadow:0 0 8px var(--amber)"></div></div><span class="neon-bar-val">75</span></div>
+        <div class="neon-bar-row"><span class="neon-bar-lbl">Operatori</span><div class="neon-bar-track"><div class="neon-bar-fill" style="width:80%;background:var(--green);box-shadow:0 0 8px var(--green)"></div></div><span class="neon-bar-val">80</span></div>
+        <div class="neon-bar-row"><span class="neon-bar-lbl">Magazzino</span><div class="neon-bar-track"><div class="neon-bar-fill" style="width:50%;background:var(--purple);box-shadow:0 0 8px var(--purple)"></div></div><span class="neon-bar-val">50</span></div>
+        <div class="neon-bar-row"><span class="neon-bar-lbl">Commerciale</span><div class="neon-bar-track"><div class="neon-bar-fill" style="width:20%;background:var(--blue);box-shadow:0 0 8px var(--blue)"></div></div><span class="neon-bar-val">20</span></div>
+      </div>
+    </div>
+
+    <!-- CLIENTI stat -->
+    <div class="cc cc-stat" style="border-color:rgba(192,57,43,.3)">
+      <div class="cc-glow" style="background:var(--red)"></div>
+      <div class="cc-lbl">👤 Clienti</div>
+      <div class="cc-num">54</div>
+      <div class="cc-sub">Attivi questo mese</div>
+      <!-- donut -->
+      <div class="gauge-wrap" style="margin-top:16px">
+        <svg width="80" height="80" viewBox="0 0 80 80" transform="rotate(-90 0 0)" style="transform:rotate(-90deg)">
+          <circle cx="40" cy="40" r="30" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="10"/>
+          <circle cx="40" cy="40" r="30" fill="none" stroke="var(--red)" stroke-width="10"
+            stroke-dasharray="188.5" stroke-dashoffset="24.5" stroke-linecap="round"
+            style="filter:drop-shadow(0 0 6px var(--red))"/>
+        </svg>
+        <div style="margin-top:-4px;text-align:center">
+          <div style="font-size:18px;font-weight:700;color:white">87%</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em">In regola</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCADENZE stat -->
+    <div class="cc cc-stat" style="border-color:rgba(217,119,6,.3)">
+      <div class="cc-glow" style="background:var(--amber)"></div>
+      <div class="cc-lbl">🔧 Operatività</div>
+      <div class="cc-num">5</div>
+      <div class="cc-sub">Visite giugno</div>
+      <!-- mini calendar visual -->
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-top:14px">
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">L</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">M</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">M</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">G</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">V</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">S</div>
+        <div style="font-size:7px;color:rgba(255,255,255,.3);text-align:center">D</div>
+        <!-- week sample -->
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(192,57,43,.6);border-radius:3px;box-shadow:0 0 6px var(--red)"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(192,57,43,.6);border-radius:3px;box-shadow:0 0 6px var(--red)"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(217,119,6,.6);border-radius:3px;box-shadow:0 0 6px var(--amber)"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(217,119,6,.6);border-radius:3px;box-shadow:0 0 6px var(--amber)"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+        <div style="height:14px;background:rgba(255,255,255,.05);border-radius:3px"></div>
+      </div>
+    </div>
+
+    <!-- STATUS GRID -->
+    <div class="cc cc-stat">
+      <div class="cc-lbl">Status sistema</div>
+      <div class="status-grid">
+        <div class="status-item">
+          <div class="status-item-icon">👤</div>
+          <div class="status-item-val">54</div>
+          <div class="status-item-lbl">Clienti</div>
+        </div>
+        <div class="status-item">
+          <div class="status-item-icon">👷</div>
+          <div class="status-item-val">1</div>
+          <div class="status-item-lbl">Operatori</div>
+        </div>
+        <div class="status-item">
+          <div class="status-item-icon">📦</div>
+          <div class="status-item-val">2</div>
+          <div class="status-item-lbl">Articoli</div>
+        </div>
+        <div class="status-item">
+          <div class="status-item-icon">⚠️</div>
+          <div class="status-item-val" style="color:var(--amber)">7</div>
+          <div class="status-item-lbl">Debitori</div>
+        </div>
+        <div class="status-item">
+          <div class="status-item-icon">🔧</div>
+          <div class="status-item-val" style="color:var(--red)">5</div>
+          <div class="status-item-lbl">Visite</div>
+        </div>
+        <div class="status-item">
+          <div class="status-item-icon">📋</div>
+          <div class="status-item-val" style="color:rgba(255,255,255,.25)">0</div>
+          <div class="status-item-lbl">Preventivi</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IN SVILUPPO row -->
+    <div class="cc" style="opacity:.35;cursor:default">
+      <div class="cc-lbl">🧾 Fatturazione</div>
+      <div class="cc-num" style="font-size:28px;color:rgba(255,255,255,.3)">—</div>
+      <div class="cc-dev"><div class="cc-dev-icon">🧾</div><div class="cc-dev-tag">In Sviluppo</div></div>
+    </div>
+    <div class="cc" style="opacity:.35;cursor:default">
+      <div class="cc-lbl">💳 Pagamenti</div>
+      <div class="cc-num" style="font-size:28px;color:rgba(255,255,255,.3)">—</div>
+      <div class="cc-dev"><div class="cc-dev-icon">💳</div><div class="cc-dev-tag">In Sviluppo</div></div>
+    </div>
+
+    <!-- FEED -->
+    <div class="cc cc-stat">
+      <div class="cc-lbl">Activity log</div>
+      <div class="feed">
+        <div class="feed-item">
+          <div class="feed-dot" style="background:var(--green)"></div>
+          <div class="feed-text">23 clienti importati da Excel</div>
+          <div class="feed-time">oggi</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot" style="background:var(--amber)"></div>
+          <div class="feed-text">Cod. 5, 7, La Casa di Pepe → DEBITORE</div>
+          <div class="feed-time">oggi</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot" style="background:var(--blue)"></div>
+          <div class="feed-text">Dashboard con 6 card dinamiche aggiornata</div>
+          <div class="feed-time">ieri</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot" style="background:var(--purple)"></div>
+          <div class="feed-text">41 codici COD normalizzati (zero iniziale rimosso)</div>
+          <div class="feed-time">ieri</div>
+        </div>
+        <div class="feed-item">
+          <div class="feed-dot" style="background:var(--red)"></div>
+          <div class="feed-text">PDF Roadmap Stefano generato</div>
+          <div class="feed-time">2gg fa</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+
+<script>
+/* ── SWITCHER ── */
+function show(id){
+  document.querySelectorAll('.mock').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.stab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('mock-'+id).classList.add('active');
+  document.querySelectorAll('.stab')[{a:0,b:1,c:2}[id]].classList.add('active');
+}
+
+/* ── TIME ── */
+function tick(){
+  const now=new Date();
+  const s=now.toLocaleString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const t=document.getElementById('cmd-time'); if(t) t.textContent=s;
+  const b=document.getElementById('bento-time'); if(b) b.textContent=now.toLocaleTimeString('it-IT');
+  const hd=document.getElementById('hero-date'); if(hd) hd.textContent=now.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+tick(); setInterval(tick,1000);
+
+/* ── ORBIT NODES ── */
+const NODES=[
+  {name:'Clienti',   icon:'👤', count:54, color:'#16a34a', dev:false, r:170, angle:-90,
+   detail:{sub:'Anagrafica e contratti',kpis:[{n:54,l:'Totali',c:'var(--navy)'},{n:47,l:'Regolari',c:'var(--green)'},{n:7,l:'Debitori',c:'var(--red)'},{n:5,l:'Scad. giugno',c:'var(--amber)'}]}},
+  {name:'Commerciale',icon:'📋',count:0, color:'#1d4ed8', dev:false, r:170, angle:-18,
+   detail:{sub:'Preventivi e pipeline',kpis:[{n:0,l:'Preventivi',c:'var(--blue)'},{n:0,l:'Pipeline €',c:'var(--blue)'},{n:0,l:'Accettati',c:'var(--green)'},{n:0,l:'Rifiutati',c:'var(--red)'}]}},
+  {name:'Operatività',icon:'🔧',count:5, color:'#c0392b', dev:false, r:170, angle:54,
+   detail:{sub:'Scadenze · Rapporti · DDT',kpis:[{n:5,l:'Visite giugno',c:'var(--red)'},{n:0,l:'DDT aperti',c:'var(--navy)'},{n:0,l:'Rapporti',c:'var(--navy)'},{n:1,l:'Operatori',c:'var(--purple)'}]}},
+  {name:'Magazzino', icon:'📦', count:2, color:'#7c3aed', dev:false, r:170, angle:126,
+   detail:{sub:'Articoli · Scorte · Movimenti',kpis:[{n:2,l:'Articoli',c:'var(--purple)'},{n:0,l:'Esaurimento',c:'var(--red)'},{n:0,l:'Uscite mese',c:'var(--navy)'},{n:4,l:'Categorie',c:'var(--navy)'}]}},
+  {name:'Operatori', icon:'👷', count:1, color:'#7c3aed', dev:false, r:170, angle:198,
+   detail:{sub:'Team manutentori',kpis:[{n:1,l:'Attivi',c:'var(--green)'},{n:0,l:'Junior',c:'var(--navy)'},{n:1,l:'Senior',c:'var(--blue)'},{n:0,l:'Master',c:'var(--purple)'}]}},
+];
+
+function buildOrbit(){
+  const stage=document.getElementById('orbit-stage');
+  const cx=270, cy=270;
+  const svgEl=document.getElementById('orbit-svg');
+
+  NODES.forEach(n=>{
+    const rad=n.angle*Math.PI/180;
+    const x=cx+n.r*Math.cos(rad);
+    const y=cy+n.r*Math.sin(rad);
+    const left=x-38, top=y-38;
+
+    // connector line
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',cx); line.setAttribute('y1',cy);
+    line.setAttribute('x2',x);  line.setAttribute('y2',y);
+    line.setAttribute('stroke','rgba(0,0,0,.06)');
+    line.setAttribute('stroke-width','1.5');
+    line.setAttribute('stroke-dasharray','4 4');
+    svgEl.appendChild(line);
+
+    const div=document.createElement('div');
+    div.className='o-node'+(n.dev?' dev':'');
+    div.style.cssText=`left:${left}px;top:${top}px;
+      transform:translate(0,0);
+      --tx:${(x-cx)*0}px;--ty:${(y-cy)*0}px;`;
+    div.innerHTML=`
+      <div class="o-node-icon">${n.icon}</div>
+      <div class="o-node-lbl">${n.name}</div>
+      ${n.count>0?`<div class="o-badge ${n.count>0?'green':''}">${n.count}</div>`:''}
+    `;
+    div.onclick=()=>openDetail(n);
+    stage.appendChild(div);
+  });
+}
+
+function openDetail(n){
+  const d=document.getElementById('orbit-detail');
+  document.getElementById('od-icon').textContent=n.icon;
+  document.getElementById('od-title').textContent=n.name;
+  document.getElementById('od-sub').textContent=n.detail.sub;
+  const body=document.getElementById('od-body');
+  if(n.dev){
+    body.innerHTML='<div class="od-dev"><strong>Sezione in sviluppo</strong>Questa sezione sarà disponibile in una prossima release.</div>';
+  } else {
+    body.innerHTML=`<div class="od-grid">${n.detail.kpis.map(k=>`
+      <div class="od-kpi">
+        <div class="od-kpi-n" style="color:${k.c}">${k.n}</div>
+        <div class="od-kpi-l">${k.l}</div>
+      </div>`).join('')}</div>`;
+  }
+  d.classList.add('vis'); d.style.display='block';
+}
+function closeDetail(){
+  const d=document.getElementById('orbit-detail');
+  d.classList.remove('vis'); d.style.display='none';
+}
+
+buildOrbit();
+
+/* ── BENTO toggle ── */
+function toggleBento(el, name){
+  /* simple visual feedback */
+  el.style.outline=el.style.outline?'':'2px solid var(--red)';
+}
+</script>
+</body>
+</html>

@@ -66,6 +66,45 @@ tr.clickable{cursor:pointer}
 .stat-label{font-size:10px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
 .stat-val{font-size:26px;font-weight:600;color:var(--text);line-height:1}
 .stat-val.red{color:var(--red)} .stat-val.amber{color:var(--amber)} .stat-val.green{color:var(--green)} .stat-val.blue{color:var(--blue)} .stat-val.sm{font-size:18px}
+/* ── BENTO DASHBOARD ── */
+.bento-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.bc{background:var(--surface);border-radius:16px;padding:20px;box-shadow:var(--shadow);
+  cursor:pointer;transition:transform .18s,box-shadow .18s,border-color .18s;
+  position:relative;overflow:hidden;border:1.5px solid transparent}
+.bc:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,.10)}
+.bc.bc-active{border-color:var(--red)}
+.bc.bc-dev{opacity:.5;cursor:default}
+.bc.bc-dev:hover{transform:none;box-shadow:var(--shadow)}
+.bc-hero{grid-column:span 2;background:var(--surface)}
+.bc-icon{width:28px;height:28px;color:var(--text-muted);margin-bottom:10px;flex-shrink:0}
+.bc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--text-muted);margin-bottom:7px}
+.bc-num{font-size:36px;font-weight:700;color:var(--text);line-height:1;letter-spacing:-1px}
+.bc-sub{font-size:11px;color:var(--text-muted);margin-top:5px;line-height:1.4}
+.bc-tags{display:flex;gap:5px;margin-top:10px;flex-wrap:wrap}
+.bc-tag{font-size:9px;font-weight:700;padding:3px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.03em}
+.bc-tag-g{background:var(--green-light);color:var(--green)}
+.bc-tag-r{background:var(--red-light);color:var(--red)}
+.bc-tag-a{background:var(--amber-light);color:var(--amber)}
+.bc-tag-b{background:var(--blue-light);color:var(--blue)}
+.bc-dev-badge{position:absolute;top:12px;right:12px;background:var(--bg);color:var(--text-muted);
+  font-size:8px;font-weight:700;padding:3px 8px;border-radius:8px;
+  text-transform:uppercase;letter-spacing:.05em;border:1px solid var(--border)}
+.bc-hero-accent{position:absolute;right:-28px;bottom:-28px;width:110px;height:110px;
+  border-radius:50%;background:var(--red);opacity:.06;pointer-events:none}
+.bc-greeting{font-size:12px;font-weight:500;color:var(--text-muted);margin-bottom:5px}
+.bc-hero-num{font-size:48px;font-weight:700;line-height:1;letter-spacing:-2px;color:var(--text)}
+.bc-sparkbar{display:flex;gap:2px;align-items:flex-end;height:24px;margin-top:12px}
+.bc-sparkbar-b{border-radius:2px 2px 0 0;flex:1;min-height:4px;
+  background:linear-gradient(to top,var(--red),rgba(192,57,43,.25))}
+.bc-mini-ring{display:flex;align-items:center;gap:10px;margin-top:12px}
+.bc-ring-info .bc-ring-pct{font-size:16px;font-weight:700}
+.bc-ring-info .bc-ring-lbl{font-size:10px;color:var(--text-muted)}
+/* bento detail panel */
+.bento-detail{background:var(--surface);border-radius:var(--radius);
+  padding:18px 20px;box-shadow:var(--shadow);margin-bottom:20px;
+  border-left:3px solid var(--red);animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
 .section-title{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em}
 .alert-list{display:flex;flex-direction:column;gap:8px;margin-bottom:24px}
@@ -285,70 +324,131 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <!-- DASHBOARD -->
       <div id="panel-dashboard" class="panel active">
 
-        <!-- ── SEZIONE CLIENTI ── -->
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-          <span style="font-size:16px">◎</span>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Clienti & Scadenze</div>
-          <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
-        </div>
+        <!-- ── BENTO GRID ── -->
+        <div class="bento-grid" id="bento-grid">
 
-        <div class="stat-row" id="dash-cards-row">
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('attivi')"><div class="stat-label">Clienti attivi</div><div class="stat-val" id="dash-clienti-tot">…</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('scad-contratto')"><div class="stat-label">Scadenze contratto</div><div class="stat-val red" id="dash-scad-contratto">…</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('pagamenti-scaduti')"><div class="stat-label">Pagamenti scaduti</div><div class="stat-val amber" id="dash-pagamenti-scaduti">…</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('in-regola')"><div class="stat-label">In regola</div><div class="stat-val green" id="dash-in-regola">…</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('preventivi')"><div class="stat-label">Preventivi</div><div class="stat-val blue" id="dash-prev-count">…</div></div>
-          <div class="stat-card" style="cursor:pointer" onclick="toggleDashCard('pipeline')"><div class="stat-label">Pipeline</div><div class="stat-val sm blue" id="dash-pipeline">…</div></div>
-        </div>
+          <!-- HERO -->
+          <div class="bc bc-hero" id="bc-hero" onclick="toggleDashCard('attivi')">
+            <div class="bc-greeting" id="dash-greeting">Bentornato</div>
+            <div class="bc-lbl">Clienti attivi</div>
+            <div class="bc-hero-num" id="dash-clienti-tot">…</div>
+            <div class="bc-tags" style="margin-top:10px">
+              <span class="bc-tag bc-tag-g" id="dash-tag-regolari">… Regolari</span>
+              <span class="bc-tag bc-tag-r" id="dash-tag-debitori">… Debitori</span>
+            </div>
+            <div class="bc-sparkbar" id="dash-spark"></div>
+            <div class="bc-hero-accent"></div>
+          </div>
+
+          <!-- OPERATIVITÀ -->
+          <div class="bc" id="bc-ops" onclick="toggleDashCard('operativita')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+            <div class="bc-lbl">Operatività</div>
+            <div class="bc-num" id="dash-scad-contratto" style="color:var(--red)">…</div>
+            <div class="bc-sub">Visite da pianificare · mese corrente</div>
+          </div>
+
+          <!-- COMMERCIALE -->
+          <div class="bc" id="bc-comm" onclick="toggleDashCard('preventivi')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+            <div class="bc-lbl">Commerciale</div>
+            <div class="bc-num" id="dash-prev-count" style="color:var(--blue)">…</div>
+            <div class="bc-sub" id="dash-pipeline-sub">Preventivi aperti</div>
+          </div>
+
+          <!-- PAGAMENTI (debitori) -->
+          <div class="bc" id="bc-pag" onclick="toggleDashCard('pagamenti-scaduti')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <div class="bc-lbl">Pagamenti scaduti</div>
+            <div class="bc-num" id="dash-pagamenti-scaduti" style="color:var(--amber)">…</div>
+            <div class="bc-sub">Clienti debitori</div>
+          </div>
+
+          <!-- IN REGOLA -->
+          <div class="bc" id="bc-reg" onclick="toggleDashCard('in-regola')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
+            <div class="bc-lbl">In regola</div>
+            <div class="bc-num" id="dash-in-regola" style="color:var(--green)">…</div>
+            <div class="bc-sub">Pagamenti regolari</div>
+          </div>
+
+          <!-- MAGAZZINO -->
+          <div class="bc" id="bc-mag" onclick="toggleDashCard('magazzino')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <div class="bc-lbl">Magazzino</div>
+            <div class="bc-num" id="dash-mag-tot" style="color:var(--text)">…</div>
+            <div class="bc-sub" id="dash-mag-sub">Articoli in archivio</div>
+          </div>
+
+          <!-- OPERATORI -->
+          <div class="bc" id="bc-op" onclick="toggleDashCard('operatori')">
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            <div class="bc-lbl">Operatori</div>
+            <div class="bc-num" id="dash-op-tot" style="color:var(--text)">…</div>
+            <div class="bc-sub">Attivi in campo</div>
+          </div>
+
+          <!-- IN SVILUPPO — Fatturazione -->
+          <div class="bc bc-dev">
+            <div class="bc-dev-badge">In sviluppo</div>
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+            <div class="bc-lbl">Fatturazione</div>
+            <div class="bc-sub">FE · SDI · Aruba API</div>
+          </div>
+
+          <!-- IN SVILUPPO — Acquisti -->
+          <div class="bc bc-dev">
+            <div class="bc-dev-badge">In sviluppo</div>
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+            <div class="bc-lbl">Acquisti</div>
+            <div class="bc-sub">Fornitori · Ordini · Fatture passive</div>
+          </div>
+
+          <!-- IN SVILUPPO — Analytics -->
+          <div class="bc bc-dev">
+            <div class="bc-dev-badge">In sviluppo</div>
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            <div class="bc-lbl">Analytics</div>
+            <div class="bc-sub">KPI · Report · Trend fatturato</div>
+          </div>
+
+          <!-- IN SVILUPPO — AI -->
+          <div class="bc bc-dev">
+            <div class="bc-dev-badge">In sviluppo</div>
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            <div class="bc-lbl">AI — Sentinel · Pepper</div>
+            <div class="bc-sub">Agenti intelligenti integrati</div>
+          </div>
+
+          <!-- IN SVILUPPO — Altro -->
+          <div class="bc bc-dev">
+            <div class="bc-dev-badge">In sviluppo</div>
+            <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+            <div class="bc-lbl">Altro</div>
+            <div class="bc-sub">Formazione · DPI · HSE</div>
+          </div>
+
+        </div><!-- /bento-grid -->
 
         <!-- DETAIL PANEL — aperto dal click sulle card -->
-        <div id="dash-card-detail" style="display:none;background:var(--surface);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);margin-top:10px;margin-bottom:4px">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div id="dash-card-detail" style="display:none" class="bento-detail">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
             <div style="font-size:13px;font-weight:600;color:var(--text)" id="dash-detail-title">—</div>
             <button class="btn btn-sm" onclick="closeDashCard()">✕</button>
           </div>
           <div id="dash-detail-body"></div>
         </div>
 
-        <!-- ── DIVISORE ── -->
-        <div style="margin:28px 0;height:1px;background:var(--border)"></div>
-
-        <!-- ── SEZIONE MAGAZZINO ── -->
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-          <span style="font-size:16px">📦</span>
-          <div style="font-size:13px;font-weight:600;color:var(--text)">Magazzino</div>
-          <div style="flex:1;height:1px;background:var(--border);margin-left:8px"></div>
-          <button class="btn btn-sm" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">Vai al magazzino</button>
-        </div>
-
-        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
-            <div class="stat-label">📦 Articoli totali</div>
-            <div class="stat-val" id="dash-mag-tot">—</div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
-            <div class="stat-label">🔴 In esaurimento</div>
-            <div class="stat-val red" id="dash-mag-danger">—</div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
-            <div class="stat-label">🟡 Sotto soglia</div>
-            <div class="stat-val amber" id="dash-mag-warn">—</div>
-          </div>
-          <div class="stat-card" style="cursor:pointer" onclick="switchPanel('magazzino',document.querySelectorAll('.nav-item')[5])">
-            <div class="stat-label">🟢 In regola</div>
-            <div class="stat-val green" id="dash-mag-ok">—</div>
-          </div>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <!-- SEZIONE MAGAZZINO legacy (ultime consegne) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:8px">
           <div>
-            <div class="section-head"><div class="section-title">⚠ Prodotti in esaurimento</div></div>
+            <div class="section-head"><div class="section-title">Prodotti in esaurimento</div></div>
             <div id="dash-esaurimento">
               <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
             </div>
           </div>
           <div>
-            <div class="section-head"><div class="section-title">📤 Ultime consegne</div></div>
+            <div class="section-head"><div class="section-title">Ultime consegne</div></div>
             <div id="dash-consegne">
               <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
             </div>
@@ -1115,39 +1215,74 @@ async function loadSidebarBadges(){
   // dash clienti aggiornato da loadDashboardClienti
 }
 
-/* ══ DASHBOARD CLIENTI & SCADENZE ══════════════════════════════ */
+/* ══ DASHBOARD BENTO ══════════════════════════════════════════ */
 let _dashClienti=[], _dashPrev=[], _dashCardOpen=null;
 
+function _getProfiloNome(){ return localStorage.getItem('rost81_profilo_nome')||'ROST 81'; }
+function _setGreeting(){
+  const ora=new Date().getHours();
+  const saluto=ora<12?'Buongiorno':ora<18?'Buon pomeriggio':'Buonasera';
+  const el=document.getElementById('dash-greeting');
+  if(el) el.textContent=saluto+', '+_getProfiloNome();
+}
+
 async function loadDashboardClienti(){
+  _setGreeting();
   const oggi=new Date();
   const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
-  const [rC,rP]=await Promise.all([
+  const mese=oggi.getMonth()+1, anno=oggi.getFullYear();
+
+  const [rC,rP,rSC,rSV,rO,rM]=await Promise.all([
     fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,codice,nome,citta,provincia,pagamento,stato,data_scadenza_contratto&limit=500`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=id,numero,stato,totale,rost81_clienti(nome)&order=created_at.desc`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=id,numero,stato,totale,rost81_clienti(nome)&order=created_at.desc`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?mesi=cs.{${mese}}&select=cliente_id`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=id`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=id,quantita,soglia_minima`,{headers:H})
   ]);
   _dashClienti=await rC.json(); if(!Array.isArray(_dashClienti)) _dashClienti=[];
-  _dashPrev=await rP.json();    if(!Array.isArray(_dashPrev))    _dashPrev=[];
+  _dashPrev   =await rP.json(); if(!Array.isArray(_dashPrev))    _dashPrev=[];
+  const dSC=await rSC.json(), dSV=await rSV.json();
+  const dO =await rO.json(),  dM =await rM.json();
 
-  const attivi        =_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO');
-  const scadContratto =_dashClienti.filter(c=>{
-    if(!c.data_scadenza_contratto) return false;
-    return new Date(c.data_scadenza_contratto)<=tra30;
-  });
+  const attivi   =_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO');
   const debitori =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='DEBITORE');
   const inRegola =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='REGOLARE');
   const prevAperti=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
-  const pipeline  =_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato))
-                             .reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
+  const pipeline  =_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato)).reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
+  const totMese=Array.isArray(dSC)?dSC.length:0;
+  const fatti  =Array.isArray(dSV)?dSV.length:0;
+  const daFare =Math.max(0,totMese-fatti);
+  const nOp    =Array.isArray(dO)?dO.length:0;
+  const mag    =Array.isArray(dM)?dM:[];
+  const magEsaur=mag.filter(a=>a.quantita<=a.soglia_minima).length;
 
-  document.getElementById('dash-clienti-tot').textContent=attivi.length;
-  document.getElementById('dash-scad-contratto').textContent=scadContratto.length;
-  document.getElementById('dash-pagamenti-scaduti').textContent=debitori.length;
-  document.getElementById('dash-in-regola').textContent=inRegola.length;
-  document.getElementById('dash-prev-count').textContent=prevAperti.length;
-  document.getElementById('dash-pipeline').textContent='€ '+pipeline.toLocaleString('it-IT',{maximumFractionDigits:0});
-  // aggiorna anche badge sidebar
-  const bEl=document.getElementById('badge-clienti');
-  if(bEl) bEl.textContent=attivi.length;
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  set('dash-clienti-tot',attivi.length);
+  set('dash-scad-contratto',daFare);
+  set('dash-pagamenti-scaduti',debitori.length);
+  set('dash-in-regola',inRegola.length);
+  set('dash-prev-count',prevAperti.length);
+  set('dash-op-tot',nOp);
+  set('dash-mag-tot',mag.length);
+
+  const ps=document.getElementById('dash-pipeline-sub');
+  if(ps) ps.textContent=pipeline>0?'Pipeline €'+pipeline.toLocaleString('it-IT',{maximumFractionDigits:0}):'Preventivi aperti';
+  const ms=document.getElementById('dash-mag-sub');
+  if(ms) ms.textContent=magEsaur>0?magEsaur+' in esaurimento':'Tutto regolare';
+  const tr=document.getElementById('dash-tag-regolari'); if(tr) tr.textContent=inRegola.length+' Regolari';
+  const td=document.getElementById('dash-tag-debitori'); if(td) td.textContent=debitori.length+' Debitori';
+
+  const spark=document.getElementById('dash-spark');
+  if(spark){
+    const heights=[30,50,45,60,55,100];
+    spark.innerHTML=heights.map(h=>`<div class="bc-sparkbar-b" style="height:${h}%"></div>`).join('');
+  }
+
+  const bEl=document.getElementById('badge-clienti'); if(bEl) bEl.textContent=attivi.length;
+  const bSc=document.getElementById('badge-scadenze'); if(bSc) bSc.textContent=daFare;
+  const bOp=document.getElementById('badge-operatori'); if(bOp) bOp.textContent=nOp;
+  const bMg=document.getElementById('badge-scorte'); if(bMg) bMg.textContent=mag.length;
 }
 
 function _dashTable(list, showScad=false){
@@ -1182,58 +1317,85 @@ function _dashTable(list, showScad=false){
   </table></div>`;
 }
 
+function _setBentoActive(type){
+  // Rimuovi active da tutte le card
+  document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
+  // Aggiungi active alla card corrispondente
+  const map={'attivi':'bc-hero','operativita':'bc-ops','preventivi':'bc-comm',
+    'pagamenti-scaduti':'bc-pag','in-regola':'bc-reg','magazzino':'bc-mag','operatori':'bc-op'};
+  const id=map[type]; if(id){const el=document.getElementById(id);if(el)el.classList.add('bc-active');}
+}
+
 function toggleDashCard(type){
   const panel=document.getElementById('dash-card-detail');
-  if(_dashCardOpen===type){ panel.style.display='none'; _dashCardOpen=null; return; }
+  if(_dashCardOpen===type){
+    panel.style.display='none';
+    _dashCardOpen=null;
+    document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
+    return;
+  }
   _dashCardOpen=type;
+  _setBentoActive(type);
+
   const oggi=new Date();
   const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
-  const titles={
-    'attivi':'Clienti attivi',
-    'scad-contratto':'Scadenze contratto (entro 30 giorni)',
+  const MESE_NOMI_D=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+  const labels={
+    'attivi':'Clienti attivi ('+_dashClienti.filter(c=>(c.stato||'ATTIVO')=='ATTIVO').length+')',
+    'operativita':'Visite da pianificare — '+MESE_NOMI_D[oggi.getMonth()+1]+' '+oggi.getFullYear(),
     'pagamenti-scaduti':'Pagamenti scaduti — Debitori',
     'in-regola':'Pagamenti in regola',
-    'preventivi':'Preventivi aperti',
-    'pipeline':'Pipeline commerciale'
+    'preventivi':'Commerciale — Preventivi aperti',
+    'magazzino':'Magazzino',
+    'operatori':'Operatori attivi'
   };
-  document.getElementById('dash-detail-title').textContent=titles[type]||type;
+  document.getElementById('dash-detail-title').textContent=labels[type]||type;
+
   let html='';
   if(type==='attivi'){
-    html=_dashTable(_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO'));
-  } else if(type==='scad-contratto'){
-    const list=_dashClienti.filter(c=>c.data_scadenza_contratto&&new Date(c.data_scadenza_contratto)<=tra30);
-    html=list.length?_dashTable(list,true):'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessuna scadenza contratto nei prossimi 30 giorni.</div>';
+    html=_dashTable(_dashClienti.filter(c=>(c.stato||'ATTIVO')=='ATTIVO'));
+  } else if(type==='operativita'){
+    const mese=oggi.getMonth()+1, anno=oggi.getFullYear();
+    // Usa i dati di scadenze del mese corrente
+    const cli_ids_mese=new Set(_dashClienti.map(c=>c.id));
+    html='<div style="color:var(--text-muted);font-size:12px;padding:6px 0 12px">Clienti con visita programmata per '+MESE_NOMI_D[mese]+' '+anno+'</div>'+
+      _dashTable(_dashClienti.filter(c=>{
+        // mostra solo clienti che hanno mesi e li hanno questo mese — approssimazione senza join
+        return true; // filtro completo caricato da loadAgendaMese, qui mostriamo tutto
+      }).slice(0,20));
+    html='<div style="color:var(--text-muted);font-size:12px;margin-bottom:10px">Vai alle Scadenze per la lista dettagliata del mese.</div>'+
+      '<button class="btn" onclick="switchPanel(\'scadenze\',document.querySelectorAll(\'.nav-item\')[3]);closeDashCard()">Apri Scadenze →</button>';
   } else if(type==='pagamenti-scaduti'){
-    const list=_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='DEBITORE');
+    const list=_dashClienti.filter(c=>(c.pagamento||'REGOLARE')=='DEBITORE');
     html=list.length?_dashTable(list):'<div style="color:var(--green);font-size:13px;padding:8px 0">✓ Nessun debitore.</div>';
   } else if(type==='in-regola'){
-    html=_dashTable(_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='REGOLARE'));
+    html=_dashTable(_dashClienti.filter(c=>(c.pagamento||'REGOLARE')=='REGOLARE'));
   } else if(type==='preventivi'){
     const list=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
-    html=list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)${i===0?';border-top:1px solid var(--border)':''}">
-      <span style="font-size:12px">${p.rost81_clienti?.nome||'—'}</span>
-      <div style="display:flex;gap:8px;align-items:center">
-        <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg);color:var(--text-muted)">${p.stato}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
-      </div></div>`).join('')
-      :'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun preventivo aperto.</div>';
-  } else if(type==='pipeline'){
-    const list=_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato));
-    const tot=list.reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
-    html=`<div style="font-size:26px;font-weight:700;color:var(--blue);margin-bottom:12px">€ ${tot.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>`
-      +(list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+    const pipeline=_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato)).reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
+    html=(pipeline>0?`<div style="font-size:22px;font-weight:700;color:var(--blue);margin-bottom:12px">Pipeline: € ${pipeline.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>`:'')
+      +(list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)${i===0?';border-top:1px solid var(--border)':''}">
         <span style="font-size:12px">${p.rost81_clienti?.nome||'—'}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
-      </div>`).join('')
-      :'<div style="color:var(--text-muted);font-size:13px">Nessun preventivo in pipeline.</div>');
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg);color:var(--text-muted)">${p.stato}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
+        </div></div>`).join('')
+      :'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun preventivo aperto.</div>');
+  } else if(type==='magazzino'){
+    html='<button class="btn" onclick="switchPanel(\'magazzino\',document.querySelectorAll(\'.nav-item\')[5]);closeDashCard()">Apri Magazzino →</button>';
+  } else if(type==='operatori'){
+    html='<button class="btn" onclick="switchPanel(\'appmanut\',document.querySelectorAll(\'.nav-item\')[7]);closeDashCard()">Apri App Manutentore →</button>';
   }
+
   document.getElementById('dash-detail-body').innerHTML=html;
   panel.style.display='block';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 function closeDashCard(){
   document.getElementById('dash-card-detail').style.display='none';
   _dashCardOpen=null;
+  document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
 }
 
 async function openClienteFromDash(id){

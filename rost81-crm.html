@@ -32,10 +32,12 @@ body.dark {
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-text-size-adjust:100%}
 .app{display:flex;min-height:100vh}
 .sidebar{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:24px 0 16px;position:fixed;top:0;left:0;bottom:0;z-index:10}
-.sidebar-logo{display:flex;align-items:center;gap:10px;padding:0 20px 24px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sidebar-logo{display:flex;align-items:center;padding:0 16px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
 .logo-mark{width:36px;height:36px;background:var(--red);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;flex-shrink:0}
 .logo-text{font-size:15px;font-weight:600;color:var(--text);line-height:1.2}
 .logo-sub{font-size:10px;color:var(--text-muted);margin-top:1px}
+.sidebar-logo img{width:148px;height:auto;display:block;object-fit:contain}
+body.dark .sidebar-logo img{filter:brightness(0) invert(1)}
 .nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;font-weight:500;color:var(--text-muted);cursor:pointer;border-left:3px solid transparent;transition:all .15s;position:relative}
 .nav-item:hover{color:var(--text);background:var(--bg)}
 .nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
@@ -279,8 +281,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 <div class="app">
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <div class="logo-mark">R81</div>
-      <div><div class="logo-text">ROST 81</div><div class="logo-sub">CRM Interno</div></div>
+      <img src="rost81-logo.png" alt="ROST 81 — Antincendio e Sicurezza sul Lavoro">
     </div>
     <nav>
       <!-- ── S1: GESTIONE ── -->

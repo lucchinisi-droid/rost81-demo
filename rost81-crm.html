@@ -336,7 +336,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
               <span class="bc-tag bc-tag-g" id="dash-tag-regolari">… Regolari</span>
               <span class="bc-tag bc-tag-r" id="dash-tag-debitori">… Debitori</span>
             </div>
-            <div class="bc-sparkbar" id="dash-spark"></div>
             <div class="bc-hero-accent"></div>
           </div>
 
@@ -1272,12 +1271,6 @@ async function loadDashboardClienti(){
   if(ms) ms.textContent=magEsaur>0?magEsaur+' in esaurimento':'Tutto regolare';
   const tr=document.getElementById('dash-tag-regolari'); if(tr) tr.textContent=inRegola.length+' Regolari';
   const td=document.getElementById('dash-tag-debitori'); if(td) td.textContent=debitori.length+' Debitori';
-
-  const spark=document.getElementById('dash-spark');
-  if(spark){
-    const heights=[30,50,45,60,55,100];
-    spark.innerHTML=heights.map(h=>`<div class="bc-sparkbar-b" style="height:${h}%"></div>`).join('');
-  }
 
   const bEl=document.getElementById('badge-clienti'); if(bEl) bEl.textContent=attivi.length;
   const bSc=document.getElementById('badge-scadenze'); if(bSc) bSc.textContent=daFare;

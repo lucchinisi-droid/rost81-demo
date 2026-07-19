@@ -669,11 +669,42 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- DOCUMENTI LIVE -->
       <div id="panel-doclavoro" class="panel">
-        <div class="coming-soon">
-          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
-          <div class="coming-soon-badge">In sviluppo</div>
-          <div class="coming-soon-title">Documenti di Lavoro</div>
-          <div class="coming-soon-sub">Rapporti di manutenzione, DDT e archivio documenti — in arrivo in una fase successiva.</div>
+        <div class="section-head">
+          <div class="section-title">Documenti di Lavoro</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" id="doclavoro-search" placeholder="🔍 Cerca cliente o documento…" oninput="renderDocumentiLavoro()" style="padding:6px 10px;border:1px solid var(--border-med);border-radius:var(--radius-sm);font-size:12px;font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--text);outline:none;width:200px">
+            <button class="btn btn-sm" onclick="loadDocumentiLavoro()">↻</button>
+          </div>
+        </div>
+
+        <!-- HERO -->
+        <div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-bottom:18px;display:flex;gap:18px;align-items:flex-start">
+          <div style="width:52px;height:52px;border-radius:14px;background:var(--blue-light,#e8f1fa);color:var(--blue,#1a4f72);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <div style="font-size:16px;font-weight:700">Archivio rapporti e DDT</div>
+              <span class="badge badge-green">Attivo</span>
+            </div>
+            <div style="font-size:13px;color:var(--text-muted);line-height:1.6;max-width:640px">
+              Ogni rapporto di manutenzione e ogni DDT stampato dai tecnici dall'App Manutentore viene salvato qui automaticamente — nessun caricamento manuale. I file sono conservati in modo sicuro e restano consultabili con un link diretto.
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="btn btn-sm sort-btn doclavoro-filter-btn active" onclick="setDocLavoroFilter('tutti',this)">Tutti</button>
+          <button class="btn btn-sm sort-btn doclavoro-filter-btn" onclick="setDocLavoroFilter('rapporto',this)">📋 Rapporti</button>
+          <button class="btn btn-sm sort-btn doclavoro-filter-btn" onclick="setDocLavoroFilter('ddt',this)">📦 DDT</button>
+          <span id="doclavoro-count" style="margin-left:auto;align-self:center;font-size:12px;color:var(--text-muted)"></span>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Cliente</th><th>Tipo</th><th>Nome file</th><th>Descrizione</th><th>Data</th><th>File</th></tr></thead>
+            <tbody id="doclavoro-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -1291,6 +1322,7 @@ function switchPanel(id, el){
   if(id==='preventivi') loadPreventivi();
   if(id==='calendario') loadCalendario();
   if(id==='appmanut') loadOperatoriAppManut();
+  if(id==='doclavoro') loadDocumentiLavoro();
 }
 
 /* ---------- APP MANUTENTORE: operatori abilitati ---------- */
@@ -1317,6 +1349,63 @@ async function loadOperatoriAppManut(){
       <td><span class="badge ${profCls}">${op.profilo || '—'}</span></td>
       <td>${dataAbil}</td>
       <td>${statoBadge}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ---------- DOCUMENTI DI LAVORO (rapporti + DDT dall'App Manutentore) ---------- */
+let _docLavoroAll = [], _docLavoroFilter = 'tutti';
+
+async function loadDocumentiLavoro(){
+  const tbody = document.getElementById('doclavoro-tbody');
+  tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>`;
+  const { data, error } = await sb.from('documenti_clienti').select('*, clienti_contratti(nome_cliente)').order('creato_il', {ascending:false});
+  if(error){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Errore nel caricamento</td></tr>`;
+    return;
+  }
+  _docLavoroAll = data || [];
+  document.getElementById('doclavoro-count').textContent = `${_docLavoroAll.length} documenti`;
+  renderDocumentiLavoro();
+}
+
+function setDocLavoroFilter(tipo, el){
+  _docLavoroFilter = tipo;
+  document.querySelectorAll('.doclavoro-filter-btn').forEach(b => b.classList.remove('active'));
+  if(el) el.classList.add('active');
+  renderDocumentiLavoro();
+}
+
+function renderDocumentiLavoro(){
+  const tbody = document.getElementById('doclavoro-tbody');
+  const search = (document.getElementById('doclavoro-search')?.value || '').toLowerCase().trim();
+  let list = _docLavoroAll;
+  if(_docLavoroFilter==='rapporto') list = list.filter(d => d.nome_file?.startsWith('MAN-'));
+  else if(_docLavoroFilter==='ddt') list = list.filter(d => d.nome_file?.startsWith('DDT-'));
+  if(search){
+    list = list.filter(d =>
+      (d.clienti_contratti?.nome_cliente || '').toLowerCase().includes(search) ||
+      (d.nome_file || '').toLowerCase().includes(search) ||
+      (d.descrizione || '').toLowerCase().includes(search)
+    );
+  }
+  if(list.length===0){
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun documento trovato</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = list.map(d => {
+    const isRap = d.nome_file?.startsWith('MAN-');
+    const isDDT = d.nome_file?.startsWith('DDT-');
+    const tipoBadge = isRap ? '<span class="badge badge-blue">📋 Rapporto</span>' : isDDT ? '<span class="badge badge-amber">📦 DDT</span>' : '<span class="badge badge-gray">Documento</span>';
+    const dataFmt = d.creato_il ? new Date(d.creato_il).toLocaleDateString('it-IT') : '—';
+    const link = d.url ? `<a href="${d.url}" target="_blank">Apri ↗</a>` : '—';
+    return `<tr>
+      <td>${d.clienti_contratti?.nome_cliente || '—'}</td>
+      <td>${tipoBadge}</td>
+      <td>${d.nome_file || '—'}</td>
+      <td style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.descrizione || '—'}</td>
+      <td>${dataFmt}</td>
+      <td>${link}</td>
     </tr>`;
   }).join('');
 }

@@ -44,6 +44,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
 .sort-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
 .mese-pill{display:flex;align-items:center;font-size:12px;cursor:pointer;padding:4px 12px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s;color:var(--text)}
+.mese-pill.on{background:var(--red-light);border-color:var(--red);color:var(--red);font-weight:600}
 tr.clickable{cursor:pointer}
 .drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.28);z-index:50;display:none;backdrop-filter:blur(1px)}
 .drawer-overlay.open{display:block}
@@ -151,7 +152,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .mag-qty.ok{color:var(--green)} .mag-qty.warn{color:var(--amber)} .mag-qty.danger{color:var(--red)}
 .mag-soglia{font-size:11px;color:var(--text-muted);margin-top:2px}
 .mag-actions{display:flex;gap:6px;margin-top:12px}
-/* ── Stato estintore ── */
 .mag-stato-row{margin:8px 0 2px}
 .stato-sel{font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:10px;border:1.5px solid;cursor:pointer;-webkit-appearance:none;appearance:none;outline:none;width:100%;text-align:center}
 .stato-sel[data-stato="NUOVO"]{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
@@ -162,7 +162,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .dark .stato-sel[data-stato="REVISIONATO"]{background:rgba(59,130,246,.18);color:#60a5fa;border-color:rgba(59,130,246,.35)}
 .dark .stato-sel[data-stato="DA REVISIONARE"]{background:rgba(245,158,11,.18);color:#fbbf24;border-color:rgba(245,158,11,.35)}
 .dark .stato-sel[data-stato="DA SMALTIRE"]{background:rgba(239,68,68,.18);color:#f87171;border-color:rgba(239,68,68,.35)}
-/* ── Filtro pills stato ── */
 .stato-pill{font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:4px 11px;border-radius:10px;border:1.5px solid var(--border);background:var(--bg-hover);color:var(--text-muted);cursor:pointer;transition:all .15s;white-space:nowrap}
 .stato-pill:hover{border-color:var(--primary)}
 .stato-pill.sp-active-tutti{background:var(--surface);color:var(--text);border-color:var(--primary)}
@@ -187,11 +186,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .form-input:focus{border-color:var(--red)}
 .toast{position:fixed;bottom:24px;right:24px;background:var(--text);color:#fff;padding:12px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;z-index:100;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)} .toast.success{background:var(--green)} .toast.error{background:var(--red)}
-/* ── Sidebar sections ── */
 .sidebar nav{flex:1;overflow-y:auto;padding-bottom:8px}
 .nav-section-label{font-size:9px;font-weight:700;letter-spacing:.1em;color:var(--text-hint);text-transform:uppercase;padding:16px 20px 5px;margin-top:2px}
 .nav-section-label.first{padding-top:4px}
-/* ── Calendar ── */
 .cal-header-days{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px}
 .cal-day-name{text-align:center;font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;padding:6px 0}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
@@ -217,7 +214,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .cal-event-ora{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .cal-event-del{background:none;border:none;color:var(--text-hint);cursor:pointer;font-size:14px;padding:0 2px;line-height:1}
 .cal-event-del:hover{color:var(--red)}
-/* ── Magazzino category tabs ── */
 .mag-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
 .mag-cat-tab{background:var(--surface);border-radius:var(--radius);border:2px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;aspect-ratio:1;transition:all .15s;text-align:center;user-select:none}
 .mag-cat-tab:hover{border-color:var(--red);background:var(--red-light);transform:translateY(-1px)}
@@ -226,7 +222,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .mag-cat-tab.active .mag-cat-icon{color:var(--red)}
 .mag-cat-tab-name{font-size:11px;font-weight:700;color:var(--text);line-height:1.2}
 .mag-cat-tab-count{font-size:10px;color:var(--text-muted);font-family:'DM Mono',monospace}
-/* ── Scheda tecnica prodotto ── */
 .scheda-section{margin-bottom:20px}
 .scheda-card{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--border);overflow:hidden;margin-bottom:10px}
 .scheda-head{display:flex;align-items:center;gap:12px;padding:14px 18px;cursor:pointer;user-select:none;transition:background .12s}
@@ -264,20 +259,51 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .scheda-taglie-table tr:hover td{background:var(--surface)}
 .scheda-taglie-table .cod{font-family:'DM Mono',monospace;font-size:10px;background:var(--red-light);color:var(--red);padding:2px 6px;border-radius:10px}
 .scheda-taglie-table .carr{font-size:9px;background:var(--blue-light);color:var(--blue);padding:2px 6px;border-radius:10px;font-weight:600}
-/* ── Coming Soon ── */
 .coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px;text-align:center}
 .coming-soon-icon{width:72px;height:72px;border-radius:20px;display:flex;align-items:center;justify-content:center;background:var(--bg);color:var(--text-muted)}
 .coming-soon-title{font-size:22px;font-weight:700;color:var(--text)}
 .coming-soon-sub{font-size:14px;color:var(--text-muted);max-width:360px;line-height:1.6}
 .coming-soon-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bg);color:var(--text-muted);border:1px solid var(--border-med)}
-/* ── Event modal ── */
 .ev-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ev-modal.open{display:flex}
 .ev-box{background:var(--surface);border-radius:var(--radius);padding:24px;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.22)}
+/* ── LOGIN ── */
+.login-screen{position:fixed;inset:0;background:var(--bg);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:32px;width:380px;max-width:100%}
+.login-logo{width:52px;height:52px;background:var(--red);border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;margin:0 auto 16px}
+.login-title{font-size:18px;font-weight:700;text-align:center;margin-bottom:4px}
+.login-sub{font-size:12px;color:var(--text-muted);text-align:center;margin-bottom:22px}
+.login-divider{display:flex;align-items:center;gap:10px;margin:16px 0;font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:.05em}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--border-med)}
+.btn-google{width:100%;justify-content:center;background:var(--surface);border:1px solid var(--border-med);color:var(--text);padding:10px;font-weight:500}
+.login-error{background:var(--red-light);color:#8b1a10;font-size:12px;padding:10px 12px;border-radius:var(--radius-sm);margin-bottom:14px;display:none}
+.login-toggle{text-align:center;font-size:12px;color:var(--text-muted);margin-top:16px}
+.login-toggle a{color:var(--red);cursor:pointer;font-weight:500;text-decoration:none}
+.app-hidden{display:none !important}
 </style>
 </head>
 <body>
-<div class="app">
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="login-screen" style="display:none">
+  <div class="login-box">
+    <div class="login-logo">R81</div>
+    <div class="login-title" id="login-title">Accedi al CRM</div>
+    <div class="login-sub">ROST 81 — area riservata staff</div>
+    <div class="login-error" id="login-error"></div>
+    <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="login-email" placeholder="nome@email.it"></div>
+    <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-input" id="login-password" placeholder="••••••••"></div>
+    <button class="btn btn-red" style="width:100%;justify-content:center;padding:10px" id="login-submit" onclick="submitLogin()">Accedi</button>
+    <div class="login-divider">oppure</div>
+    <button class="btn btn-google" onclick="loginGoogle()">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Accedi con Google
+    </button>
+    <div class="login-toggle" id="login-toggle">Non hai un account? <a onclick="toggleAuthMode()">Registrati</a></div>
+  </div>
+</div>
+
+<div class="app app-hidden" id="app-root">
   <aside class="sidebar">
     <div class="sidebar-logo">
       <img src="rost81-logo.png" alt="ROST 81 — Antincendio e Sicurezza sul Lavoro">
@@ -308,7 +334,10 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('sentinel',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>Sentinel-81</span></div>
       <div class="nav-item" onclick="switchPanel('pepper',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7H3a7 7 0 0 1 7-7h1V5.73c-.6-.34-1-.99-1-1.73a2 2 0 0 1 2-2z"/><path d="M5 14v7h14v-7"/><path d="M9 21v-6a3 3 0 0 1 6 0v6"/></svg><span>Pepper</span></div>
     </nav>
-    <div class="sidebar-footer"><div class="sidebar-contact">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div></div>
+    <div class="sidebar-footer">
+      <div class="sidebar-contact" id="sidebar-user">Via Giotto 2<br>Colleferro (RM)<br>06 97234064</div>
+      <button class="btn btn-sm" style="width:100%;justify-content:center;margin-top:10px" onclick="logout()">↩ Esci</button>
+    </div>
   </aside>
 
   <div class="main">
@@ -375,8 +404,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="bc" id="bc-mag" onclick="toggleDashCard('magazzino')">
             <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27,6.96 12,12.01 20.73,6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
             <div class="bc-lbl">Magazzino</div>
-            <div class="bc-num" id="dash-mag-tot" style="color:var(--text)">…</div>
-            <div class="bc-sub" id="dash-mag-sub">Articoli in archivio</div>
+            <div class="bc-num" id="dash-mag-tot" style="color:var(--text)">0</div>
+            <div class="bc-sub" id="dash-mag-sub">Non ancora attivo</div>
           </div>
 
           <!-- OPERATORI -->
@@ -384,7 +413,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <svg class="bc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             <div class="bc-lbl">Operatori</div>
             <div class="bc-num" id="dash-op-tot" style="color:var(--text)">…</div>
-            <div class="bc-sub">Attivi in campo</div>
+            <div class="bc-sub">Staff registrato</div>
           </div>
 
           <!-- IN SVILUPPO — Fatturazione -->
@@ -443,13 +472,13 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div>
             <div class="section-head"><div class="section-title">Prodotti in esaurimento</div></div>
             <div id="dash-esaurimento">
-              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
+              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Magazzino non ancora attivo</div>
             </div>
           </div>
           <div>
             <div class="section-head"><div class="section-title">Ultime consegne</div></div>
             <div id="dash-consegne">
-              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Caricamento...</div>
+              <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:13px;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow)">Magazzino non ancora attivo</div>
             </div>
           </div>
         </div>
@@ -497,6 +526,24 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
             <div class="form-group"><label class="form-label">Note</label><input type="text" class="form-input" id="nc-note" placeholder="Annotazioni varie"></div>
           </div>
 
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
+            <div class="form-group">
+              <label class="form-label">Tipo contratto</label>
+              <select class="form-input" id="nc-tipo-contratto">
+                <option value="FULL">FULL</option>
+                <option value="BASE">BASE</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">Scadenza contratto</label><input type="date" class="form-input" id="nc-scadenza-contratto"></div>
+            <div class="form-group">
+              <label class="form-label">Pagamento</label>
+              <select class="form-input" id="nc-pagamento">
+                <option value="REGOLARE">REGOLARE</option>
+                <option value="DEBITORE">DEBITORE</option>
+              </select>
+            </div>
+          </div>
+
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px">
             <div class="form-group"><label class="form-label">Referente</label><input type="text" class="form-input" id="nc-referente" placeholder="Mario Rossi"></div>
             <div class="form-group"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="nc-tel-referente" placeholder="333 1234567"></div>
@@ -505,18 +552,18 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="form-group" style="margin-bottom:16px">
             <label class="form-label" style="margin-bottom:8px">Mesi intervento</label>
             <div style="display:flex;flex-wrap:wrap;gap:6px" id="nc-mesi-wrap">
-              <label id="label-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightMese(1,this.checked)"  style="display:none"> Gen</label>
-              <label id="label-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightMese(2,this.checked)"  style="display:none"> Feb</label>
-              <label id="label-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightMese(3,this.checked)"  style="display:none"> Mar</label>
-              <label id="label-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightMese(4,this.checked)"  style="display:none"> Apr</label>
-              <label id="label-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightMese(5,this.checked)"  style="display:none"> Mag</label>
-              <label id="label-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightMese(6,this.checked)"  style="display:none"> Giu</label>
-              <label id="label-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightMese(7,this.checked)"  style="display:none"> Lug</label>
-              <label id="label-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightMese(8,this.checked)"  style="display:none"> Ago</label>
-              <label id="label-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightMese(9,this.checked)"  style="display:none"> Set</label>
-              <label id="label-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightMese(10,this.checked)" style="display:none"> Ott</label>
-              <label id="label-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightMese(11,this.checked)" style="display:none"> Nov</label>
-              <label id="label-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightMese(12,this.checked)" style="display:none"> Dic</label>
+              <label id="label-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightMese(1,this.checked,'nc')"  style="display:none"> Gen</label>
+              <label id="label-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightMese(2,this.checked,'nc')"  style="display:none"> Feb</label>
+              <label id="label-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightMese(3,this.checked,'nc')"  style="display:none"> Mar</label>
+              <label id="label-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightMese(4,this.checked,'nc')"  style="display:none"> Apr</label>
+              <label id="label-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightMese(5,this.checked,'nc')"  style="display:none"> Mag</label>
+              <label id="label-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightMese(6,this.checked,'nc')"  style="display:none"> Giu</label>
+              <label id="label-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightMese(7,this.checked,'nc')"  style="display:none"> Lug</label>
+              <label id="label-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightMese(8,this.checked,'nc')"  style="display:none"> Ago</label>
+              <label id="label-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightMese(9,this.checked,'nc')"  style="display:none"> Set</label>
+              <label id="label-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightMese(10,this.checked,'nc')" style="display:none"> Ott</label>
+              <label id="label-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightMese(11,this.checked,'nc')" style="display:none"> Nov</label>
+              <label id="label-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightMese(12,this.checked,'nc')" style="display:none"> Dic</label>
             </div>
           </div>
 
@@ -560,7 +607,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
                 <option value="1">Gennaio</option><option value="2">Febbraio</option><option value="3">Marzo</option><option value="4">Aprile</option><option value="5">Maggio</option><option value="6">Giugno</option><option value="7">Luglio</option><option value="8">Agosto</option><option value="9">Settembre</option><option value="10">Ottobre</option><option value="11">Novembre</option><option value="12">Dicembre</option>
               </select>
             </div>
-            <button class="btn btn-sm" onclick="exportScadenzePDF()" style="gap:6px">📄 Esporta PDF</button>
+            <button class="btn btn-sm" onclick="toast('Esportazione PDF in arrivo','error')" style="gap:6px">📄 Esporta PDF</button>
           </div>
           <div class="table-wrap">
             <table>
@@ -591,19 +638,18 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="section-title">Archivio Preventivi</div>
           <div style="display:flex;gap:8px;align-items:center">
             <button class="btn btn-sm" onclick="loadPreventivi()">↻ Aggiorna</button>
-            <a href="rost81_manutenzione.html" target="_blank" style="text-decoration:none"><button class="btn btn-sm btn-red">+ Nuovo preventivo</button></a>
           </div>
         </div>
         <div id="prev-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
           <div class="stat-card"><div class="stat-label">Preventivi totali</div><div class="stat-val blue" id="prev-count">—</div></div>
-          <div class="stat-card"><div class="stat-label">Valore totale (IVA incl.)</div><div class="stat-val" id="prev-totale">—</div></div>
+          <div class="stat-card"><div class="stat-label">Valore totale stimato</div><div class="stat-val" id="prev-totale">—</div></div>
           <div class="stat-card"><div class="stat-label">Ultimo salvato</div><div class="stat-val" id="prev-ultimo" style="font-size:13px">—</div></div>
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>N° Preventivo</th><th>Cliente</th><th>Data</th><th>Importo totale</th><th>Documento</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Categoria</th><th>Data</th><th>Importo stimato</th><th>Stato</th><th>Documento</th></tr></thead>
             <tbody id="preventivi-tbody">
-              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
+              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
             </tbody>
           </table>
         </div>
@@ -611,303 +657,41 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- MAGAZZINO -->
       <div id="panel-magazzino" class="panel">
-
-        <!-- Tab categorie 4+4 -->
-        <div class="mag-cat-grid">
-          <!-- riga 1 -->
-          <div class="mag-cat-tab" id="mct-estintori" onclick="selectMagCat('Estintori')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V5a5 5 0 0 1 10 0v6"/><rect x="3" y="11" width="18" height="11" rx="2"/><line x1="12" y1="15" x2="12" y2="19"/></svg></div>
-            <div class="mag-cat-tab-name">Estintori</div>
-            <div class="mag-cat-tab-count" id="mct-count-estintori">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-porte-rei" onclick="selectMagCat('Porte REI')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="2" width="18" height="20" rx="1"/><path d="M3 12h18"/><circle cx="16.5" cy="9" r="1" fill="currentColor" stroke="none"/></svg></div>
-            <div class="mag-cat-tab-name">Porte REI</div>
-            <div class="mag-cat-tab-count" id="mct-count-porte-rei">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-idranti" onclick="selectMagCat('Idranti')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 C12 2 4 10 4 15a8 8 0 0 0 16 0C20 10 12 2 12 2z"/><line x1="12" y1="12" x2="12" y2="18"/></svg></div>
-            <div class="mag-cat-tab-name">Idranti</div>
-            <div class="mag-cat-tab-count" id="mct-count-idranti">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-primo-soccorso" onclick="selectMagCat('Primo Soccorso')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
-            <div class="mag-cat-tab-name">Primo Soccorso</div>
-            <div class="mag-cat-tab-count" id="mct-count-primo-soccorso">—</div>
-          </div>
-          <!-- riga 2 -->
-          <div class="mag-cat-tab" id="mct-ferramenta" onclick="selectMagCat('Ferramenta')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-            <div class="mag-cat-tab-name">Ferramenta</div>
-            <div class="mag-cat-tab-count" id="mct-count-ferramenta">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-cartoleria" onclick="selectMagCat('Cartoleria')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><path d="M5 12l7-7 7 7"/></svg></div>
-            <div class="mag-cat-tab-name">Cartoleria</div>
-            <div class="mag-cat-tab-count" id="mct-count-cartoleria">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-abbigliamento" onclick="selectMagCat('Abbigliamento')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.57a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.57a2 2 0 0 0-1.34-2.23z"/></svg></div>
-            <div class="mag-cat-tab-name">Abbigliamento</div>
-            <div class="mag-cat-tab-count" id="mct-count-abbigliamento">—</div>
-          </div>
-          <div class="mag-cat-tab" id="mct-varie" onclick="selectMagCat('Varie')">
-            <div class="mag-cat-tab-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
-            <div class="mag-cat-tab-name">Varie</div>
-            <div class="mag-cat-tab-count" id="mct-count-varie">—</div>
-          </div>
-        </div>
-
-        <!-- Alert scorte -->
-        <div id="scorte-alert" style="display:none;background:var(--red-light);border:1px solid rgba(192,57,43,.2);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;align-items:center;gap:10px">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c0392b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <div style="flex:1;font-size:13px;font-weight:500;color:#8b1a10" id="scorte-alert-text">Articoli sotto scorta minima</div>
-        </div>
-
-        <!-- Schede tecniche per categoria -->
-        <div id="mag-schede-section" class="scheda-section" style="display:none"></div>
-
-        <div class="section-head">
-          <div class="section-title" id="mag-section-title">Tutti gli articoli</div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-sm" onclick="loadMagazzino()">↻ Aggiorna</button>
-            <button class="btn btn-sm btn-red" onclick="apriNuovoArticolo()">+ Articolo</button>
-          </div>
-        </div>
-        <!-- Filtro stato -->
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
-          <button class="stato-pill sp-active-tutti" id="sp-tutti" onclick="setStatoFiltro(null)">● Tutti</button>
-          <button class="stato-pill" id="sp-nuovo" onclick="setStatoFiltro('NUOVO')">NUOVO</button>
-          <button class="stato-pill" id="sp-revisionato" onclick="setStatoFiltro('REVISIONATO')">REVISIONATO</button>
-          <button class="stato-pill" id="sp-da-revisionare" onclick="setStatoFiltro('DA REVISIONARE')">DA REVISIONARE</button>
-          <button class="stato-pill" id="sp-da-smaltire" onclick="setStatoFiltro('DA SMALTIRE')">DA SMALTIRE</button>
-        </div>
-        <div id="mag-grid" class="mag-grid">
-          <div style="grid-column:1/-1;text-align:center;padding:24px;color:var(--text-muted);font-size:13px">Caricamento...</div>
-        </div>
-        <div class="section-head" style="margin-top:8px">
-          <div class="section-title">Ultimi movimenti</div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Articolo</th><th>Cliente</th><th>Q.tà</th><th>Nota</th><th>Data</th></tr></thead>
-            <tbody id="mov-list"><tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Caricamento...</td></tr></tbody>
-          </table>
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">Magazzino</div>
+          <div class="coming-soon-sub">Gestione scorte, movimenti e stato articoli — in arrivo in una fase successiva.</div>
         </div>
       </div>
 
-      <!-- MODALE USCITA -->
-      <div class="uscita-modal" id="uscita-modal">
-        <div class="uscita-box">
-          <div class="uscita-title" id="uscita-nome">Uscita articolo</div>
-          <div class="uscita-sub">Registra materiale consegnato o utilizzato</div>
-          <input type="hidden" id="uscita-id">
-          <div class="form-group">
-            <label class="form-label">Cliente</label>
-            <select class="form-input" id="uscita-cliente">
-              <option value="">— Uso interno / campo —</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Quantità in uscita</label>
-            <input type="number" class="form-input" id="uscita-qty" min="1" value="1">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Nota (opzionale)</label>
-            <input type="text" class="form-input" id="uscita-nota" placeholder="es. Installazione presso sede cliente">
-          </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="registraUscita()">✓ Conferma uscita</button>
-            <button class="btn" onclick="document.getElementById('uscita-modal').classList.remove('open')">Annulla</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- MODALE NUOVO ARTICOLO -->
-      <div class="nuovo-modal" id="nuovo-modal">
-        <div class="uscita-box" style="width:460px">
-          <div class="uscita-title">Nuovo articolo</div>
-          <div class="uscita-sub">Aggiungi un articolo al magazzino</div>
-
-          <!-- Livello 1: Categoria -->
-          <div class="form-group">
-            <label class="form-label">Categoria</label>
-            <select class="form-input" id="n-cat" onchange="onCatChange(this.value)">
-              <option value="">— Seleziona categoria —</option>
-              <option>Estintori</option><option>Porte REI</option><option>Idranti</option><option>Primo Soccorso</option>
-              <option>Ferramenta</option><option>Cartoleria</option><option>Abbigliamento</option><option>Varie</option>
-            </select>
-          </div>
-
-          <!-- Livello 2: Tipo agente (da catalogo) -->
-          <div class="form-group" id="n-agente-group" style="display:none">
-            <label class="form-label">Tipo prodotto</label>
-            <select class="form-input" id="n-agente" onchange="onAgenteChange(this.value)">
-              <option value="">— Seleziona tipo —</option>
-            </select>
-          </div>
-
-          <!-- Livello 3: Taglia / Modello -->
-          <div class="form-group" id="n-taglia-group" style="display:none">
-            <label class="form-label">Taglia / Modello</label>
-            <select class="form-input" id="n-taglia" onchange="onTagliaChange(this.value)">
-              <option value="">— Seleziona taglia —</option>
-            </select>
-          </div>
-
-          <!-- Nome (auto-riempito o manuale) -->
-          <div class="form-group" id="n-nome-group" style="display:none">
-            <label class="form-label">Nome articolo</label>
-            <input type="text" class="form-input" id="n-nome-custom" placeholder="Nome articolo...">
-          </div>
-          <!-- campi legacy nascosti (compatibilità) -->
-          <select id="n-nome-select" style="display:none"></select>
-          <input type="hidden" id="n-catalogo-id">
-          <input type="hidden" id="n-taglia-val">
-
-          <div class="form-group">
-            <label class="form-label">Stato</label>
-            <select class="form-input" id="n-stato">
-              <option value="NUOVO">NUOVO</option>
-              <option value="REVISIONATO">REVISIONATO</option>
-              <option value="DA REVISIONARE">DA REVISIONARE</option>
-              <option value="DA SMALTIRE">DA SMALTIRE</option>
-            </select>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 80px;gap:10px">
-            <div class="form-group"><label class="form-label">Quantità</label><input type="number" class="form-input" id="n-qty" min="0" value="0"></div>
-            <div class="form-group"><label class="form-label">Soglia minima</label><input type="number" class="form-input" id="n-soglia" min="0" value="5"></div>
-            <div class="form-group"><label class="form-label">Unità</label><input type="text" class="form-input" id="n-unita" value="pz"></div>
-          </div>
-          <div style="display:flex;gap:8px;margin-top:4px">
-            <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaArticolo()">+ Aggiungi</button>
-            <button class="btn" onclick="chiudiNuovoModal()">Annulla</button>
-          </div>
-        </div>
-      </div>
       <!-- DOCUMENTI LIVE -->
       <div id="panel-doclavoro" class="panel">
-
-        <!-- ── Strumenti di lavoro ── -->
-        <div class="section-head" style="margin-bottom:14px">
-          <div class="section-title">Strumenti di Lavoro</div>
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">Documenti di Lavoro</div>
+          <div class="coming-soon-sub">Rapporti di manutenzione, DDT e archivio documenti — in arrivo in una fase successiva.</div>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:28px">
-
-          <a href="rost81_manutenzione.html" target="_blank" style="text-decoration:none;color:inherit">
-            <div style="background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid var(--red);cursor:pointer;transition:box-shadow .15s" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,.12)'" onmouseout="this.style.boxShadow='var(--shadow)'">
-              <div style="font-size:26px;margin-bottom:8px">🔧</div>
-              <div style="font-size:13px;font-weight:600;margin-bottom:3px">Rapporto di Manutenzione</div>
-              <div style="font-size:11px;color:var(--text-muted);line-height:1.5">Estintori · Firme · AI · PDF</div>
-              <div style="margin-top:10px;font-size:11px;color:var(--red);font-weight:500">Apri →</div>
-            </div>
-          </a>
-
-          <div style="background:var(--surface);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border-left:4px solid #aaa;opacity:.55">
-            <div style="font-size:26px;margin-bottom:8px">📦</div>
-            <div style="font-size:13px;font-weight:600;margin-bottom:3px">DDT</div>
-            <div style="font-size:11px;color:var(--text-muted);line-height:1.5">Documento di trasporto</div>
-            <div style="margin-top:10px;font-size:11px;color:var(--text-hint);font-weight:500">Prossimamente</div>
-          </div>
-
-        </div>
-
-        <!-- ── Archivio Documenti ── -->
-        <div class="section-head" style="margin-bottom:14px">
-          <div class="section-title">Archivio Documenti</div>
-          <div style="display:flex;gap:8px;align-items:center">
-            <select id="archivio-filtro-anno" onchange="loadArchivioDoc()" style="padding:5px 10px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);color:var(--text);font-size:12px;font-family:inherit"></select>
-            <button class="btn btn-sm" onclick="loadArchivioDoc()">↻ Aggiorna</button>
-          </div>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Data</th><th>N° Documento</th><th>Cliente</th><th>Descrizione</th><th>Documento</th></tr></thead>
-            <tbody id="archivio-tbody">
-              <tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
-            </tbody>
-          </table>
-        </div>
-
       </div>
 
       <!-- APP MANUTENTORE -->
       <div id="panel-appmanut" class="panel">
-
-        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px">
-          <div class="stat-card"><div class="stat-label">👷 Operatori totali</div><div class="stat-val" id="op-tot">—</div></div>
-          <div class="stat-card"><div class="stat-label">🟢 Attivi</div><div class="stat-val green" id="op-attivi">—</div></div>
-          <div class="stat-card"><div class="stat-label">Junior</div><div class="stat-val" id="op-junior">—</div></div>
-          <div class="stat-card"><div class="stat-label">Senior / Master</div><div class="stat-val" style="color:#7c3aed" id="op-senior">—</div></div>
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">App Manutentore</div>
+          <div class="coming-soon-sub">Gestione operatori e app di campo — in arrivo in una fase successiva.</div>
         </div>
-
-        <div class="section-head">
-          <div class="section-title">Operatori</div>
-          <button class="btn btn-red btn-sm" onclick="document.getElementById('form-nuovo-op').style.display=document.getElementById('form-nuovo-op').style.display==='none'?'block':'none'">+ Nuovo operatore</button>
-        </div>
-
-        <!-- FORM NUOVO OPERATORE -->
-        <div id="form-nuovo-op" style="display:none;background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px">
-          <div style="font-size:13px;font-weight:600;margin-bottom:14px;color:var(--text)">Nuovo operatore</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-            <div class="form-group"><label class="form-label">Nome</label><input type="text" class="form-input" id="op-nome" placeholder="Mario"></div>
-            <div class="form-group"><label class="form-label">Cognome</label><input type="text" class="form-input" id="op-cognome" placeholder="Rossi"></div>
-          </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-            <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="op-email" placeholder="mario@rost81.it"></div>
-            <div class="form-group"><label class="form-label">Password temporanea</label><input type="password" class="form-input" id="op-password" placeholder="min. 8 caratteri"></div>
-            <div class="form-group">
-              <label class="form-label">Profilo</label>
-              <select class="form-input" id="op-profilo">
-                <option value="junior">Junior</option>
-                <option value="senior">Senior</option>
-                <option value="master">Master</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group" style="margin-bottom:14px"><label class="form-label">Note (opzionale)</label><input type="text" class="form-input" id="op-note" placeholder="es. Zona Colleferro"></div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-red" style="flex:1;justify-content:center" id="btn-crea-op" onclick="creaOperatore()">✓ Crea operatore</button>
-            <button class="btn" onclick="document.getElementById('form-nuovo-op').style.display='none'">Annulla</button>
-          </div>
-        </div>
-
-        <!-- TABELLA OPERATORI -->
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Nome</th><th>Email</th><th>Profilo</th><th>Stato</th><th>Note</th><th>Creato</th><th></th></tr></thead>
-            <tbody id="operatori-tbody">
-              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
-            </tbody>
-          </table>
-        </div>
-
       </div>
 
       <!-- CALENDARIO -->
       <div id="panel-calendario" class="panel">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-          <div style="display:flex;align-items:center;gap:10px">
-            <button class="btn btn-sm" onclick="calPrev()">←</button>
-            <div id="cal-title" style="font-size:18px;font-weight:700;min-width:200px;text-align:center"></div>
-            <button class="btn btn-sm" onclick="calNext()">→</button>
-            <button class="btn btn-sm" onclick="calGoToday()" style="margin-left:4px">Oggi</button>
-          </div>
-          <button class="btn btn-sm btn-red" onclick="openEventModal()">+ Nuovo evento</button>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 296px;gap:20px;align-items:start">
-          <div>
-            <div class="cal-header-days">
-              <div class="cal-day-name">Lun</div><div class="cal-day-name">Mar</div><div class="cal-day-name">Mer</div>
-              <div class="cal-day-name">Gio</div><div class="cal-day-name">Ven</div>
-              <div class="cal-day-name" style="color:var(--amber)">Sab</div><div class="cal-day-name" style="color:var(--red)">Dom</div>
-            </div>
-            <div class="cal-grid" id="cal-grid"></div>
-          </div>
-          <div id="cal-day-panel" style="background:var(--surface);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);min-height:200px">
-            <div style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:12px" id="cal-day-label">Seleziona un giorno</div>
-            <div id="cal-day-events"><div style="color:var(--text-hint);font-size:13px">—</div></div>
-          </div>
+        <div class="coming-soon">
+          <div class="coming-soon-icon"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div class="coming-soon-badge">In sviluppo</div>
+          <div class="coming-soon-title">Calendario</div>
+          <div class="coming-soon-sub">Vista eventi e appuntamenti — in arrivo in una fase successiva.</div>
         </div>
       </div>
 
@@ -965,32 +749,6 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
   </div>
 </div>
 
-<!-- MODAL EVENTO CALENDARIO -->
-<div class="ev-modal" id="ev-modal">
-  <div class="ev-box">
-    <div style="font-size:15px;font-weight:700;margin-bottom:16px">Nuovo evento</div>
-    <div class="form-group"><label class="form-label">Titolo *</label><input type="text" class="form-input" id="ev-titolo" placeholder="Es. Corso antincendio Roma"></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="form-group"><label class="form-label">Data *</label><input type="date" class="form-input" id="ev-data"></div>
-      <div class="form-group"><label class="form-label">Ora</label><input type="time" class="form-input" id="ev-ora"></div>
-    </div>
-    <div class="form-group">
-      <label class="form-label">Tipo</label>
-      <select class="form-input" id="ev-tipo">
-        <option value="appuntamento">Appuntamento</option>
-        <option value="corso">Corso / Formazione</option>
-        <option value="scadenza">Scadenza</option>
-        <option value="altro">Altro</option>
-      </select>
-    </div>
-    <div class="form-group"><label class="form-label">Note</label><textarea class="form-input" id="ev-note" rows="2" style="resize:none" placeholder="Opzionale"></textarea></div>
-    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
-      <button class="btn" onclick="closeEventModal()">Annulla</button>
-      <button class="btn btn-red" onclick="saveEvent()">Salva evento</button>
-    </div>
-  </div>
-</div>
-
 <div id="toast" class="toast"></div>
 
 <!-- DRAWER ANAGRAFICA CLIENTE -->
@@ -1005,6 +763,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
   </div>
 
   <div class="drawer-body">
+    <input type="hidden" id="d-id">
     <div class="d-section">Identificazione</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
       <div class="form-group"><label class="form-label">Codice</label><input type="text" class="form-input" id="d-cod"></div>
@@ -1023,1601 +782,535 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
     <div class="d-section">Contatti</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Telefono</label><input type="text" class="form-input" id="d-tel"></div>
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-input" id="d-email"></div>
-      <div class="form-group"><label class="form-label">PEC</label><input type="email" class="form-input" id="d-pec"></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="form-group"><label class="form-label">Telefono</label><input type="text" class="form-input" id="d-tel"></div>
+      <div class="form-group"><label class="form-label">PEC</label><input type="email" class="form-input" id="d-pec"></div>
       <div class="form-group"><label class="form-label">Referente</label><input type="text" class="form-input" id="d-referente"></div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-bottom:12px">
-      <div class="form-group"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="d-tel-referente"></div>
-    </div>
+    <div class="form-group" style="margin-bottom:12px"><label class="form-label">Tel. referente</label><input type="text" class="form-input" id="d-tel-referente"></div>
 
     <div class="d-section">Contratto</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-      <div class="form-group"><label class="form-label">Scadenza contratto</label><input type="date" class="form-input" id="d-scadenza"></div>
+      <div class="form-group">
+        <label class="form-label">Tipo contratto</label>
+        <select class="form-input" id="d-tipo-contratto">
+          <option value="FULL">FULL</option>
+          <option value="BASE">BASE</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pagamento</label>
+        <select class="form-input" id="d-pagamento">
+          <option value="REGOLARE">REGOLARE</option>
+          <option value="DEBITORE">DEBITORE</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div class="form-group"><label class="form-label">Inizio contratto</label><input type="date" class="form-input" id="d-data-inizio"></div>
+      <div class="form-group"><label class="form-label">Scadenza contratto</label><input type="date" class="form-input" id="d-data-scadenza"></div>
     </div>
 
     <div class="d-section">Mesi intervento</div>
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px" id="d-mesi-wrap">
-      <label id="d-label-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightDrawerMese(1,this.checked)"  style="display:none"> Gen</label>
-      <label id="d-label-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightDrawerMese(2,this.checked)"  style="display:none"> Feb</label>
-      <label id="d-label-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightDrawerMese(3,this.checked)"  style="display:none"> Mar</label>
-      <label id="d-label-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightDrawerMese(4,this.checked)"  style="display:none"> Apr</label>
-      <label id="d-label-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightDrawerMese(5,this.checked)"  style="display:none"> Mag</label>
-      <label id="d-label-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightDrawerMese(6,this.checked)"  style="display:none"> Giu</label>
-      <label id="d-label-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightDrawerMese(7,this.checked)"  style="display:none"> Lug</label>
-      <label id="d-label-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightDrawerMese(8,this.checked)"  style="display:none"> Ago</label>
-      <label id="d-label-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightDrawerMese(9,this.checked)"  style="display:none"> Set</label>
-      <label id="d-label-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightDrawerMese(10,this.checked)" style="display:none"> Ott</label>
-      <label id="d-label-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightDrawerMese(11,this.checked)" style="display:none"> Nov</label>
-      <label id="d-label-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightDrawerMese(12,this.checked)" style="display:none"> Dic</label>
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px" id="d-mesi-wrap">
+      <label id="label-d-m-1"  class="mese-pill"><input type="checkbox" value="1"  onchange="highlightMese(1,this.checked,'d')"  style="display:none"> Gen</label>
+      <label id="label-d-m-2"  class="mese-pill"><input type="checkbox" value="2"  onchange="highlightMese(2,this.checked,'d')"  style="display:none"> Feb</label>
+      <label id="label-d-m-3"  class="mese-pill"><input type="checkbox" value="3"  onchange="highlightMese(3,this.checked,'d')"  style="display:none"> Mar</label>
+      <label id="label-d-m-4"  class="mese-pill"><input type="checkbox" value="4"  onchange="highlightMese(4,this.checked,'d')"  style="display:none"> Apr</label>
+      <label id="label-d-m-5"  class="mese-pill"><input type="checkbox" value="5"  onchange="highlightMese(5,this.checked,'d')"  style="display:none"> Mag</label>
+      <label id="label-d-m-6"  class="mese-pill"><input type="checkbox" value="6"  onchange="highlightMese(6,this.checked,'d')"  style="display:none"> Giu</label>
+      <label id="label-d-m-7"  class="mese-pill"><input type="checkbox" value="7"  onchange="highlightMese(7,this.checked,'d')"  style="display:none"> Lug</label>
+      <label id="label-d-m-8"  class="mese-pill"><input type="checkbox" value="8"  onchange="highlightMese(8,this.checked,'d')"  style="display:none"> Ago</label>
+      <label id="label-d-m-9"  class="mese-pill"><input type="checkbox" value="9"  onchange="highlightMese(9,this.checked,'d')"  style="display:none"> Set</label>
+      <label id="label-d-m-10" class="mese-pill"><input type="checkbox" value="10" onchange="highlightMese(10,this.checked,'d')" style="display:none"> Ott</label>
+      <label id="label-d-m-11" class="mese-pill"><input type="checkbox" value="11" onchange="highlightMese(11,this.checked,'d')" style="display:none"> Nov</label>
+      <label id="label-d-m-12" class="mese-pill"><input type="checkbox" value="12" onchange="highlightMese(12,this.checked,'d')" style="display:none"> Dic</label>
     </div>
 
     <div class="d-section">Note</div>
-    <div class="form-group" style="margin-bottom:4px">
-      <textarea class="form-input" id="d-note" rows="3" style="resize:vertical"></textarea>
-    </div>
+    <div class="form-group"><textarea class="form-input" id="d-note" rows="3" style="resize:none"></textarea></div>
   </div>
 
   <div class="drawer-footer">
-    <button class="btn btn-red" style="flex:1;justify-content:center" id="btn-salva-drawer" onclick="salvaModificheCliente()">✓ Salva modifiche</button>
-    <button class="btn" onclick="closeClienteDrawer()">Annulla</button>
+    <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaClienteDrawer()">✓ Salva modifiche</button>
+    <button class="btn" onclick="eliminaClienteDrawer()" style="border-color:var(--red);color:var(--red)">Elimina</button>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
-const SUPA_ADMIN_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTQxMDc1OSwiZXhwIjoyMDkwOTg2NzU5fQ.vanzyHny3STars9hMMv4rx2tl-enz0FdV1bAM-hpQzw';
-const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
-const HA={'apikey':SUPA_ADMIN_KEY,'Authorization':'Bearer '+SUPA_ADMIN_KEY,'Content-Type':'application/json'};
-const sbAdmin=supabase.createClient(SUPA_URL,SUPA_ADMIN_KEY);
+/* ============================================================
+   ROST 81 CRM — logica applicativa
+   Backend: Ecosystem Rost 81 (Supabase condiviso col bot Telegram)
+   ============================================================ */
+
+const SUPABASE_URL = 'https://xolpmrbhpfouoovfeuvb.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbHBtcmJocGZvdW9vdmZldXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3MDEzNjcsImV4cCI6MjA5OTI3NzM2N30.toaMG3s62h6syZFbAObrGwsTKukzuTvgrIQzmhSMUBU';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const MESI_LABEL = ['','Gen','Feb','Mar','Apr','Mag','Giu','Lug','Ago','Set','Ott','Nov','Dic'];
+let isSignupMode = false;
+let _clientiCache = [];
+let sortKey = 'cod';
+let onlyDebitori = false;
+let scadTab = 'mese';
+
+/* ---------- AUTH ---------- */
+
+function showLogin(){
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app-root').classList.add('app-hidden');
+}
+function hideLogin(){
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app-root').classList.remove('app-hidden');
+}
+function toggleAuthMode(){
+  isSignupMode = !isSignupMode;
+  document.getElementById('login-title').textContent = isSignupMode ? 'Crea un account' : 'Accedi al CRM';
+  document.getElementById('login-submit').textContent = isSignupMode ? 'Registrati' : 'Accedi';
+  document.getElementById('login-toggle').innerHTML = isSignupMode
+    ? 'Hai già un account? <a onclick="toggleAuthMode()">Accedi</a>'
+    : 'Non hai un account? <a onclick="toggleAuthMode()">Registrati</a>';
+  document.getElementById('login-error').style.display = 'none';
+}
+function loginError(msg){
+  const el = document.getElementById('login-error');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+async function submitLogin(){
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  if(!email || !password){ loginError('Inserisci email e password.'); return; }
+  document.getElementById('login-error').style.display = 'none';
+  if(isSignupMode){
+    const { error } = await sb.auth.signUp({ email, password });
+    if(error){ loginError(error.message); return; }
+    loginError('Registrazione avviata. Controlla la mail per confermare, poi accedi.');
+  } else {
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ loginError(error.message); return; }
+  }
+}
+async function loginGoogle(){
+  await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
+}
+async function logout(){
+  await sb.auth.signOut();
+  showLogin();
+}
+
+async function onAuthReady(session){
+  if(!session){ showLogin(); return; }
+  const email = session.user.email || '';
+  const { data: staffRow } = await sb.from('team_utenti').select('nome,ruolo').eq('email', email).maybeSingle();
+  if(!staffRow){
+    loginError('Questo account non è autorizzato ad accedere al CRM.');
+    await sb.auth.signOut();
+    showLogin();
+    return;
+  }
+  document.getElementById('sidebar-user').innerHTML = `${staffRow.nome} · ${staffRow.ruolo}<br>Via Giotto 2<br>Colleferro (RM)`;
+  document.getElementById('dash-greeting').textContent = 'Bentornato, ' + staffRow.nome;
+  hideLogin();
+  boot();
+}
+
+sb.auth.onAuthStateChange((_event, session) => { onAuthReady(session); });
+sb.auth.getSession().then(({ data }) => { onAuthReady(data.session); });
+
+/* ---------- UI GENERALE ---------- */
+
+function switchPanel(id, el){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  const titles = {dashboard:'Dashboard',calendario:'Calendario',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore',appclient:'App Client',statistiche:'Statistiche',marketing:'Marketing',sentinel:'Sentinel-81',pepper:'Pepper'};
+  document.getElementById('page-title').textContent = titles[id] || id;
+  if(id==='clienti') loadClienti();
+  if(id==='scadenze') loadAgendaMese();
+  if(id==='preventivi') loadPreventivi();
+}
+
 function toggleTheme(){
-  const dark=document.body.classList.toggle('dark');
-  document.getElementById('theme-btn').textContent=dark?'☀️':'🌙';
-  localStorage.setItem('rost81-theme',dark?'dark':'light');
+  document.body.classList.toggle('dark');
+  document.getElementById('theme-btn').textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+  localStorage.setItem('rost81_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
 }
-// ripristina tema salvato
-if(localStorage.getItem('rost81-theme')==='dark'){
-  document.body.classList.add('dark');
-  document.getElementById('theme-btn').textContent='☀️';
-}
-
-document.getElementById('topbar-date').textContent=new Date().toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-
-function showToast(msg,type='success'){
-  const t=document.getElementById('toast');
-  t.textContent=msg;
-  t.className='toast show '+(type==='error'?'error':'success');
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>{t.className='toast';},3200);
-}
-
-function icon(n){if(!n)return'📄';const e=n.split('.').pop().toLowerCase();if(e==='pdf')return'📋';if(['doc','docx'].includes(e))return'📝';if(['xls','xlsx'].includes(e))return'📊';if(['png','jpg','jpeg'].includes(e))return'🖼';return'📄';}
-
-// ---- MAGAZZINO ----
-let magazzino=[];
-let clientiMap={};
-let magCatAttiva=null;
-let magStatoFiltro=null;
-
-const MAG_CATS=[
-  {key:'estintori',     label:'Estintori'},
-  {key:'porte-rei',     label:'Porte REI'},
-  {key:'idranti',       label:'Idranti'},
-  {key:'primo-soccorso',label:'Primo Soccorso'},
-  {key:'ferramenta',    label:'Ferramenta'},
-  {key:'cartoleria',    label:'Cartoleria'},
-  {key:'abbigliamento', label:'Abbigliamento'},
-  {key:'varie',         label:'Varie'}
-];
-
-function selectMagCat(cat){
-  magCatAttiva = (magCatAttiva===cat) ? null : cat;
-  // aggiorna stato visivo tab
-  document.querySelectorAll('.mag-cat-tab').forEach(t=>t.classList.remove('active'));
-  if(magCatAttiva){
-    const slug=magCatAttiva.toLowerCase().replace(/\s+/g,'-');
-    const tab=document.getElementById('mct-'+slug);
-    if(tab) tab.classList.add('active');
+function initTheme(){
+  if(localStorage.getItem('rost81_theme') === 'dark'){
+    document.body.classList.add('dark');
+    document.getElementById('theme-btn').textContent = '☀️';
   }
-  // aggiorna titolo sezione
-  document.getElementById('mag-section-title').textContent=
-    magCatAttiva ? magCatAttiva : 'Tutti gli articoli';
-  // schede tecniche
-  renderSchedeProdotti(magCatAttiva);
-  renderMagGrid();
+}
+function updateClock(){
+  const d = new Date();
+  document.getElementById('topbar-date').textContent = d.toLocaleDateString('it-IT',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
 
-function renderMagGrid(){
-  const grid=document.getElementById('mag-grid');
-  let list=magCatAttiva ? magazzino.filter(a=>a.categoria===magCatAttiva) : magazzino;
-  if(magStatoFiltro) list=list.filter(a=>(a.stato||'NUOVO')===magStatoFiltro);
-  if(list.length===0){
-    grid.innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">Nessun articolo${magCatAttiva?' in questa categoria':''}${magStatoFiltro?' con stato '+magStatoFiltro:''}</div>`;
-    return;
-  }
-  grid.innerHTML=list.map(a=>{
-    const sq=statoQty(a.quantita,a.soglia_minima);
-    const stato=a.stato||'NUOVO';
-    const statoKey=stato.toLowerCase().replace(/ /g,'-');
-    return `
-    <div class="mag-card ${sq}">
-      <div class="mag-cat">${a.categoria||'Varie'}${a.taglia?` · <span style="font-family:'DM Mono',monospace;font-size:10px">${a.taglia}</span>`:''}</div>
-      <div class="mag-nome">${a.nome}</div>
-      <div class="mag-stato-row">
-        <select class="stato-sel" data-stato="${stato}" onchange="cambiaStato('${a.id}',this.value,this)">
-          <option value="NUOVO" ${stato==='NUOVO'?'selected':''}>✦ NUOVO</option>
-          <option value="REVISIONATO" ${stato==='REVISIONATO'?'selected':''}>✓ REVISIONATO</option>
-          <option value="DA REVISIONARE" ${stato==='DA REVISIONARE'?'selected':''}>⚠ DA REVISIONARE</option>
-          <option value="DA SMALTIRE" ${stato==='DA SMALTIRE'?'selected':''}>✕ DA SMALTIRE</option>
-        </select>
-      </div>
-      <div class="mag-qty ${sq}">${a.quantita} <span style="font-size:13px;font-weight:400">${a.unita||'pz'}</span></div>
-      <div class="mag-soglia">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div>
-      <div class="mag-actions">
-        <button class="btn btn-sm btn-red" style="flex:1;justify-content:center" onclick="apriUscita('${a.id}','${a.nome.replace(/'/g,"\\'")}',${a.quantita})">↑ Uscita</button>
-        <button class="btn btn-sm" onclick="eliminaArticolo('${a.id}')">×</button>
-      </div>
-    </div>`;
-  }).join('');
+function toast(msg, type){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + (type==='error'?'error':'success');
+  setTimeout(()=>{ t.className = 'toast'; }, 3000);
 }
 
-async function cambiaStato(id, nuovoStato, sel){
-  sel.dataset.stato=nuovoStato;
-  const art=magazzino.find(a=>a.id===id);
-  if(art) art.stato=nuovoStato;
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${id}`,{
-    method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({stato:nuovoStato})
+function highlightMese(n, checked, prefix){
+  const lbl = document.getElementById('label-'+(prefix==='d'?'d-m-':'m-')+n);
+  if(lbl) lbl.classList.toggle('on', checked);
+}
+function getMesiSelezionati(prefix){
+  const wrapId = prefix==='d' ? 'd-mesi-wrap' : 'nc-mesi-wrap';
+  return Array.from(document.querySelectorAll('#'+wrapId+' input[type=checkbox]:checked')).map(c=>parseInt(c.value,10));
+}
+function setMesiSelezionati(prefix, mesi){
+  const wrapId = prefix==='d' ? 'd-mesi-wrap' : 'nc-mesi-wrap';
+  document.querySelectorAll('#'+wrapId+' input[type=checkbox]').forEach(c=>{
+    const on = (mesi||[]).includes(parseInt(c.value,10));
+    c.checked = on;
+    highlightMese(parseInt(c.value,10), on, prefix);
   });
-  if(r.ok) showToast(`✓ Stato: ${nuovoStato}`,'success');
-  else{ showToast('Errore aggiornamento stato','error'); loadMagazzino(); }
 }
 
-function setStatoFiltro(stato){
-  magStatoFiltro=stato;
-  // aggiorna pill attive
-  const pills={null:'tutti','NUOVO':'nuovo','REVISIONATO':'revisionato','DA REVISIONARE':'da-revisionare','DA SMALTIRE':'da-smaltire'};
-  Object.values(pills).forEach(k=>{ const el=document.getElementById('sp-'+k); if(el) el.className='stato-pill'; });
-  const key=pills[stato];
-  const active=document.getElementById('sp-'+key);
-  if(active) active.classList.add('sp-active-'+key);
-  renderMagGrid();
+/* ---------- BOOT: carica dati dopo login ---------- */
+
+async function boot(){
+  updateClock();
+  initTheme();
+  await loadDashboard();
+  await refreshBadges();
 }
 
-async function loadSidebarBadges(){
-  const now=new Date();
-  const mese=now.getMonth()+1, anno=now.getFullYear();
-  const [rC,rO,rM,rSC,rSV]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?mesi=cs.{${mese}}&select=cliente_id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=id`,{headers:H})
-  ]);
-  const [dC,dO,dM,dSC,dSV]=await Promise.all([rC.json(),rO.json(),rM.json(),rSC.json(),rSV.json()]);
-  const nC=Array.isArray(dC)?dC.length:0;
-  const nO=Array.isArray(dO)?dO.length:0;
-  const nM=Array.isArray(dM)?dM.length:0;
-  const totMese=Array.isArray(dSC)?dSC.length:0;
-  const fatti=Array.isArray(dSV)?dSV.length:0;
-  const daFare=Math.max(0,totMese-fatti);
-  document.getElementById('badge-clienti').textContent=nC;
-  document.getElementById('badge-scadenze').textContent=daFare;
-  document.getElementById('badge-preventivi').textContent=0;
-  document.getElementById('badge-scorte').textContent=nM;
-  document.getElementById('badge-operatori').textContent=nO;
-  // dash clienti aggiornato da loadDashboardClienti
+async function refreshBadges(){
+  const { count: totClienti } = await sb.from('clienti_contratti').select('*', {count:'exact', head:true});
+  document.getElementById('badge-clienti').textContent = totClienti ?? 0;
+
+  const meseCorrente = new Date().getMonth() + 1;
+  const { data: clientiMese } = await sb.from('clienti_contratti').select('id, mesi_intervento');
+  const nMese = (clientiMese||[]).filter(c => (c.mesi_intervento||[]).includes(meseCorrente)).length;
+  document.getElementById('badge-scadenze').textContent = nMese;
+
+  const { count: totPrev } = await sb.from('preventivi').select('*', {count:'exact', head:true}).in('stato', ['bozza','in attesa','inviato al cliente']);
+  document.getElementById('badge-preventivi').textContent = totPrev ?? 0;
+
+  const { count: totOp } = await sb.from('team_utenti').select('*', {count:'exact', head:true});
+  document.getElementById('badge-operatori').textContent = totOp ?? 0;
 }
 
-/* ══ DASHBOARD BENTO ══════════════════════════════════════════ */
-let _dashClienti=[], _dashPrev=[], _dashCardOpen=null;
+/* ---------- DASHBOARD ---------- */
 
-function _getProfiloNome(){ return localStorage.getItem('rost81_profilo_nome')||'Stefano'; }
-function _setGreeting(){
-  const ora=new Date().getHours();
-  const saluto=ora<12?'Buongiorno':ora<18?'Buon pomeriggio':'Buonasera';
-  const el=document.getElementById('dash-greeting');
-  if(el) el.textContent=saluto+', '+_getProfiloNome();
+async function loadDashboard(){
+  const { data: clienti, count: totClienti } = await sb.from('clienti_contratti').select('id,pagamento,mesi_intervento', {count:'exact'});
+  const lista = clienti || [];
+  document.getElementById('dash-clienti-tot').textContent = totClienti ?? lista.length;
+
+  const regolari = lista.filter(c => c.pagamento !== 'DEBITORE').length;
+  const debitori = lista.filter(c => c.pagamento === 'DEBITORE').length;
+  document.getElementById('dash-tag-regolari').textContent = regolari + ' Regolari';
+  document.getElementById('dash-tag-debitori').textContent = debitori + ' Debitori';
+  document.getElementById('dash-in-regola').textContent = regolari;
+  document.getElementById('dash-pagamenti-scaduti').textContent = debitori;
+
+  const meseCorrente = new Date().getMonth() + 1;
+  const nMese = lista.filter(c => (c.mesi_intervento||[]).includes(meseCorrente)).length;
+  document.getElementById('dash-scad-contratto').textContent = nMese;
+
+  const { data: prev } = await sb.from('preventivi').select('prezzo_stimato,stato');
+  const prevAperti = (prev||[]).filter(p => ['bozza','in attesa','inviato al cliente'].includes(p.stato));
+  document.getElementById('dash-prev-count').textContent = prevAperti.length;
+  const pipeline = prevAperti.reduce((s,p)=>s+(Number(p.prezzo_stimato)||0),0);
+  document.getElementById('dash-pipeline-sub').textContent = pipeline > 0 ? ('Pipeline: € ' + pipeline.toLocaleString('it-IT')) : 'Preventivi aperti';
+
+  const { count: totOp } = await sb.from('team_utenti').select('*', {count:'exact', head:true});
+  document.getElementById('dash-op-tot').textContent = totOp ?? 0;
+
+  _clientiData = lista;
 }
-
-async function loadDashboardClienti(){
-  _setGreeting();
-  const oggi=new Date();
-  const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
-  const mese=oggi.getMonth()+1, anno=oggi.getFullYear();
-
-  const [rC,rP,rSC,rSV,rO,rM]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,codice,nome,citta,provincia,pagamento,stato,data_scadenza_contratto&limit=500`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=id,numero,stato,totale,rost81_clienti(nome)&order=created_at.desc`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?mesi=cs.{${mese}}&select=cliente_id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=id`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=id&attivo=eq.true`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=id,quantita,soglia_minima`,{headers:H})
-  ]);
-  _dashClienti=await rC.json(); if(!Array.isArray(_dashClienti)) _dashClienti=[];
-  _dashPrev   =await rP.json(); if(!Array.isArray(_dashPrev))    _dashPrev=[];
-  const dSC=await rSC.json(), dSV=await rSV.json();
-  const dO =await rO.json(),  dM =await rM.json();
-
-  const attivi   =_dashClienti.filter(c=>(c.stato||'ATTIVO')==='ATTIVO');
-  const debitori =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='DEBITORE');
-  const inRegola =_dashClienti.filter(c=>(c.pagamento||'REGOLARE')==='REGOLARE');
-  const prevAperti=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
-  const pipeline  =_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato)).reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
-  const totMese=Array.isArray(dSC)?dSC.length:0;
-  const fatti  =Array.isArray(dSV)?dSV.length:0;
-  const daFare =Math.max(0,totMese-fatti);
-  const nOp    =Array.isArray(dO)?dO.length:0;
-  const mag    =Array.isArray(dM)?dM:[];
-  const magEsaur=mag.filter(a=>a.quantita<=a.soglia_minima).length;
-
-  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
-  set('dash-clienti-tot',attivi.length);
-  set('dash-scad-contratto',daFare);
-  set('dash-pagamenti-scaduti',debitori.length);
-  set('dash-in-regola',inRegola.length);
-  set('dash-prev-count',prevAperti.length);
-  set('dash-op-tot',nOp);
-  set('dash-mag-tot',mag.length);
-
-  const ps=document.getElementById('dash-pipeline-sub');
-  if(ps) ps.textContent=pipeline>0?'Pipeline €'+pipeline.toLocaleString('it-IT',{maximumFractionDigits:0}):'Preventivi aperti';
-  const ms=document.getElementById('dash-mag-sub');
-  if(ms) ms.textContent=magEsaur>0?magEsaur+' in esaurimento':'Tutto regolare';
-  const tr=document.getElementById('dash-tag-regolari'); if(tr) tr.textContent=inRegola.length+' Regolari';
-  const td=document.getElementById('dash-tag-debitori'); if(td) td.textContent=debitori.length+' Debitori';
-
-  const bEl=document.getElementById('badge-clienti'); if(bEl) bEl.textContent=attivi.length;
-  const bSc=document.getElementById('badge-scadenze'); if(bSc) bSc.textContent=daFare;
-  const bOp=document.getElementById('badge-operatori'); if(bOp) bOp.textContent=nOp;
-  const bMg=document.getElementById('badge-scorte'); if(bMg) bMg.textContent=mag.length;
-}
-
-function _dashTable(list, showScad=false){
-  if(!list.length) return '<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun elemento.</div>';
-  const thScad=showScad?'<th style="padding:5px 10px">Scadenza</th>':'';
-  const rows=list.map((c,i)=>{
-    const deb=(c.pagamento||'REGOLARE')==='DEBITORE';
-    const rowBg=i%2===0?'':'background:var(--bg)';
-    const nameStyle=deb?'color:var(--red);font-weight:600':'';
-    const pagBadge=deb
-      ?'<span style="background:#fee2e2;color:#991b1b;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">⚠ DEBITORE</span>'
-      :'<span style="background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:600">✓ Regolare</span>';
-    const scadTd=showScad?`<td style="padding:5px 10px;font-size:11px">${c.data_scadenza_contratto?new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT'):'—'}</td>`:'';
-    return `<tr style="${rowBg};cursor:pointer" onclick="openClienteFromDash('${c.id}')">
-      <td style="padding:5px 10px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td style="padding:5px 10px;${nameStyle}">${c.nome}</td>
-      <td style="padding:5px 10px;font-size:11px;color:var(--text-muted)">${c.citta||'—'}</td>
-      ${scadTd}
-      <td style="padding:5px 10px">${pagBadge}</td>
-    </tr>`;
-  }).join('');
-  const thScadH=showScad?'<th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Scadenza</th>':'';
-  return `<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse">
-    <thead><tr style="border-bottom:2px solid var(--border)">
-      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Cod.</th>
-      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Cliente</th>
-      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Città</th>
-      ${thScadH}
-      <th style="padding:5px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);text-align:left">Pagamento</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table></div>`;
-}
-
-function _setBentoActive(type){
-  // Rimuovi active da tutte le card
-  document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
-  // Aggiungi active alla card corrispondente
-  const map={'attivi':'bc-hero','operativita':'bc-ops','preventivi':'bc-comm',
-    'pagamenti-scaduti':'bc-pag','in-regola':'bc-reg','magazzino':'bc-mag','operatori':'bc-op'};
-  const id=map[type]; if(id){const el=document.getElementById(id);if(el)el.classList.add('bc-active');}
-}
-
-function toggleDashCard(type){
-  const panel=document.getElementById('dash-card-detail');
-  if(_dashCardOpen===type){
-    panel.style.display='none';
-    _dashCardOpen=null;
-    document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
-    return;
-  }
-  _dashCardOpen=type;
-  _setBentoActive(type);
-
-  const oggi=new Date();
-  const tra30=new Date(oggi); tra30.setDate(oggi.getDate()+30);
-  const MESE_NOMI_D=['','Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-  const labels={
-    'attivi':'Clienti attivi ('+_dashClienti.filter(c=>(c.stato||'ATTIVO')=='ATTIVO').length+')',
-    'operativita':'Visite da pianificare — '+MESE_NOMI_D[oggi.getMonth()+1]+' '+oggi.getFullYear(),
-    'pagamenti-scaduti':'Pagamenti scaduti — Debitori',
-    'in-regola':'Pagamenti in regola',
-    'preventivi':'Commerciale — Preventivi aperti',
-    'magazzino':'Magazzino',
-    'operatori':'Operatori attivi'
-  };
-  document.getElementById('dash-detail-title').textContent=labels[type]||type;
-
-  let html='';
-  if(type==='attivi'){
-    html=_dashTable(_dashClienti.filter(c=>(c.stato||'ATTIVO')=='ATTIVO'));
-  } else if(type==='operativita'){
-    const mese=oggi.getMonth()+1, anno=oggi.getFullYear();
-    // Usa i dati di scadenze del mese corrente
-    const cli_ids_mese=new Set(_dashClienti.map(c=>c.id));
-    html='<div style="color:var(--text-muted);font-size:12px;padding:6px 0 12px">Clienti con visita programmata per '+MESE_NOMI_D[mese]+' '+anno+'</div>'+
-      _dashTable(_dashClienti.filter(c=>{
-        // mostra solo clienti che hanno mesi e li hanno questo mese — approssimazione senza join
-        return true; // filtro completo caricato da loadAgendaMese, qui mostriamo tutto
-      }).slice(0,20));
-    html='<div style="color:var(--text-muted);font-size:12px;margin-bottom:10px">Vai alle Scadenze per la lista dettagliata del mese.</div>'+
-      '<button class="btn" onclick="switchPanel(\'scadenze\',document.querySelectorAll(\'.nav-item\')[3]);closeDashCard()">Apri Scadenze →</button>';
-  } else if(type==='pagamenti-scaduti'){
-    const list=_dashClienti.filter(c=>(c.pagamento||'REGOLARE')=='DEBITORE');
-    html=list.length?_dashTable(list):'<div style="color:var(--green);font-size:13px;padding:8px 0">✓ Nessun debitore.</div>';
-  } else if(type==='in-regola'){
-    html=_dashTable(_dashClienti.filter(c=>(c.pagamento||'REGOLARE')=='REGOLARE'));
-  } else if(type==='preventivi'){
-    const list=_dashPrev.filter(p=>['bozza','inviato','accettato'].includes(p.stato));
-    const pipeline=_dashPrev.filter(p=>['inviato','accettato'].includes(p.stato)).reduce((s,p)=>s+(parseFloat(p.totale)||0),0);
-    html=(pipeline>0?`<div style="font-size:22px;font-weight:700;color:var(--blue);margin-bottom:12px">Pipeline: € ${pipeline.toLocaleString('it-IT',{maximumFractionDigits:0})}</div>`:'')
-      +(list.length?list.map((p,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)${i===0?';border-top:1px solid var(--border)':''}">
-        <span style="font-size:12px">${p.rost81_clienti?.nome||'—'}</span>
-        <div style="display:flex;gap:8px;align-items:center">
-          <span style="font-size:10px;padding:2px 6px;border-radius:8px;background:var(--bg);color:var(--text-muted)">${p.stato}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:12px">€ ${(parseFloat(p.totale)||0).toLocaleString('it-IT',{maximumFractionDigits:0})}</span>
-        </div></div>`).join('')
-      :'<div style="color:var(--text-muted);font-size:13px;padding:8px 0">Nessun preventivo aperto.</div>');
-  } else if(type==='magazzino'){
-    html='<button class="btn" onclick="switchPanel(\'magazzino\',document.querySelectorAll(\'.nav-item\')[5]);closeDashCard()">Apri Magazzino →</button>';
-  } else if(type==='operatori'){
-    html='<button class="btn" onclick="switchPanel(\'appmanut\',document.querySelectorAll(\'.nav-item\')[7]);closeDashCard()">Apri App Manutentore →</button>';
-  }
-
-  document.getElementById('dash-detail-body').innerHTML=html;
-  panel.style.display='block';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+let _clientiData = [];
 
 function closeDashCard(){
-  document.getElementById('dash-card-detail').style.display='none';
-  _dashCardOpen=null;
-  document.querySelectorAll('#bento-grid .bc').forEach(c=>c.classList.remove('bc-active'));
+  document.getElementById('dash-card-detail').style.display = 'none';
+  document.querySelectorAll('.bc').forEach(c=>c.classList.remove('bc-active'));
+}
+async function toggleDashCard(type){
+  const box = document.getElementById('dash-card-detail');
+  const isSame = box.dataset.type === type && box.style.display !== 'none';
+  document.querySelectorAll('.bc').forEach(c=>c.classList.remove('bc-active'));
+  if(isSame){ closeDashCard(); return; }
+  box.dataset.type = type;
+  box.style.display = 'block';
+  const titles = {attivi:'Clienti attivi', operativita:'Visite da pianificare · mese corrente', preventivi:'Preventivi aperti', 'pagamenti-scaduti':'Clienti debitori', 'in-regola':'Clienti in regola', magazzino:'Magazzino', operatori:'Staff registrato'};
+  document.getElementById('dash-detail-title').textContent = titles[type] || type;
+  const body = document.getElementById('dash-detail-body');
+  body.innerHTML = '<div style="color:var(--text-muted);font-size:13px">Caricamento…</div>';
+
+  if(type === 'magazzino'){
+    body.innerHTML = '<div style="color:var(--text-muted);font-size:13px">Sezione Magazzino non ancora attiva.</div>';
+    return;
+  }
+  if(type === 'operatori'){
+    const { data } = await sb.from('team_utenti').select('nome,ruolo,email');
+    body.innerHTML = (data||[]).map(o=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">${o.nome} <span style="color:var(--text-muted)">— ${o.ruolo}${o.email?(' · '+o.email):''}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:13px">Nessun operatore.</div>';
+    return;
+  }
+  if(type === 'preventivi'){
+    const { data } = await sb.from('preventivi').select('categoria,descrizione,prezzo_stimato,stato,cliente_id,clienti_contratti(nome_cliente)').in('stato', ['bozza','in attesa','inviato al cliente']);
+    body.innerHTML = (data||[]).map(p=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">${(p.clienti_contratti&&p.clienti_contratti.nome_cliente)||'—'} <span style="color:var(--text-muted)">— ${p.categoria||''} · € ${Number(p.prezzo_stimato||0).toLocaleString('it-IT')} · ${p.stato}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:13px">Nessun preventivo aperto.</div>';
+    return;
+  }
+  let list = _clientiCache.length ? _clientiCache : (await sb.from('clienti_contratti').select('*')).data || [];
+  if(type === 'attivi'){
+    body.innerHTML = `<div style="font-size:13px;color:var(--text-muted)">${list.length} clienti totali in archivio.</div>`;
+  } else if(type === 'pagamenti-scaduti'){
+    const rows = list.filter(c=>c.pagamento==='DEBITORE');
+    body.innerHTML = rows.map(c=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">${c.nome_cliente} <span style="color:var(--text-muted)">— ${c.citta||''}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:13px">Nessun debitore.</div>';
+  } else if(type === 'in-regola'){
+    const rows = list.filter(c=>c.pagamento!=='DEBITORE');
+    body.innerHTML = `<div style="font-size:13px;color:var(--text-muted)">${rows.length} clienti con pagamento regolare.</div>`;
+  } else if(type === 'operativita'){
+    const meseCorrente = new Date().getMonth() + 1;
+    const rows = list.filter(c => (c.mesi_intervento||[]).includes(meseCorrente));
+    body.innerHTML = rows.map(c=>`<div style="padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">${c.nome_cliente} <span style="color:var(--text-muted)">— ${c.citta||''}</span></div>`).join('') || '<div style="color:var(--text-muted);font-size:13px">Nessuna visita da pianificare questo mese.</div>';
+  }
 }
 
-async function openClienteFromDash(id){
-  // Cerca prima in _clientiData (menu Clienti già caricato)
-  let c=_clientiData.find(x=>x.id===id);
-  if(!c){
-    // Fetch completo da Supabase con mesi
-    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?id=eq.${id}&select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
-    const data=await r.json();
-    if(data&&data[0]){
-      c=data[0];
-      // Aggiungi in cache locale così successive aperture sono istantanee
-      _clientiData.push(c);
-    }
-  }
-  if(c) openClienteDrawer(c);
-}
+/* ---------- CLIENTI ---------- */
 
-const MESI_NOMI={1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'};
-let _clientiData=[];
-let _sortKey='cod';
-let _filterDebitori=false;
-
-function toggleDebitori(){
-  _filterDebitori=!_filterDebitori;
-  const btn=document.getElementById('filter-debitori');
-  if(_filterDebitori){
-    btn.style.background='var(--amber)';
-    btn.style.color='#fff';
-    btn.style.borderColor='var(--amber)';
-  } else {
-    btn.style.background='';
-    btn.style.color='var(--amber)';
-    btn.style.borderColor='var(--amber)';
-  }
+async function loadClienti(){
+  const tbody = document.getElementById('clienti-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>';
+  const { data, error } = await sb.from('clienti_contratti').select('*');
+  if(error){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--red)">Errore caricamento clienti.</td></tr>'; return; }
+  const { data: interventi } = await sb.from('interventi').select('cliente_id');
+  const countMap = {};
+  (interventi||[]).forEach(i=>{ countMap[i.cliente_id] = (countMap[i.cliente_id]||0) + 1; });
+  _clientiCache = (data||[]).map(c => ({...c, _interventi: countMap[c.id] || 0}));
   applyFilterAndSort();
 }
 
 function setSortKey(key){
-  _sortKey=key;
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  document.getElementById('sort-'+key).classList.add('active');
+  sortKey = key;
+  document.getElementById('sort-cod').classList.toggle('active', key==='cod');
+  document.getElementById('sort-nome').classList.toggle('active', key==='nome');
   applyFilterAndSort();
 }
-
-function sortedData(data){
-  return [...data].sort((a,b)=>{
-    if(_sortKey==='cod'){
-      const ac=(a.codice||'zzz').toLowerCase(), bc=(b.codice||'zzz').toLowerCase();
-      return ac.localeCompare(bc,'it');
-    }
-    // nome
-    return (a.nome||'').toLowerCase().localeCompare((b.nome||'').toLowerCase(),'it');
-  });
+function toggleDebitori(){
+  onlyDebitori = !onlyDebitori;
+  document.getElementById('filter-debitori').classList.toggle('active', onlyDebitori);
+  applyFilterAndSort();
 }
-
 function applyFilterAndSort(){
-  const q=(document.getElementById('clienti-search')?.value||'').toLowerCase();
-  let data=_clientiData;
-  if(_filterDebitori) data=data.filter(c=>c.note&&c.note.toUpperCase().includes('DEBITORE'));
-  if(q) data=data.filter(c=>
-    (c.nome||'').toLowerCase().includes(q)||
-    (c.citta||'').toLowerCase().includes(q)||
-    (c.codice||'').toLowerCase().includes(q)||
-    (c.partita_iva||'').toLowerCase().includes(q)
-  );
-  renderClienti(sortedData(data));
-}
-
-async function loadClienti(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H});
-  _clientiData=await r.json();
-  applyFilterAndSort();
-}
-
-function toggleFormNuovoCliente(){
-  const f=document.getElementById('form-nuovo-cliente');
-  f.style.display=f.style.display==='none'?'block':'none';
-}
-
-function highlightMese(n,checked){
-  const lbl=document.getElementById('label-m-'+n);
-  if(checked){lbl.style.background='var(--red)';lbl.style.color='#fff';lbl.style.borderColor='var(--red)';}
-  else{lbl.style.background='';lbl.style.color='';lbl.style.borderColor='';}
-}
-
-async function salvaNuovoCliente(){
-  const nome=document.getElementById('nc-nome').value.trim();
-  if(!nome){showToast('Ragione sociale obbligatoria','error');return;}
-  const btn=document.getElementById('btn-salva-cliente');
-  btn.disabled=true;btn.textContent='Salvataggio…';
-  try{
-    // 1. inserisci cliente
-    const body={
-      nome,
-      codice:document.getElementById('nc-cod').value.trim()||null,
-      partita_iva:document.getElementById('nc-piva').value.trim()||null,
-      codice_fiscale:document.getElementById('nc-cf').value.trim()||null,
-      citta:document.getElementById('nc-citta').value.trim()||null,
-      provincia:(document.getElementById('nc-prov').value.trim().toUpperCase())||null,
-      email:document.getElementById('nc-email').value.trim()||null,
-      pec:document.getElementById('nc-pec').value.trim()||null,
-      telefono:document.getElementById('nc-tel').value.trim()||null,
-      referente:document.getElementById('nc-referente').value.trim()||null,
-      telefono_referente:document.getElementById('nc-tel-referente').value.trim()||null,
-      note:document.getElementById('nc-note').value.trim()||null,
-    };
-    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti`,{
-      method:'POST',headers:{...H,'Prefer':'return=representation'},
-      body:JSON.stringify(body)
-    });
-    const data=await r.json();
-    const clienteId=Array.isArray(data)?data[0]?.id:data?.id;
-    if(!clienteId){showToast('Errore salvataggio cliente','error');return;}
-    // 2. salva mesi intervento
-    const mesi=[...document.querySelectorAll('#nc-mesi-wrap input:checked')].map(cb=>parseInt(cb.value));
-    if(mesi.length>0){
-      await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto`,{
-        method:'POST',headers:{...H,'Prefer':'return=minimal'},
-        body:JSON.stringify({cliente_id:clienteId,mesi})
-      });
-    }
-    showToast(`✓ ${nome} aggiunto`,'success');
-    // reset form
-    ['nc-cod','nc-nome','nc-piva','nc-cf','nc-citta','nc-prov','nc-tel','nc-email','nc-pec','nc-referente','nc-tel-referente','nc-note'].forEach(id=>document.getElementById(id).value='');
-    document.querySelectorAll('#nc-mesi-wrap input').forEach(cb=>{cb.checked=false;highlightMese(cb.value,false);});
-    document.getElementById('form-nuovo-cliente').style.display='none';
-    loadClienti();
-  }catch(e){showToast('Errore: '+e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='✓ Salva cliente';}
-}
-
-function renderClienti(data){
-  const tbody=document.getElementById('clienti-tbody');
-  if(!data||data.length===0){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente trovato</td></tr>';
-    return;
-  }
-  tbody.innerHTML=data.map(c=>{
-    const debitore=c.note&&c.note.includes('DEBITORE');
-    const mesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]||m).join(' · ');
-    const noteDisplay=debitore
-      ? '<span class="badge badge-red" style="font-size:10px">⚠ DEBITORE</span>'+(c.note.replace('DEBITORE','').replace(' - ','').trim()?` <span style="font-size:11px;color:var(--text-muted)">${c.note.replace('DEBITORE','').replace(' - ','').trim()}</span>`:'')
-      : `<span style="font-size:11px;color:var(--text-muted)">${c.note||'—'}</span>`;
-    const rowStyle=debitore?'font-weight:600;color:var(--red)':'';
-    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')" style="${rowStyle}">
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td><div class="td-name" style="${rowStyle}">${c.nome}</div>${c.citta?`<div class="td-sub">${c.citta} (${c.provincia||''})</div>`:''}</td>
-      <td style="font-size:12px">${c.citta||'—'}</td>
-      <td style="font-size:12px">${c.provincia||'—'}</td>
-      <td style="font-size:11px;white-space:nowrap">${mesi||'—'}</td>
-      <td>${noteDisplay}</td>
-    </tr>`;
-  }).join('');
-}
-
-
-async function loadClienteIds(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?order=nome&select=id,nome`,{headers:H});
-  const d=await r.json();
-  if(!d||!Array.isArray(d)) return;
-  d.forEach(c=>{ clientiMap[c.nome]=c.id; });
-  const opts=d.map(c=>`<option value="${c.nome}">${c.nome}</option>`).join('');
-  const selUscita=document.getElementById('uscita-cliente');
-  const selPrev=document.getElementById('prev-cliente');
-  if(selUscita) selUscita.innerHTML='<option value="">— Uso interno / campo —</option>'+opts;
-  if(selPrev) selPrev.innerHTML='<option value="">— seleziona cliente —</option>'+opts;
-}
-
-/* ══════════════════════════════════════════
-   SCHEDE TECNICHE PRODOTTI MAGAZZINO
-══════════════════════════════════════════ */
-/* ══════════════════════════════════════════
-   CATALOGO PRODOTTI (da Supabase)
-══════════════════════════════════════════ */
-let catalogo = [];
-
-async function loadCatalogo(){
-  try{
-    const r = await fetch(`${SUPA_URL}/rest/v1/rost81_catalogo?order=macrocategoria,agente&select=*`,{headers:H});
-    const data = await r.json();
-    catalogo = Array.isArray(data) ? data : [];
-  }catch(e){ catalogo=[]; }
-}
-
-/* ── Dropdown a 3 livelli: Categoria → Tipo → Taglia ── */
-function onCatChange(cat){
-  const agenteGroup = document.getElementById('n-agente-group');
-  const tagliaGroup = document.getElementById('n-taglia-group');
-  const nomeGroup   = document.getElementById('n-nome-group');
-  const agenteSel   = document.getElementById('n-agente');
-  document.getElementById('n-catalogo-id').value='';
-  document.getElementById('n-taglia-val').value='';
-  tagliaGroup.style.display='none';
-  nomeGroup.style.display='none';
-  const items = catalogo.filter(c=>c.macrocategoria===cat);
-  if(items.length>0){
-    agenteSel.innerHTML='<option value="">— Seleziona tipo —</option>';
-    items.forEach(c=>{
-      const o=document.createElement('option');
-      o.value=c.id; o.textContent=c.agente;
-      agenteSel.appendChild(o);
-    });
-    const oc=document.createElement('option');
-    oc.value='__custom__'; oc.textContent='✏ Prodotto personalizzato';
-    agenteSel.appendChild(oc);
-    agenteGroup.style.display='block';
-  } else {
-    agenteGroup.style.display='none';
-    nomeGroup.style.display='block';
-    document.getElementById('n-nome-custom').value='';
-  }
-}
-
-function onAgenteChange(val){
-  const tagliaGroup=document.getElementById('n-taglia-group');
-  const nomeGroup=document.getElementById('n-nome-group');
-  const tagliaSel=document.getElementById('n-taglia');
-  document.getElementById('n-taglia-val').value='';
-  if(val==='__custom__'){
-    tagliaGroup.style.display='none';
-    nomeGroup.style.display='block';
-    document.getElementById('n-nome-custom').value='';
-    document.getElementById('n-catalogo-id').value='';
-    return;
-  }
-  if(!val){ tagliaGroup.style.display='none'; nomeGroup.style.display='none'; return; }
-  const item=catalogo.find(c=>c.id===val);
-  if(!item||!item.taglie||item.taglie.length===0){
-    tagliaGroup.style.display='none'; nomeGroup.style.display='block'; return;
-  }
-  tagliaSel.innerHTML='<option value="">— Seleziona taglia/modello —</option>';
-  item.taglie.forEach((t,i)=>{
-    const o=document.createElement('option');
-    o.value=i;
-    const badge=t.codice?` (${t.codice})`:'';
-    const tipo=t.tipo==='carrellato'?' — Carrellato':'';
-    o.textContent=`${t.taglia}${badge}${tipo} — ${t.efficacia||''}`;
-    tagliaSel.appendChild(o);
+  const q = (document.getElementById('clienti-search').value || '').toLowerCase();
+  let rows = _clientiCache.filter(c => !q || (c.nome_cliente||'').toLowerCase().includes(q) || (c.codice_cliente||'').toLowerCase().includes(q));
+  if(onlyDebitori) rows = rows.filter(c => c.pagamento === 'DEBITORE');
+  rows = rows.slice().sort((a,b)=>{
+    if(sortKey==='nome') return (a.nome_cliente||'').localeCompare(b.nome_cliente||'');
+    return (a.codice_cliente||'').localeCompare(b.codice_cliente||'');
   });
-  document.getElementById('n-catalogo-id').value=val;
-  tagliaGroup.style.display='block';
-  nomeGroup.style.display='none';
+  renderClientiTable(rows);
 }
-
-function onTagliaChange(idx){
-  if(idx===''){return;}
-  const agenteId=document.getElementById('n-agente').value;
-  const item=catalogo.find(c=>c.id===agenteId);
-  if(!item||!item.taglie) return;
-  const t=item.taglie[parseInt(idx)];
-  if(!t) return;
-  document.getElementById('n-taglia-val').value=t.taglia;
-  document.getElementById('n-nome-custom').value=t.nome||`${item.agente} ${t.taglia}`;
-  document.getElementById('n-nome-group').style.display='block';
-  document.getElementById('n-unita').value='pz';
-}
-
-function chiudiNuovoModal(){
-  document.getElementById('nuovo-modal').classList.remove('open');
-  // reset form
-  document.getElementById('n-cat').value='';
-  document.getElementById('n-agente-group').style.display='none';
-  document.getElementById('n-taglia-group').style.display='none';
-  document.getElementById('n-nome-group').style.display='none';
-  document.getElementById('n-nome-custom').value='';
-  document.getElementById('n-catalogo-id').value='';
-  document.getElementById('n-taglia-val').value='';
-  document.getElementById('n-stato').value='NUOVO';
-  document.getElementById('n-qty').value=0;
-  document.getElementById('n-soglia').value=5;
-  document.getElementById('n-unita').value='pz';
-}
-
-/* ── Schede tecniche da catalogo Supabase ── */
-function renderSchedeProdotti(cat){
-  const el=document.getElementById('mag-schede-section');
-  if(!el) return;
-  const items=catalogo.filter(c=>c.macrocategoria===cat);
-  if(!items.length){ el.style.display='none'; el.innerHTML=''; return; }
-  el.style.display='block';
-  el.innerHTML='<div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px">Schede Tecniche — '+cat+'</div>'
-    +items.map((s,i)=>{
-      const taglie=s.taglie||[];
-      const mant=s.piano_manutenzione||[];
-      return `
-      <div class="scheda-card">
-        <div class="scheda-head" onclick="toggleScheda('sc-${i}')">
-          <div class="scheda-head-name">${s.nome}</div>
-          <div class="scheda-head-specs">
-            <div class="scheda-head-spec"><span class="scheda-head-spec-val">${taglie.length}</span><span class="scheda-head-spec-lbl">Taglie</span></div>
-            <div class="scheda-head-spec"><span class="scheda-head-spec-val">${(s.classi_ok||[]).length}</span><span class="scheda-head-spec-lbl">Classi OK</span></div>
-          </div>
-          <svg class="scheda-chevron" id="chev-sc-${i}" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-        </div>
-        <div class="scheda-body" id="sc-${i}">
-          <!-- Classi fuoco -->
-          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Classi di fuoco</div>
-          <div class="scheda-classes">
-            ${(s.classi_ok||[]).map(c=>`<span class="scheda-class ok"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>${c}</span>`).join('')}
-            ${(s.classi_no||[]).map(c=>`<span class="scheda-class no">${c}</span>`).join('')}
-          </div>
-          <!-- Tabella taglie -->
-          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Taglie disponibili</div>
-          <div class="scheda-taglie-wrap">
-            <table class="scheda-taglie-table">
-              <thead><tr><th>Taglia</th><th>Cod.</th><th>Tipo</th><th>Pressione</th><th>Efficacia</th><th>Gittata</th><th>Scarica</th><th>Peso tot.</th></tr></thead>
-              <tbody>${taglie.map(t=>`
-                <tr>
-                  <td style="font-weight:600">${t.taglia}</td>
-                  <td>${t.codice?`<span class="cod">${t.codice}</span>`:'—'}</td>
-                  <td>${t.tipo==='carrellato'?'<span class="carr">Carrellato</span>':'<span style="font-size:10px;color:var(--text-muted)">Portatile</span>'}</td>
-                  <td style="font-family:\'DM Mono\',monospace;font-size:11px">${t.pressione||'—'}</td>
-                  <td style="font-weight:600">${t.efficacia||'—'}</td>
-                  <td>${t.gittata||'—'}</td>
-                  <td>${t.scarica||'—'}</td>
-                  <td>${t.peso||'—'}</td>
-                </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-          <!-- Normativa -->
-          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Normativa di riferimento</div>
-          <div class="scheda-norms">${(s.normativa||[]).map(n=>`<span class="scheda-norm">${n}</span>`).join('')}</div>
-          <!-- Manutenzione -->
-          <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Piano di manutenzione (UNI 9994-1)</div>
-          <div class="scheda-maint">${mant.map(m=>`
-            <div class="scheda-maint-item">
-              <div class="scheda-maint-freq">${m.freq}</div>
-              <div class="scheda-maint-desc">${m.desc}</div>
-            </div>`).join('')}
-          </div>
-          ${s.avviso?`<div class="scheda-warn">⚠ ${s.avviso}</div>`:''}
-          ${s.note_tecniche?`<div style="font-size:11px;color:var(--text-hint);margin-top:10px;font-style:italic">${s.note_tecniche}</div>`:''}
-          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:8px;align-items:center">
-            <button class="btn btn-sm btn-red" onclick="apriNuovoArticoloConAgente('${s.id}','${cat}')">+ Aggiungi al magazzino</button>
-            <span style="font-size:11px;color:var(--text-muted)">Seleziona la taglia e inserisci la quantità</span>
-          </div>
-        </div>
-      </div>`;
-    }).join('');
-}
-
-function toggleScheda(id){
-  const body=document.getElementById(id);
-  const chev=document.getElementById('chev-'+id);
-  if(!body) return;
-  const open=body.classList.toggle('open');
-  if(chev) chev.classList.toggle('open',open);
-}
-
-function apriNuovoArticolo(){
-  chiudiNuovoModal();
-  const catSel=document.getElementById('n-cat');
-  if(magCatAttiva){ catSel.value=magCatAttiva; onCatChange(magCatAttiva); }
-  document.getElementById('nuovo-modal').classList.add('open');
-}
-
-function apriNuovoArticoloConAgente(catalogoId, cat){
-  chiudiNuovoModal();
-  const catSel=document.getElementById('n-cat');
-  catSel.value=cat;
-  onCatChange(cat);
-  setTimeout(()=>{
-    const agenteSel=document.getElementById('n-agente');
-    agenteSel.value=catalogoId;
-    onAgenteChange(catalogoId);
-    document.getElementById('nuovo-modal').classList.add('open');
-  },50);
-}
-
-async function inserisciArticoloDaScheda(codice, nome, cat){
-  // Retrocompatibilità — ora usa apriNuovoArticoloConAgente
-  chiudiNuovoModal();
-  const catSel=document.getElementById('n-cat');
-  catSel.value=cat; onCatChange(cat);
-  const item=catalogo.find(c=>c.macrocategoria===cat&&(c.agente.includes('CO')||c.agente.includes(codice)));
-  if(item){
-    setTimeout(()=>{
-      document.getElementById('n-agente').value=item.id;
-      onAgenteChange(item.id);
-      document.getElementById('nuovo-modal').classList.add('open');
-    },50);
-  } else {
-    document.getElementById('n-nome-custom').value=nome;
-    document.getElementById('n-nome-group').style.display='block';
-    document.getElementById('nuovo-modal').classList.add('open');
-  }
-}
-
-async function salvaArticolo(){
-  const nome=document.getElementById('n-nome-custom').value.trim();
-  if(!nome){showToast('Seleziona tipo e taglia del prodotto','error');return;}
-  const cat=document.getElementById('n-cat').value;
-  if(!cat){showToast('Seleziona la categoria','error');return;}
-  const catalogoId=document.getElementById('n-catalogo-id').value||null;
-  const tagliaVal=document.getElementById('n-taglia-val').value||null;
-  const stato=document.getElementById('n-stato').value||'NUOVO';
-  const body={
-    nome, categoria:cat, stato,
-    quantita:parseInt(document.getElementById('n-qty').value)||0,
-    soglia_minima:parseInt(document.getElementById('n-soglia').value)||5,
-    unita:document.getElementById('n-unita').value||'pz'
-  };
-  if(catalogoId) body.catalogo_id=catalogoId;
-  if(tagliaVal) body.taglia=tagliaVal;
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino`,{
-    method:'POST',headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify(body)
-  });
-  chiudiNuovoModal();
-  if(r.ok){showToast('✓ Articolo aggiunto','success');loadMagazzino();}
-  else showToast('Errore salvataggio','error');
-}
-
-function statoQty(qty,soglia){
-  if(qty<=0) return 'danger';
-  if(qty<=soglia) return 'warn';
-  return 'ok';
-}
-
-function catIcon(cat){ return cat||'Varie'; }
-
-async function loadMagazzino(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?order=categoria,nome&select=*`,{headers:H});
-  magazzino=await r.json();
-  if(!magazzino||!Array.isArray(magazzino)) return;
-
-  // aggiorna contatori tab categorie
-  MAG_CATS.forEach(c=>{
-    const cnt=magazzino.filter(a=>a.categoria===c.label).length;
-    const el=document.getElementById('mct-count-'+c.key);
-    if(el) el.textContent=cnt>0?cnt+' art.':'vuota';
-  });
-
-  // badge sidebar
-  const badge=document.getElementById('badge-scorte');
-  if(badge) badge.textContent=magazzino.length;
-
-  // alert scorte
-  const sot=magazzino.filter(a=>a.quantita<=a.soglia_minima);
-  const alertEl=document.getElementById('scorte-alert');
-  if(alertEl){
-    if(sot.length>0){ alertEl.style.display='flex'; document.getElementById('scorte-alert-text').textContent=`${sot.length} articol${sot.length>1?'i':'o'} sotto scorta minima`; }
-    else alertEl.style.display='none';
-  }
-
-  await loadCatalogo();
-  renderMagGrid();
-  loadMovimenti();
-}
-
-async function loadMovimenti(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_movimenti?order=created_at.desc&limit=10&select=*,rost81_magazzino(nome),rost81_clienti(nome)`,{headers:H});
-  const movs=await r.json();
-  const tbody=document.getElementById('mov-list');
-  if(!movs||movs.length===0){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text-muted)">Nessun movimento ancora</td></tr>';return;}
-  tbody.innerHTML=movs.map(m=>`
-    <tr>
-      <td style="font-weight:500">${m.rost81_magazzino?.nome||'—'}</td>
-      <td>${m.rost81_clienti?.nome||'Uso interno'}</td>
-      <td><span class="badge badge-red">-${m.quantita}</span></td>
-      <td style="color:var(--text-muted);font-size:12px">${m.nota||'—'}</td>
-      <td style="font-size:12px;color:var(--text-muted)">${new Date(m.created_at).toLocaleString('it-IT')}</td>
-    </tr>
-  `).join('');
-}
-
-function apriUscita(id,nome,qtyAttuale){
-  document.getElementById('uscita-id').value=id;
-  document.getElementById('uscita-nome').textContent='Uscita: '+nome;
-  document.getElementById('uscita-qty').max=qtyAttuale;
-  document.getElementById('uscita-qty').value=1;
-  document.getElementById('uscita-nota').value='';
-  document.getElementById('uscita-cliente').value='';
-  document.getElementById('uscita-modal').classList.add('open');
-}
-
-async function registraUscita(){
-  const articoloId=document.getElementById('uscita-id').value;
-  const qty=parseInt(document.getElementById('uscita-qty').value)||1;
-  const nota=document.getElementById('uscita-nota').value;
-  const clienteNome=document.getElementById('uscita-cliente').options[document.getElementById('uscita-cliente').selectedIndex].text;
-  const clienteId=clientiMap[clienteNome]||null;
-
-  const art=magazzino.find(a=>a.id===articoloId);
-  if(!art) return;
-  if(qty>art.quantita){showToast('Quantità superiore alla giacenza','error');return;}
-
-  const nuovaQty=art.quantita-qty;
-
-  const [r1,r2]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${articoloId}`,{
-      method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify({quantita:nuovaQty})
-    }),
-    fetch(`${SUPA_URL}/rest/v1/rost81_movimenti`,{
-      method:'POST',headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify({articolo_id:articoloId,cliente_id:clienteId||null,quantita:qty,tipo:'uscita',nota:nota||null})
-    })
-  ]);
-
-  document.getElementById('uscita-modal').classList.remove('open');
-  if(r1.ok&&r2.ok){
-    showToast(`✓ Uscita registrata: -${qty} ${art.unita||'pz'}${clienteId?' → '+clienteNome:''}','success`);
-    loadMagazzino();
-  } else {
-    showToast('Errore durante la registrazione','error');
-  }
-}
-
-
-async function eliminaArticolo(id){
-  if(!confirm('Eliminare questo articolo dal magazzino?')) return;
-  await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?id=eq.${id}`,{method:'DELETE',headers:H});
-  showToast('Articolo eliminato','success');
-  loadMagazzino();
-}
-
-// avvia magazzino quando si apre il panel
-function switchPanel(id,el){
-  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('panel-'+id).classList.add('active');
-  if(el) el.classList.add('active');
-  const labels={
-    dashboard:'Dashboard',calendario:'Calendario',clienti:'Clienti',
-    scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',
-    doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore',
-    appclient:'App Client',statistiche:'Statistiche',marketing:'Marketing',
-    sentinel:'Sentinel-81',pepper:'Pepper'
-  };
-  document.getElementById('page-title').textContent=labels[id]||id;
-  if(id==='magazzino'){ loadClienteIds(); loadMagazzino(); }
-  if(id==='dashboard'){ loadDashboardMagazzino(); loadDashboardClienti(); closeDashCard(); }
-  if(id==='clienti') loadClienti();
-  if(id==='scadenze') loadScadenze();
-  if(id==='appmanut') loadOperatori();
-  if(id==='preventivi') loadPreventivi();
-  if(id==='doclavoro') loadArchivioDoc();
-  if(id==='calendario') initCalendario();
-}
-
-/* ══ PREVENTIVI ══ */
-async function loadPreventivi() {
-  const tbody = document.getElementById('preventivi-tbody');
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
-  try {
-    const r = await fetch(`${SUPA_URL}/rest/v1/rost81_preventivi?select=*,rost81_clienti(nome)&order=created_at.desc`, {headers:H});
-    const data = await r.json();
-    // Stats
-    document.getElementById('prev-count').textContent = data.length;
-    const tot = data.reduce((s,p)=>s+(parseFloat(p.importo_totale)||0),0);
-    document.getElementById('prev-totale').textContent = '€ '+tot.toFixed(2).replace('.',',');
-    if(data.length) {
-      const u = new Date(data[0].created_at);
-      document.getElementById('prev-ultimo').textContent = u.toLocaleDateString('it-IT');
-    }
-    if(!data.length) {
-      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Nessun preventivo ancora salvato.<br><small>Crea un preventivo dal Documento di Manutenzione e clicca Esporta PDF.</small></td></tr>';
-      return;
-    }
-    tbody.innerHTML = data.map(p => {
-      const cliente = p.rost81_clienti?.nome || '—';
-      const dataFmt = p.data ? new Date(p.data+'T12:00:00').toLocaleDateString('it-IT') : '—';
-      const importo = p.importo_totale ? '€ '+parseFloat(p.importo_totale).toFixed(2).replace('.',',') : '—';
-      const link = p.url ? `<a href="${p.url}" target="_blank" style="color:var(--red);font-size:11px;font-weight:600;text-decoration:none">Apri →</a>` : '<span style="color:var(--text-hint);font-size:11px">—</span>';
-      return `<tr>
-        <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--red)">${p.numero||'—'}</td>
-        <td style="font-weight:500">${cliente}</td>
-        <td style="font-size:12px;color:var(--text-muted)">${dataFmt}</td>
-        <td style="font-family:'DM Mono',monospace;font-weight:600">${importo}</td>
-        <td>${link}</td>
-      </tr>`;
-    }).join('');
-  } catch(e) {
-    tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:16px">Errore caricamento preventivi</td></tr>';
-  }
-}
-
-/* ══ ARCHIVIO DOCUMENTI ══ */
-async function loadArchivioDoc() {
-  const tbody = document.getElementById('archivio-tbody');
-  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
-  // Popola selettore anno
-  const selAnno = document.getElementById('archivio-filtro-anno');
-  if(!selAnno.options.length) {
-    const y = new Date().getFullYear();
-    for(let i=y+1;i>=2024;i--) {
-      const o = document.createElement('option'); o.value=i; o.textContent=i;
-      if(i===y) o.selected=true;
-      selAnno.appendChild(o);
-    }
-    const oAll = document.createElement('option'); oAll.value='tutti'; oAll.textContent='Tutti gli anni';
-    selAnno.appendChild(oAll);
-  }
-  const annoFiltro = selAnno.value;
-  try {
-    let url = `${SUPA_URL}/rest/v1/rost81_documenti?select=*,rost81_clienti(nome)&order=created_at.desc`;
-    if(annoFiltro !== 'tutti') {
-      url += `&created_at=gte.${annoFiltro}-01-01&created_at=lt.${parseInt(annoFiltro)+1}-01-01`;
-    }
-    const r = await fetch(url, {headers:H});
-    const data = await r.json();
-    if(!data.length) {
-      tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text-muted)">Nessun documento archiviato per questo periodo.<br><small>I rapporti vengono salvati automaticamente al momento dell\'esportazione PDF.</small></td></tr>';
-      return;
-    }
-    tbody.innerHTML = data.map(d => {
-      const cliente = d.rost81_clienti?.nome || '—';
-      const dataFmt = new Date(d.created_at).toLocaleDateString('it-IT');
-      const link = d.url ? `<a href="${d.url}" target="_blank" style="color:var(--red);font-size:11px;font-weight:600;text-decoration:none">Apri →</a>` : '<span style="color:var(--text-hint);font-size:11px">—</span>';
-      return `<tr>
-        <td style="font-size:12px;color:var(--text-muted)">${dataFmt}</td>
-        <td style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--red)">${d.nome_file||'—'}</td>
-        <td style="font-weight:500">${cliente}</td>
-        <td style="font-size:12px;color:var(--text-muted)">${d.descrizione||'—'}</td>
-        <td>${link}</td>
-      </tr>`;
-    }).join('');
-  } catch(e) {
-    tbody.innerHTML='<tr><td colspan="5" style="color:var(--red);text-align:center;padding:16px">Errore caricamento archivio</td></tr>';
-  }
-}
-
-loadClienteIds();
-
-async function loadDashboardMagazzino(){
-  const [rMag,rMov]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?order=quantita&select=*`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_movimenti?order=created_at.desc&limit=5&select=*,rost81_magazzino(nome,unita),rost81_clienti(nome)`,{headers:H})
-  ]);
-  const mag=await rMag.json();
-  const movs=await rMov.json();
-  if(mag&&Array.isArray(mag)){
-    const danger=mag.filter(a=>a.quantita<=0);
-    const warn=mag.filter(a=>a.quantita>0&&a.quantita<=a.soglia_minima);
-    const ok=mag.filter(a=>a.quantita>a.soglia_minima);
-    document.getElementById('dash-mag-tot').textContent=mag.length;
-    document.getElementById('dash-mag-danger').textContent=danger.length;
-    document.getElementById('dash-mag-warn').textContent=warn.length;
-    document.getElementById('dash-mag-ok').textContent=ok.length;
-    const critici=[...danger,...warn].slice(0,4);
-    const esEl=document.getElementById('dash-esaurimento');
-    if(critici.length===0){
-      esEl.innerHTML='<div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;display:flex;align-items:center;gap:10px"><span style="font-size:18px">✅</span><span style="font-size:13px;color:var(--green);font-weight:500">Tutti i prodotti sono in regola</span></div>';
-    } else {
-      esEl.innerHTML=critici.map(a=>{
-        const s=a.quantita<=0?'danger':a.quantita<=a.soglia_minima?'warn':'ok';
-        const col=s==='danger'?'var(--red)':s==='warn'?'var(--amber)':'var(--green)';
-        return `<div class="alert-card ${s}" style="margin-bottom:8px"><div class="alert-dot ${s}"></div><div class="alert-info"><div class="alert-name">${a.nome}</div><div class="alert-sub">Soglia min: ${a.soglia_minima} ${a.unita||'pz'}</div></div><div style="font-size:14px;font-weight:700;color:${col}">${a.quantita} ${a.unita||'pz'}</div></div>`;
-      }).join('');
-    }
-  }
-  if(movs&&Array.isArray(movs)){
-    const consEl=document.getElementById('dash-consegne');
-    if(movs.length===0){
-      consEl.innerHTML='<div style="background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:14px 16px;text-align:center;color:var(--text-muted);font-size:13px">Nessuna consegna ancora</div>';
-    } else {
-      consEl.innerHTML=movs.map(m=>`
-        <div class="doc-item" style="margin-bottom:8px"><div class="doc-icon">📦</div><div class="doc-info"><div class="doc-name">${m.rost81_magazzino?.nome||'—'}</div><div class="doc-meta">${m.rost81_clienti?.nome||'Uso interno'} · ${new Date(m.created_at).toLocaleString('it-IT')}</div></div><span class="badge badge-red">-${m.quantita} ${m.rost81_magazzino?.unita||'pz'}</span></div>
-      `).join('');
-    }
-  }
-}
-
-// ---- APP MANUTENTORE ----
-const PROFILO_BADGE={
-  junior:'<span class="badge badge-gray">Junior</span>',
-  senior:'<span class="badge badge-blue">Senior</span>',
-  master:'<span style="background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px">Master</span>'
-};
-
-async function loadOperatori(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?select=*&order=created_at.desc`,{headers:H});
-  const data=await r.json();
-  if(!Array.isArray(data)) return;
-  // stats
-  document.getElementById('op-tot').textContent=data.length;
-  document.getElementById('op-attivi').textContent=data.filter(o=>o.attivo).length;
-  document.getElementById('op-junior').textContent=data.filter(o=>o.profilo==='junior').length;
-  document.getElementById('op-senior').textContent=data.filter(o=>o.profilo==='senior'||o.profilo==='master').length;
-  document.getElementById('badge-operatori').textContent=data.filter(o=>o.attivo).length;
-  // tabella
-  const tbody=document.getElementById('operatori-tbody');
-  if(data.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun operatore ancora creato</td></tr>';return;}
-  tbody.innerHTML=data.map(o=>`
-    <tr style="${!o.attivo?'opacity:.45':''}">
-      <td style="font-weight:500">${o.nome} ${o.cognome}</td>
-      <td style="font-size:12px;color:var(--text-muted)">${o.email||'—'}</td>
-      <td>${PROFILO_BADGE[o.profilo]||o.profilo}</td>
-      <td>${o.attivo
-        ?'<span class="badge badge-green">● Attivo</span>'
-        :'<span class="badge badge-red">○ Disattivato</span>'}</td>
-      <td style="font-size:11px;color:var(--text-muted)">${o.note||'—'}</td>
-      <td style="font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace">${new Date(o.created_at).toLocaleDateString('it-IT')}</td>
-      <td style="display:flex;gap:6px">
-        <button class="btn btn-sm" onclick="toggleOperatore('${o.id}',${o.attivo})">${o.attivo?'🔒 Revoca':'🔓 Riattiva'}</button>
-        <button class="btn btn-sm" onclick="cambiaProfiloModal('${o.id}','${o.profilo}','${o.nome} ${o.cognome}')">✏️</button>
+function renderClientiTable(rows){
+  const tbody = document.getElementById('clienti-tbody');
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente trovato.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(c => `
+    <tr class="clickable" onclick="apriClienteDrawer('${c.id}')">
+      <td>${c.codice_cliente||'—'}</td>
+      <td>
+        <div class="td-name">${c.nome_cliente||'—'}</div>
+        ${c.pagamento==='DEBITORE' ? '<span class="badge badge-red" style="margin-top:3px;display:inline-block">DEBITORE</span>' : ''}
       </td>
+      <td>${c.citta||'—'}</td>
+      <td>${c.provincia||'—'}</td>
+      <td>${c._interventi||0}</td>
+      <td class="td-sub">${(c.note||'').slice(0,40)}</td>
     </tr>`).join('');
 }
 
-async function creaOperatore(){
-  const nome=document.getElementById('op-nome').value.trim();
-  const cognome=document.getElementById('op-cognome').value.trim();
-  const email=document.getElementById('op-email').value.trim();
-  const password=document.getElementById('op-password').value;
-  const profilo=document.getElementById('op-profilo').value;
-  const note=document.getElementById('op-note').value.trim();
-  if(!nome||!cognome||!email||!password){showToast('Compila tutti i campi obbligatori','error');return;}
-  if(password.length<8){showToast('Password minimo 8 caratteri','error');return;}
-  if(!email.includes('@')){showToast('Email non valida','error');return;}
-  const btn=document.getElementById('btn-crea-op');
-  btn.disabled=true; btn.textContent='Creazione…';
-  try{
-    // 1. Crea utente Auth via SDK admin
-    let uid=null;
-    const {data:aData,error:aErr}=await sbAdmin.auth.admin.createUser({email,password,email_confirm:true});
-    console.log('createUser result',JSON.stringify(aData),JSON.stringify(aErr));
-
-    if(aData?.user?.id){
-      uid=aData.user.id;
-    } else if(aErr){
-      // email già esistente → cerca id e aggiorna password
-      if(aErr.message&&(aErr.message.includes('already')||aErr.status===422||aErr.code==='email_exists')){
-        const {data:listData}=await sbAdmin.auth.admin.listUsers({perPage:500});
-        const found=(listData?.users||[]).find(u=>u.email===email);
-        if(found){
-          uid=found.id;
-          await sbAdmin.auth.admin.updateUserById(uid,{password,email_confirm:true});
-        } else {showToast('Email già registrata — usa indirizzo diverso','error');return;}
-      } else {
-        showToast('Errore Auth: '+aErr.message,'error');
-        return;
-      }
-    }
-
-    if(!uid){showToast('Errore: impossibile creare account','error');return;}
-
-    // 2. Inserisci/aggiorna profilo (upsert su id)
-    const oRes=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori`,{
-      method:'POST',
-      headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({id:uid,nome,cognome,email,profilo,note:note||null})
-    });
-    if(oRes.ok){
-      showToast(`✓ ${nome} ${cognome} (${profilo}) — accesso Sentinel-81 attivo`,'success');
-      document.getElementById('form-nuovo-op').style.display='none';
-      ['op-nome','op-cognome','op-email','op-password','op-note'].forEach(id=>document.getElementById(id).value='');
-      loadOperatori();
-    } else {
-      const err=await oRes.json().catch(()=>({}));
-      showToast('Account creato, errore profilo: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
-    }
-  } catch(e){
-    showToast('Errore imprevisto: '+e.message,'error');
-  } finally {
-    btn.disabled=false; btn.textContent='✓ Crea operatore';
-  }
+function toggleFormNuovoCliente(){
+  const f = document.getElementById('form-nuovo-cliente');
+  f.style.display = f.style.display === 'none' ? 'block' : 'none';
+}
+async function salvaNuovoCliente(){
+  const nome = document.getElementById('nc-nome').value.trim();
+  if(!nome){ toast('Ragione sociale obbligatoria', 'error'); return; }
+  const payload = {
+    codice_cliente: document.getElementById('nc-cod').value.trim() || null,
+    nome_cliente: nome,
+    partita_iva: document.getElementById('nc-piva').value.trim() || null,
+    codice_fiscale: document.getElementById('nc-cf').value.trim() || null,
+    citta: document.getElementById('nc-citta').value.trim() || null,
+    provincia: document.getElementById('nc-prov').value.trim().toUpperCase() || null,
+    telefono: document.getElementById('nc-tel').value.trim() || null,
+    email: document.getElementById('nc-email').value.trim() || null,
+    pec: document.getElementById('nc-pec').value.trim() || null,
+    note: document.getElementById('nc-note').value.trim() || null,
+    tipo_contratto: document.getElementById('nc-tipo-contratto').value,
+    data_scadenza_contratto: document.getElementById('nc-scadenza-contratto').value || null,
+    pagamento: document.getElementById('nc-pagamento').value,
+    referente: document.getElementById('nc-referente').value.trim() || null,
+    referente_telefono: document.getElementById('nc-tel-referente').value.trim() || null,
+    mesi_intervento: getMesiSelezionati('nc')
+  };
+  const { error } = await sb.from('clienti_contratti').insert(payload);
+  if(error){ toast('Errore salvataggio: ' + error.message, 'error'); return; }
+  toast('Cliente salvato');
+  toggleFormNuovoCliente();
+  document.querySelectorAll('#form-nuovo-cliente input').forEach(i=>i.value='');
+  setMesiSelezionati('nc', []);
+  loadClienti();
+  refreshBadges();
 }
 
-async function toggleOperatore(id,attivo){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?id=eq.${id}`,{
-    method:'PATCH',
-    headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({attivo:!attivo})
-  });
-  if(r.ok){showToast(attivo?'🔒 Accesso revocato':'🔓 Operatore riattivato','success');loadOperatori();}
-  else showToast('Errore aggiornamento','error');
-}
-
-async function cambiaProfiloModal(id,profiloAttuale,nomeCompleto){
-  const nuovo=prompt(`Cambia profilo di ${nomeCompleto}\nInserisci: junior / senior / master\n(attuale: ${profiloAttuale})`);
-  if(!nuovo||!['junior','senior','master'].includes(nuovo.toLowerCase())) return;
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?id=eq.${id}`,{
-    method:'PATCH',
-    headers:{...H,'Prefer':'return=minimal'},
-    body:JSON.stringify({profilo:nuovo.toLowerCase()})
-  });
-  if(r.ok){showToast(`✓ Profilo aggiornato: ${nuovo}`,'success');loadOperatori();}
-  else showToast('Errore aggiornamento profilo','error');
-}
-
-// ---- SCADENZE ----
-let _scadTab='mese';
-let _scadClientiMese=[], _scadVisitatiSet=new Set();
-
-function switchScadTab(tab){
-  _scadTab=tab;
-  document.querySelectorAll('[id^="scad-tab-"]').forEach(b=>b.classList.remove('active'));
-  document.getElementById('scad-tab-'+tab).classList.add('active');
-  document.getElementById('scad-panel-mese').style.display=tab==='mese'?'block':'none';
-  document.getElementById('scad-panel-rinnovi').style.display=tab==='rinnovi'?'block':'none';
-}
-
-async function loadScadenze(){
-  await Promise.all([loadAgendaMese(),loadRinnovi()]);
-}
-
-async function loadAgendaMese(){
-  const now=new Date();
-  const annoEl=document.getElementById('scad-anno');
-  const meseEl=document.getElementById('scad-mese');
-  const mese=meseEl?parseInt(meseEl.value):now.getMonth()+1;
-  const anno=annoEl?parseInt(annoEl.value):now.getFullYear();
-  const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
-  document.getElementById('scad-title').textContent=`Scadenze — ${MESI_LUNGHI[mese]} ${anno}`;
-
-  const [rC,rV]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${mese}&anno=eq.${anno}&select=cliente_id`,{headers:H})
-  ]);
-  const data=await rC.json();
-  const visite=await rV.json();
-  const visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
-
-  const clientiMese=(data||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(mese));
-  clientiMese.sort((a,b)=>(a.nome||'').localeCompare(b.nome||'','it'));
-  _scadClientiMese=clientiMese;
-  _scadVisitatiSet=visitatiSet;
-
-  const fatti=clientiMese.filter(c=>visitatiSet.has(c.id)).length;
-  document.getElementById('scad-count-wrap').innerHTML=_scadTab==='mese'
-    ?`<span style="color:var(--green);font-weight:600">${fatti} ✓</span> <span style="color:var(--text-muted)">/ ${clientiMese.length}</span>`:'';
-
-  const tbody=document.getElementById('scad-mese-tbody');
-  if(clientiMese.length===0){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente programmato per questo mese</td></tr>';
-    return;
-  }
-  tbody.innerHTML=clientiMese.map(c=>{
-    const visitato=visitatiSet.has(c.id);
-    const debitore=c.note&&c.note.includes('DEBITORE');
-    const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>MESI_NOMI[m]).join(' · ');
-    const led=visitato
-      ?`<div style="width:20px;height:20px;border-radius:50%;background:var(--green);margin:auto;box-shadow:0 0 6px var(--green)"></div>`
-      :`<div style="width:20px;height:20px;border-radius:50%;border:2px solid #ccc;margin:auto"></div>`;
-    const rowStyle=[visitato?'opacity:.4':'',debitore?'border-left:3px solid var(--red)':''].filter(Boolean).join(';');
-    const nomeCell=debitore
-      ?`<div class="td-name" style="color:var(--red);font-weight:600">${c.nome} <span class="badge badge-red" style="font-size:10px;vertical-align:middle;margin-left:4px">⚠ DEBITORE</span></div>`
-      :`<div class="td-name">${c.nome}</div>`;
-    return `<tr style="${rowStyle}">
-      <td onclick="toggleVisita('${c.id}',${visitato})" style="cursor:pointer;text-align:center;padding:10px 8px;width:44px">${led}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer">${nomeCell}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.citta||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px;font-family:'DM Mono',monospace">${c.telefono||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:12px">${c.referente||'—'}</td>
-      <td onclick="openClienteDrawerById('${c.id}')" style="cursor:pointer;font-size:11px;color:var(--text-muted)">${tuttiMesi||'—'}</td>
-    </tr>`;
-  }).join('');
-}
-
-function exportScadenzePDF(){
-  const annoEl=document.getElementById('scad-anno');
-  const meseEl=document.getElementById('scad-mese');
-  const MESI_LUNGHI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
-  const anno=annoEl?annoEl.value:new Date().getFullYear();
-  const mese=meseEl?parseInt(meseEl.value):new Date().getMonth()+1;
-  const meseName=MESI_LUNGHI[mese]||'';
-  const totale=_scadClientiMese.length;
-  if(totale===0){showToast('Nessun cliente in agenda per questo mese','error');return;}
-  const visitati=_scadClientiMese.filter(c=>_scadVisitatiSet.has(c.id)).length;
-  const daFare=totale-visitati;
-  const debitori=_scadClientiMese.filter(c=>c.note&&c.note.includes('DEBITORE')).length;
-  const righe=_scadClientiMese.map(c=>{
-    const visitato=_scadVisitatiSet.has(c.id);
-    const debitore=c.note&&c.note.includes('DEBITORE');
-    const tuttiMesi=(c.rost81_scadenze_contratto?.[0]?.mesi||[]).map(m=>({1:'Gen',2:'Feb',3:'Mar',4:'Apr',5:'Mag',6:'Giu',7:'Lug',8:'Ago',9:'Set',10:'Ott',11:'Nov',12:'Dic'}[m]||m)).join(' · ');
-    return `<tr style="${visitato?'opacity:.5':''}${debitore?';border-left:3px solid #c0392b':''}">
-      <td style="font-family:monospace;font-size:10px;color:#888">${c.codice||'—'}</td>
-      <td style="${debitore?'color:#c0392b;font-weight:700':''}">${c.nome}${debitore?' <span style="background:#fde8e6;color:#8b1a10;padding:1px 5px;border-radius:3px;font-size:9px;font-weight:700">⚠ DEBITORE</span>':''}</td>
-      <td>${c.citta||'—'}</td>
-      <td style="font-family:monospace;font-size:10px">${c.telefono||'—'}</td>
-      <td>${c.referente||'—'}</td>
-      <td style="text-align:center;font-size:16px">${visitato?'<span style="color:#27ae60">✓</span>':'<span style="color:#ccc">○</span>'}</td>
-      <td style="font-size:10px;color:#888">${tuttiMesi||'—'}</td>
-    </tr>`;
-  }).join('');
-  const html=`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8">
-<title>Scadenze ${meseName} ${anno} — ROST 81</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:28px}
-  .header{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #c0392b;padding-bottom:14px;margin-bottom:20px}
-  .logo{font-size:24px;font-weight:700;color:#c0392b;letter-spacing:-1px}
-  .logo-sub{font-size:10px;color:#666;margin-top:3px}
-  .print-meta{text-align:right;font-size:10px;color:#888;line-height:1.6}
-  .doc-title{font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:16px}
-  .stats{display:flex;gap:20px;margin-bottom:20px;padding:12px 16px;background:#f5f5f3;border-radius:4px}
-  .stat{text-align:center;min-width:60px}
-  .stat-n{font-size:22px;font-weight:700;line-height:1.2}
-  .stat-l{font-size:9px;color:#666;text-transform:uppercase;letter-spacing:.5px}
-  table{width:100%;border-collapse:collapse;font-size:11px}
-  th{background:#1a1a1a;color:#fff;padding:6px 8px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.5px;font-weight:600}
-  td{padding:6px 8px;border-bottom:1px solid #eee;vertical-align:middle}
-  tr:nth-child(even) td{background:#fafafa}
-  .footer{margin-top:20px;font-size:9px;color:#aaa;text-align:right;border-top:1px solid #eee;padding-top:10px}
-  @media print{body{padding:10px}}
-</style></head><body>
-<div class="header">
-  <div><div class="logo">ROST 81</div><div class="logo-sub">Via Giotto 2, 00034 Colleferro (RM) &nbsp;·&nbsp; P.IVA 10524751004 &nbsp;·&nbsp; info@rost81.it</div></div>
-  <div class="print-meta">Stampato il ${new Date().toLocaleDateString('it-IT')}<br>${new Date().toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'})}</div>
-</div>
-<div class="doc-title">Riepilogo Manutenzioni — ${meseName} ${anno}</div>
-<div class="stats">
-  <div class="stat"><div class="stat-n">${totale}</div><div class="stat-l">In agenda</div></div>
-  <div class="stat"><div class="stat-n" style="color:#27ae60">${visitati}</div><div class="stat-l">Visitati</div></div>
-  <div class="stat"><div class="stat-n" style="color:#e67e22">${daFare}</div><div class="stat-l">Da fare</div></div>
-  ${debitori>0?`<div class="stat"><div class="stat-n" style="color:#c0392b">${debitori}</div><div class="stat-l">Debitori</div></div>`:''}
-</div>
-<table>
-  <thead><tr><th>COD</th><th>Cliente</th><th>Città</th><th>Telefono</th><th>Referente</th><th style="text-align:center">Visita</th><th>Mesi contratto</th></tr></thead>
-  <tbody>${righe}</tbody>
-</table>
-<div class="footer">ROST 81 Srl — Documento generato automaticamente dal CRM interno</div>
-</body></html>`;
-  const w=window.open('','_blank');
-  w.document.write(html);
-  w.document.close();
-  w.focus();
-  setTimeout(()=>w.print(),500);
-}
-
-async function toggleVisita(clienteId, visitatoAttuale){
-  const now=new Date();
-  const mese=now.getMonth()+1, anno=now.getFullYear();
-  if(visitatoAttuale){
-    // già visitato → rimuovi (DELETE)
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?cliente_id=eq.${clienteId}&mese=eq.${mese}&anno=eq.${anno}`,{
-      method:'DELETE',
-      headers:{...H,'Prefer':'return=minimal'}
-    });
-  } else {
-    // non visitato → segna (INSERT)
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{
-      method:'POST',
-      headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({cliente_id:clienteId,mese,anno})
-    });
-  }
-  loadAgendaMese();
-  loadSidebarBadges();
-}
-
-async function loadRinnovi(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,codice,nome,citta,data_scadenza_contratto&data_scadenza_contratto=not.is.null&order=data_scadenza_contratto`,{headers:H});
-  const data=await r.json();
-  const today=new Date(); today.setHours(0,0,0,0);
-  const relevant=(data||[]).filter(c=>{
-    if(!c.data_scadenza_contratto) return false;
-    const diff=Math.floor((new Date(c.data_scadenza_contratto)-today)/(864e5));
-    return diff<=90;
-  });
-  const tbody=document.getElementById('scad-rinnovi-tbody');
-  if(relevant.length===0){
-    tbody.innerHTML='<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun rinnovo nei prossimi 90 giorni</td></tr>';
-    return;
-  }
-  tbody.innerHTML=relevant.map(c=>{
-    const diff=Math.floor((new Date(c.data_scadenza_contratto)-today)/(864e5));
-    const dataFmt=new Date(c.data_scadenza_contratto).toLocaleDateString('it-IT');
-    let badge;
-    if(diff<0)       badge=`<span class="badge badge-red">Scaduto ${Math.abs(diff)}gg fa</span>`;
-    else if(diff<=30) badge=`<span class="badge badge-red">${diff} giorni</span>`;
-    else if(diff<=60) badge=`<span class="badge badge-amber">${diff} giorni</span>`;
-    else              badge=`<span class="badge badge-green">${diff} giorni</span>`;
-    return `<tr class="clickable" onclick="openClienteDrawerById('${c.id}')">
-      <td style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text-muted)">${c.codice||'—'}</td>
-      <td class="td-name">${c.nome}</td>
-      <td style="font-size:12px">${c.citta||'—'}</td>
-      <td style="font-size:12px;font-family:'DM Mono',monospace">${dataFmt}</td>
-      <td>${badge}</td>
-    </tr>`;
-  }).join('');
-}
-
-// Inizializza selettori scadenze sul mese/anno correnti
-(function(){
-  const _n=new Date();
-  const aEl=document.getElementById('scad-anno');
-  const mEl=document.getElementById('scad-mese');
-  if(aEl) aEl.value=_n.getFullYear();
-  if(mEl) mEl.value=_n.getMonth()+1;
-})();
-
-loadDashboardMagazzino();
-loadSidebarBadges();
-loadDashboardClienti();
-
-// ---- DRAWER ANAGRAFICA CLIENTE ----
-let _clienteEditId=null;
-
-function openClienteDrawerById(id){
-  const c=_clientiData.find(x=>x.id===id);
-  if(c) openClienteDrawer(c);
-}
-
-function openClienteDrawer(c){
-  _clienteEditId=c.id;
-  document.getElementById('drawer-title').textContent=c.nome;
-  document.getElementById('drawer-sub').textContent=[c.citta,c.provincia].filter(Boolean).join(' · ')||'';
-  // Identificazione
-  document.getElementById('d-cod').value=c.codice||'';
-  document.getElementById('d-nome').value=c.nome||'';
-  document.getElementById('d-piva').value=c.partita_iva||'';
-  document.getElementById('d-cf').value=c.codice_fiscale||'';
-  // Sede
-  document.getElementById('d-citta').value=c.citta||'';
-  document.getElementById('d-prov').value=c.provincia||'';
-  // Contatti
-  document.getElementById('d-email').value=c.email||'';
-  document.getElementById('d-pec').value=c.pec||'';
-  document.getElementById('d-tel').value=c.telefono||'';
-  document.getElementById('d-referente').value=c.referente||'';
-  document.getElementById('d-tel-referente').value=c.telefono_referente||'';
-  document.getElementById('d-scadenza').value=c.data_scadenza_contratto||'';
-  // Note
-  document.getElementById('d-note').value=c.note||'';
-  // Mesi
-  const mesi=c.rost81_scadenze_contratto?.[0]?.mesi||[];
-  for(let i=1;i<=12;i++){
-    const cb=document.querySelector(`#d-label-m-${i} input`);
-    cb.checked=mesi.includes(i);
-    highlightDrawerMese(i,mesi.includes(i));
-  }
+function apriClienteDrawer(id){
+  const c = _clientiCache.find(x => x.id === id);
+  if(!c) return;
+  document.getElementById('d-id').value = c.id;
+  document.getElementById('drawer-title').textContent = c.nome_cliente || 'Anagrafica';
+  document.getElementById('drawer-sub').textContent = c.codice_cliente || '';
+  document.getElementById('d-cod').value = c.codice_cliente || '';
+  document.getElementById('d-nome').value = c.nome_cliente || '';
+  document.getElementById('d-piva').value = c.partita_iva || '';
+  document.getElementById('d-cf').value = c.codice_fiscale || '';
+  document.getElementById('d-citta').value = c.citta || '';
+  document.getElementById('d-prov').value = c.provincia || '';
+  document.getElementById('d-tel').value = c.telefono || '';
+  document.getElementById('d-email').value = c.email || '';
+  document.getElementById('d-pec').value = c.pec || '';
+  document.getElementById('d-referente').value = c.referente || '';
+  document.getElementById('d-tel-referente').value = c.referente_telefono || '';
+  document.getElementById('d-tipo-contratto').value = c.tipo_contratto || 'FULL';
+  document.getElementById('d-pagamento').value = c.pagamento || 'REGOLARE';
+  document.getElementById('d-data-inizio').value = c.data_inizio_contratto || '';
+  document.getElementById('d-data-scadenza').value = c.data_scadenza_contratto || '';
+  document.getElementById('d-note').value = c.note || '';
+  setMesiSelezionati('d', c.mesi_intervento || []);
   document.getElementById('drawer-overlay').classList.add('open');
   document.getElementById('cliente-drawer').classList.add('open');
 }
-
 function closeClienteDrawer(){
   document.getElementById('drawer-overlay').classList.remove('open');
   document.getElementById('cliente-drawer').classList.remove('open');
 }
-
-function highlightDrawerMese(n,checked){
-  const lbl=document.getElementById('d-label-m-'+n);
-  if(checked){lbl.style.background='var(--red)';lbl.style.color='#fff';lbl.style.borderColor='var(--red)';}
-  else{lbl.style.background='';lbl.style.color='';lbl.style.borderColor='';}
+async function salvaClienteDrawer(){
+  const id = document.getElementById('d-id').value;
+  const payload = {
+    codice_cliente: document.getElementById('d-cod').value.trim() || null,
+    nome_cliente: document.getElementById('d-nome').value.trim(),
+    partita_iva: document.getElementById('d-piva').value.trim() || null,
+    codice_fiscale: document.getElementById('d-cf').value.trim() || null,
+    citta: document.getElementById('d-citta').value.trim() || null,
+    provincia: document.getElementById('d-prov').value.trim().toUpperCase() || null,
+    telefono: document.getElementById('d-tel').value.trim() || null,
+    email: document.getElementById('d-email').value.trim() || null,
+    pec: document.getElementById('d-pec').value.trim() || null,
+    referente: document.getElementById('d-referente').value.trim() || null,
+    referente_telefono: document.getElementById('d-tel-referente').value.trim() || null,
+    tipo_contratto: document.getElementById('d-tipo-contratto').value,
+    pagamento: document.getElementById('d-pagamento').value,
+    data_inizio_contratto: document.getElementById('d-data-inizio').value || null,
+    data_scadenza_contratto: document.getElementById('d-data-scadenza').value || null,
+    note: document.getElementById('d-note').value.trim() || null,
+    mesi_intervento: getMesiSelezionati('d')
+  };
+  const { error } = await sb.from('clienti_contratti').update(payload).eq('id', id);
+  if(error){ toast('Errore salvataggio: ' + error.message, 'error'); return; }
+  toast('Modifiche salvate');
+  closeClienteDrawer();
+  loadClienti();
+  refreshBadges();
+}
+async function eliminaClienteDrawer(){
+  const id = document.getElementById('d-id').value;
+  if(!confirm('Eliminare definitivamente questo cliente?')) return;
+  const { error } = await sb.from('clienti_contratti').delete().eq('id', id);
+  if(error){ toast('Errore eliminazione: ' + error.message, 'error'); return; }
+  toast('Cliente eliminato');
+  closeClienteDrawer();
+  loadClienti();
+  refreshBadges();
 }
 
-async function salvaModificheCliente(){
-  const nome=document.getElementById('d-nome').value.trim();
-  if(!nome){showToast('Ragione sociale obbligatoria','error');return;}
-  const btn=document.getElementById('btn-salva-drawer');
-  btn.disabled=true;btn.textContent='Salvataggio…';
-  try{
-    const body={
-      nome,
-      codice:document.getElementById('d-cod').value.trim()||null,
-      partita_iva:document.getElementById('d-piva').value.trim()||null,
-      codice_fiscale:document.getElementById('d-cf').value.trim()||null,
-      citta:document.getElementById('d-citta').value.trim()||null,
-      provincia:document.getElementById('d-prov').value.trim().toUpperCase()||null,
-      email:document.getElementById('d-email').value.trim()||null,
-      pec:document.getElementById('d-pec').value.trim()||null,
-      telefono:document.getElementById('d-tel').value.trim()||null,
-      referente:document.getElementById('d-referente').value.trim()||null,
-      telefono_referente:document.getElementById('d-tel-referente').value.trim()||null,
-      data_scadenza_contratto:document.getElementById('d-scadenza').value||null,
-      note:document.getElementById('d-note').value.trim()||null,
-    };
-    const r=await fetch(`${SUPA_URL}/rest/v1/rost81_clienti?id=eq.${_clienteEditId}`,{
-      method:'PATCH',headers:{...H,'Prefer':'return=minimal'},
-      body:JSON.stringify(body)
-    });
-    // Aggiorna mesi: delete + insert
-    const mesi=[...document.querySelectorAll('#d-mesi-wrap input:checked')].map(cb=>parseInt(cb.value));
-    await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto?cliente_id=eq.${_clienteEditId}`,{method:'DELETE',headers:H});
-    if(mesi.length>0){
-      await fetch(`${SUPA_URL}/rest/v1/rost81_scadenze_contratto`,{
-        method:'POST',headers:{...H,'Prefer':'return=minimal'},
-        body:JSON.stringify({cliente_id:_clienteEditId,mesi})
-      });
-    }
-    if(r.ok){
-      showToast('✓ Modifiche salvate','success');
-      closeClienteDrawer();
-      loadClienti();
-    } else {
-      const err=await r.json().catch(()=>({}));
-      showToast('Errore: '+(err?.message||err?.hint||JSON.stringify(err)),'error');
-    }
-  }catch(e){showToast('Errore: '+e.message,'error');}
-  finally{btn.disabled=false;btn.textContent='✓ Salva modifiche';}
+/* ---------- SCADENZE ---------- */
+
+function switchScadTab(tab){
+  scadTab = tab;
+  document.getElementById('scad-tab-mese').classList.toggle('active', tab==='mese');
+  document.getElementById('scad-tab-rinnovi').classList.toggle('active', tab==='rinnovi');
+  document.getElementById('scad-panel-mese').style.display = tab==='mese' ? 'block' : 'none';
+  document.getElementById('scad-panel-rinnovi').style.display = tab==='rinnovi' ? 'block' : 'none';
+  if(tab==='mese') loadAgendaMese(); else loadRinnoviContratto();
 }
-
-/* ══════════════════════════════════════════
-   CALENDARIO
-══════════════════════════════════════════ */
-const CAL_STORE = 'rost81_cal';
-const CAL_MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno',
-                  'Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
-let calYear, calMonth, calSelectedDate;
-
-function calData(){
-  try{ return JSON.parse(localStorage.getItem(CAL_STORE)||'{}'); }
-  catch(e){ return {}; }
-}
-function calSave(data){ localStorage.setItem(CAL_STORE, JSON.stringify(data)); }
-function calKey(y,m,d){ return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`; }
-
-function initCalendario(){
+async function loadAgendaMese(){
+  if(scadTab !== 'mese') return;
   const now = new Date();
-  if(calYear===undefined){ calYear=now.getFullYear(); calMonth=now.getMonth(); }
-  renderCal();
+  if(!document.getElementById('scad-anno').value) document.getElementById('scad-anno').value = now.getFullYear();
+  if(!document.getElementById('scad-mese').value) document.getElementById('scad-mese').value = now.getMonth()+1;
+  const mese = parseInt(document.getElementById('scad-mese').value, 10);
+  const tbody = document.getElementById('scad-mese-tbody');
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>';
+  const { data } = await sb.from('clienti_contratti').select('*');
+  const rows = (data||[]).filter(c => (c.mesi_intervento||[]).includes(mese));
+  document.getElementById('scad-count-wrap').textContent = rows.length + ' clienti in questo mese';
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun cliente con intervento previsto in questo mese.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(c => `
+    <tr class="clickable" onclick="apriClienteDrawer('${c.id}')">
+      <td><input type="checkbox" onclick="event.stopPropagation()"></td>
+      <td>${c.codice_cliente||'—'}</td>
+      <td>${c.nome_cliente||'—'}</td>
+      <td>${c.citta||'—'}</td>
+      <td>${c.telefono||'—'}</td>
+      <td>${c.referente||'—'}</td>
+      <td>${(c.mesi_intervento||[]).map(m=>MESI_LABEL[m]).join(', ')}</td>
+    </tr>`).join('');
 }
-
-function calPrev(){ calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCal(); }
-function calNext(){ calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCal(); }
-function calGoToday(){ const n=new Date(); calYear=n.getFullYear(); calMonth=n.getMonth(); renderCal(); selectCalDay(n.getFullYear(),n.getMonth(),n.getDate()); }
-
-function renderCal(){
-  document.getElementById('cal-title').textContent = CAL_MESI[calMonth]+' '+calYear;
-  const grid = document.getElementById('cal-grid');
-  const data = calData();
-  const today = new Date();
-  const firstDay = new Date(calYear, calMonth, 1);
-  const lastDay  = new Date(calYear, calMonth+1, 0);
-  // lunedì = 0, domenica = 6
-  let startDow = (firstDay.getDay()+6)%7; // monday-based
-  const cells = [];
-  // celle mese precedente
-  for(let i=0;i<startDow;i++){
-    const d = new Date(calYear, calMonth, -startDow+i+1);
-    cells.push({day:d.getDate(), month:d.getMonth(), year:d.getFullYear(), other:true});
-  }
-  // celle mese corrente
-  for(let d=1;d<=lastDay.getDate();d++){
-    cells.push({day:d, month:calMonth, year:calYear, other:false});
-  }
-  // celle mese successivo
-  const rem = 7 - (cells.length%7);
-  if(rem<7){ for(let i=1;i<=rem;i++){ const d=new Date(calYear,calMonth+1,i); cells.push({day:d.getDate(),month:d.getMonth(),year:d.getFullYear(),other:true}); } }
-
-  grid.innerHTML = cells.map(c=>{
-    const key = calKey(c.year,c.month,c.day);
-    const evs = data[key]||[];
-    const isToday = !c.other && c.year===today.getFullYear() && c.month===today.getMonth() && c.day===today.getDate();
-    const isSel = calSelectedDate===key;
-    const dots = evs.map(e=>`<div class="cal-dot ${e.tipo||'altro'}"></div>`).join('');
-    return `<div class="cal-cell${c.other?' other-month':''}${isToday?' today':''}${isSel?' selected':''}"
-      onclick="selectCalDay(${c.year},${c.month},${c.day})">
-      <div class="cal-cell-num">${c.day}</div>
-      <div class="cal-dots">${dots}</div>
-    </div>`;
+async function loadRinnoviContratto(){
+  const tbody = document.getElementById('scad-rinnovi-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>';
+  const { data } = await sb.from('clienti_contratti').select('*').not('data_scadenza_contratto','is',null).order('data_scadenza_contratto',{ascending:true});
+  const rows = data || [];
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--text-muted)">Nessuna scadenza contratto registrata.</td></tr>'; return; }
+  const oggi = new Date(); oggi.setHours(0,0,0,0);
+  tbody.innerHTML = rows.map(c => {
+    const scad = new Date(c.data_scadenza_contratto);
+    const giorni = Math.round((scad - oggi) / 86400000);
+    const color = giorni <= 0 ? 'var(--red)' : (giorni <= 30 ? 'var(--amber)' : 'var(--text)');
+    return `<tr class="clickable" onclick="apriClienteDrawer('${c.id}')">
+      <td>${c.codice_cliente||'—'}</td>
+      <td>${c.nome_cliente||'—'}</td>
+      <td>${c.citta||'—'}</td>
+      <td>${scad.toLocaleDateString('it-IT')}</td>
+      <td style="color:${color};font-weight:600">${giorni}</td>
+    </tr>`;
   }).join('');
 }
 
-function selectCalDay(y,m,d){
-  calSelectedDate = calKey(y,m,d);
-  renderCal();
-  const data = calData();
-  const evs = data[calSelectedDate]||[];
-  const label = `${d} ${CAL_MESI[m]} ${y}`;
-  document.getElementById('cal-day-label').textContent = label;
-  const tipoLabel={appuntamento:'Appuntamento',corso:'Corso / Formazione',scadenza:'Scadenza',altro:'Altro'};
-  if(evs.length===0){
-    document.getElementById('cal-day-events').innerHTML='<div style="color:var(--text-hint);font-size:13px;padding:8px 0">Nessun evento — <span style="color:var(--red);cursor:pointer;text-decoration:underline" onclick="openEventModal()">+ Aggiungi</span></div>';
-  } else {
-    document.getElementById('cal-day-events').innerHTML = evs.map((e,i)=>`
-      <div class="cal-event-row ${e.tipo||'altro'}">
-        <div style="flex:1">
-          <div class="cal-event-titolo">${e.titolo}</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${tipoLabel[e.tipo]||'Altro'}${e.ora?' · '+e.ora:''}</div>
-          ${e.note?`<div style="font-size:11px;color:var(--text-muted);margin-top:2px">${e.note}</div>`:''}
-        </div>
-        <button class="cal-event-del" onclick="deleteEvent('${calSelectedDate}',${i})" title="Elimina">×</button>
-      </div>
-    `).join('')+'<div style="margin-top:8px"><span style="color:var(--red);cursor:pointer;font-size:12px;text-decoration:underline" onclick="openEventModal()">+ Aggiungi evento</span></div>';
-  }
+/* ---------- PREVENTIVI ---------- */
+
+async function loadPreventivi(){
+  const tbody = document.getElementById('preventivi-tbody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
+  const { data, error } = await sb.from('preventivi').select('*, clienti_contratti(nome_cliente)').order('creato_il',{ascending:false});
+  if(error){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--red)">Errore caricamento preventivi.</td></tr>'; return; }
+  const rows = data || [];
+  document.getElementById('prev-count').textContent = rows.length;
+  const totale = rows.reduce((s,p)=>s+(Number(p.prezzo_stimato)||0),0);
+  document.getElementById('prev-totale').textContent = '€ ' + totale.toLocaleString('it-IT');
+  document.getElementById('prev-ultimo').textContent = rows[0] ? new Date(rows[0].creato_il).toLocaleDateString('it-IT') : '—';
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun preventivo in archivio.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(p => `
+    <tr>
+      <td>${(p.clienti_contratti&&p.clienti_contratti.nome_cliente)||'—'}</td>
+      <td>${p.categoria||'—'}</td>
+      <td>${p.creato_il ? new Date(p.creato_il).toLocaleDateString('it-IT') : '—'}</td>
+      <td>€ ${Number(p.prezzo_stimato||0).toLocaleString('it-IT')}</td>
+      <td><span class="badge badge-blue">${p.stato||'—'}</span></td>
+      <td>${p.doc_url ? `<a href="${p.doc_url}" target="_blank">Apri ↗</a>` : '—'}</td>
+    </tr>`).join('');
 }
-
-function openEventModal(){
-  document.getElementById('ev-titolo').value='';
-  document.getElementById('ev-data').value= calSelectedDate||new Date().toISOString().slice(0,10);
-  document.getElementById('ev-ora').value='';
-  document.getElementById('ev-tipo').value='appuntamento';
-  document.getElementById('ev-note').value='';
-  document.getElementById('ev-modal').classList.add('open');
-  setTimeout(()=>document.getElementById('ev-titolo').focus(),80);
-}
-function closeEventModal(){ document.getElementById('ev-modal').classList.remove('open'); }
-
-function saveEvent(){
-  const titolo = document.getElementById('ev-titolo').value.trim();
-  if(!titolo){ showToast('Inserisci un titolo','error'); return; }
-  const data = document.getElementById('ev-data').value;
-  if(!data){ showToast('Inserisci una data','error'); return; }
-  const ev = {
-    id: Date.now().toString(36),
-    titolo,
-    tipo: document.getElementById('ev-tipo').value,
-    ora:  document.getElementById('ev-ora').value||'',
-    note: document.getElementById('ev-note').value.trim()
-  };
-  const store = calData();
-  if(!store[data]) store[data]=[];
-  store[data].push(ev);
-  calSave(store);
-  closeEventModal();
-  showToast('Evento salvato','success');
-  // aggiorna vista
-  const [yy,mm,dd] = data.split('-').map(Number);
-  if(yy===calYear && mm-1===calMonth){
-    renderCal();
-    if(calSelectedDate===data) selectCalDay(yy,mm-1,dd);
-  } else {
-    calYear=yy; calMonth=mm-1;
-    renderCal();
-    selectCalDay(yy,mm-1,dd);
-  }
-}
-
-function deleteEvent(dateKey,idx){
-  if(!confirm('Eliminare questo evento?')) return;
-  const store = calData();
-  if(store[dateKey]){ store[dateKey].splice(idx,1); if(store[dateKey].length===0) delete store[dateKey]; }
-  calSave(store);
-  showToast('Evento eliminato','success');
-  const [y,m,d]=dateKey.split('-').map(Number);
-  renderCal();
-  selectCalDay(y,m-1,d);
-}
-
-// chiudi modal ev cliccando fuori
-document.getElementById('ev-modal').addEventListener('click',function(e){if(e.target===this)closeEventModal();});
-
 </script>
 </body>
 </html>

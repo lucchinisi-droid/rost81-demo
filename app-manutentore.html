@@ -523,10 +523,12 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
 // ── CONFIG ──
-const SUPA_URL='https://aswreslquvvpyevuhboi.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFzd3Jlc2xxdXZ2cHlldnVoYm9pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0MTA3NTksImV4cCI6MjA5MDk4Njc1OX0.aAdVzpgeG013xTKTyJeYUDVWJ5u8VxPCU-E0wU8j9JA';
+// Stesso database del CRM (xolpmrbhpfouoovfeuvb): stesso login staff, stessi clienti.
+const SUPA_URL='https://xolpmrbhpfouoovfeuvb.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbHBtcmJocGZvdW9vdmZldXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3MDEzNjcsImV4cCI6MjA5OTI3NzM2N30.toaMG3s62h6syZFbAObrGwsTKukzuTvgrIQzmhSMUBU';
 const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{storageKey:'rost81_manut_auth'}});
+const ALLEGATI_LINK_SECONDI=60*60*24*365*5; // 5 anni, come lib/storage.js del backend
 const SENTINEL_REPO='lucchinisi-droid/sentinel-81';
 const SENTINEL_MODEL='claude-sonnet-4-20250514';
 
@@ -567,7 +569,7 @@ let _sentinelRecording=false, _sentinelRec=null;
 })();
 
 async function initOp(email){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_operatori?email=eq.${encodeURIComponent(email)}&select=*`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/team_utenti?email=eq.${encodeURIComponent(email)}&select=*`,{headers:H});
   const ops=await r.json();
   const op=Array.isArray(ops)?ops[0]:null;
   if(!op){toast('Operatore non trovato. Contatta l\'ufficio.','error');await sb.auth.signOut();showScreen('login');return;}
@@ -585,12 +587,12 @@ async function initOp(email){
 
 function setupUI(){
   document.getElementById('h-badge').textContent=`${_op.nome} · ${_op.profilo}`;
-  document.getElementById('p-nome').textContent=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('p-nome').textContent=_op.nome;
   document.getElementById('p-email').textContent=_op.email||'';
   document.getElementById('p-avatar').textContent=(_op.nome?.[0]||'?').toUpperCase();
   const bc={'junior':'bdg-junior','senior':'bdg-senior','master':'bdg-master'}[_op.profilo]||'bdg-junior';
   document.getElementById('p-badge').innerHTML=`<span class="bdg-profilo ${bc}">${_op.profilo}</span>`;
-  document.getElementById('p-version').textContent='App Manutentore v2.0 · ROST 81';
+  document.getElementById('p-version').textContent='App Manutentore v2.1 · ROST 81';
   if(_op.profilo!=='junior'){
     document.getElementById('btn-prev').classList.remove('hidden');
     document.getElementById('btn-next').classList.remove('hidden');
@@ -664,14 +666,14 @@ async function loadClienti(){
   document.getElementById('m-count').textContent='Caricamento…';
   document.getElementById('client-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
   const [rC,rV]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=*,rost81_scadenze_contratto(mesi)`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=*`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/visite_mensili?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:H})
   ]);
   const allC=await rC.json();
   const visite=await rV.json();
   _visitatiSet=new Set((visite||[]).map(v=>v.cliente_id));
-  _clientiMese=(allC||[]).filter(c=>(c.rost81_scadenze_contratto?.[0]?.mesi||[]).includes(_meseVis));
-  _clientiMese.sort((a,b)=>(a.numero_n??99999)-(b.numero_n??99999));
+  _clientiMese=(allC||[]).filter(c=>(c.mesi_intervento||[]).includes(_meseVis));
+  _clientiMese.sort((a,b)=>(a.nome_cliente||'').localeCompare(b.nome_cliente||''));
   const fatti=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
   document.getElementById('m-count').textContent=`${fatti} ✓ di ${_clientiMese.length} clienti`;
   renderClienti();
@@ -686,14 +688,14 @@ function renderClienti(){
   const sorted=[..._clientiMese.filter(c=>!_visitatiSet.has(c.id)),..._clientiMese.filter(c=>_visitatiSet.has(c.id))];
   list.innerHTML=sorted.map(c=>{
     const vis=_visitatiSet.has(c.id);
-    const deb=c.note&&c.note.includes('DEBITORE');
+    const deb=c.pagamento==='DEBITORE';
     return `<div class="client-card${vis?' visitato':''}${deb?' debitore':''}">
       <div class="led ${vis?'on':'off'}" onclick="event.stopPropagation();toggleVis('${c.id}',${vis})"></div>
       <div class="card-body" onclick="openSheet('${c.id}')">
-        <div class="card-nome">${c.nome}${deb?'<span class="bdg-deb">⚠ DEB</span>':''}</div>
+        <div class="card-nome">${c.nome_cliente}${deb?'<span class="bdg-deb">⚠ DEB</span>':''}</div>
         <div class="card-meta">${[c.citta,c.referente].filter(Boolean).join(' · ')||'—'}</div>
       </div>
-      <div class="card-n">#${c.numero_n||'?'}</div>
+      <div class="card-n">#${c.codice_cliente||'?'}</div>
     </div>`;
   }).join('');
 }
@@ -701,10 +703,10 @@ function renderClienti(){
 // ── VISITA TOGGLE ──
 async function toggleVis(id,era){
   if(era){
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm?cliente_id=eq.${id}&mese=eq.${_meseVis}&anno=eq.${_annoVis}`,{method:'DELETE',headers:{...H,'Prefer':'return=minimal'}});
+    await fetch(`${SUPA_URL}/rest/v1/visite_mensili?cliente_id=eq.${id}&mese=eq.${_meseVis}&anno=eq.${_annoVis}`,{method:'DELETE',headers:{...H,'Prefer':'return=minimal'}});
     _visitatiSet.delete(id);
   }else{
-    await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:id,mese:_meseVis,anno:_annoVis})});
+    await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
     _visitatiSet.add(id);
   }
   const f=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
@@ -714,7 +716,7 @@ async function toggleVis(id,era){
 
 // ── MAGAZZINO ──
 async function loadMag(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/rost81_magazzino?select=*&order=nome`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/magazzino?select=*&order=nome`,{headers:H});
   _magazzino=await r.json()||[];
 }
 
@@ -724,15 +726,15 @@ function openSheet(id){
   if(!_clienteAtt) return;
   const c=_clienteAtt;
   const vis=_visitatiSet.has(c.id);
-  const deb=c.note&&c.note.includes('DEBITORE');
-  document.getElementById('sh-nome').textContent=c.nome;
+  const deb=c.pagamento==='DEBITORE';
+  document.getElementById('sh-nome').textContent=c.nome_cliente;
   document.getElementById('sh-nome').style.color=deb?'var(--red)':'var(--dark)';
-  document.getElementById('sh-sub').textContent=[c.codice?`COD ${c.codice}`:'',c.citta].filter(Boolean).join(' · ')||'';
+  document.getElementById('sh-sub').textContent=[c.codice_cliente?`COD ${c.codice_cliente}`:'',c.citta].filter(Boolean).join(' · ')||'';
   const fields=[
     {l:'Telefono',v:c.telefono},{l:'Referente',v:c.referente},
-    {l:'Tel. referente',v:c.telefono_referente},{l:'Email',v:c.email},
+    {l:'Tel. referente',v:c.referente_telefono},{l:'Email',v:c.email},
     {l:'PEC',v:c.pec},{l:'P.IVA',v:c.partita_iva},
-    {l:'Note',v:c.note?c.note.replace('DEBITORE','').replace(/\s*-\s*/g,'').trim()||null:null}
+    {l:'Note',v:c.note||null}
   ].filter(f=>f.v);
   document.getElementById('sh-info').innerHTML=fields.map(f=>`<div class="info-row"><span class="info-lbl">${f.l}</span><span class="info-val">${f.v}</span></div>`).join('');
   let acts=`<button class="btn ${vis?'btn-outline':'btn-green'}" style="width:100%" onclick="toggleVis('${c.id}',${vis});closeSheet()">
@@ -761,21 +763,21 @@ async function openRapporto(id){
   if(!_clienteAtt) return;
   const c=_clienteAtt;
   _rapSalvato=false; _rapHtml=''; _rapDocNum='';
-  const rr=await fetch(`${SUPA_URL}/rest/v1/rost81_rapporti?select=id`,{headers:H});
+  const rr=await fetch(`${SUPA_URL}/rest/v1/rapporti_manutenzione?select=id`,{headers:H});
   const rlist=await rr.json()||[];
   const num=String(rlist.length+1).padStart(3,'0');
   _rapDocNum=`MAN-${new Date().getFullYear()}-${num}`;
   document.getElementById('r-num').value=_rapDocNum;
   document.getElementById('r-data').value=new Date().toISOString().split('T')[0];
-  document.getElementById('r-cliente').value=c.nome;
+  document.getElementById('r-cliente').value=c.nome_cliente;
   document.getElementById('r-referente').value=c.referente||'';
   document.getElementById('r-tel').value=c.telefono||'';
   document.getElementById('r-sede').value=c.citta||'';
   document.getElementById('r-tipo').value='';
-  document.getElementById('r-tecnico').value=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('r-tecnico').value=_op.nome;
   document.getElementById('r-descr').value='';
   document.getElementById('r-materiali').value='';
-  document.getElementById('r-firma-tec').value=`${_op.nome} ${_op.cognome}`;
+  document.getElementById('r-firma-tec').value=_op.nome;
   document.getElementById('r-firma-cli').value='';
   document.querySelectorAll('input[name="esito"]').forEach(r=>r.checked=false);
   document.getElementById('ck-container').innerHTML=CK_VOCI.map((v,i)=>`
@@ -811,7 +813,7 @@ async function saveRapporto(){
     firma_tecnico:document.getElementById('r-firma-tec').value,
     firma_cliente:document.getElementById('r-firma-cli').value
   };
-  const res=await fetch(`${SUPA_URL}/rest/v1/rost81_rapporti`,{
+  const res=await fetch(`${SUPA_URL}/rest/v1/rapporti_manutenzione`,{
     method:'POST',headers:{...H,'Prefer':'return=minimal'},
     body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('r-data').value,contenuto})
   });
@@ -820,7 +822,7 @@ async function saveRapporto(){
     _rapSalvato=true;
     document.getElementById('btn-stampa-r').disabled=false;
     if(!_visitatiSet.has(c.id)){
-      await fetch(`${SUPA_URL}/rest/v1/rost81_visite_crm`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis})});
+      await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
       _visitatiSet.add(c.id);
       renderClienti();
     }
@@ -893,8 +895,8 @@ async function stampaRapporto(){
   setTimeout(()=>w.print(),500);
   // Salva sul CRM
   const nomeFile=`${_rapDocNum}.html`;
-  const descr=`Rapporto manutenzione — ${document.getElementById('r-tipo').value||'intervento'} — ${new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT')} — ${_op.nome} ${_op.cognome}`;
-  await uploadDocumento(html, nomeFile, descr, c.id);
+  const descr=`Rapporto manutenzione — ${document.getElementById('r-tipo').value||'intervento'} — ${new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT')} — ${_op.nome}`;
+  await uploadDocumento(html, nomeFile, descr, c.id, 'rapporti');
 }
 
 function inviaEmail(){
@@ -902,7 +904,7 @@ function inviaEmail(){
   const dest=c.pec||c.email||'';
   const sogg=encodeURIComponent(`Rapporto di manutenzione ${document.getElementById('r-num').value} — ROST 81`);
   const data=new Date(document.getElementById('r-data').value).toLocaleDateString('it-IT');
-  const corpo=encodeURIComponent(`Gentile ${c.referente?c.referente:'Cliente'},\n\nin allegato il rapporto di manutenzione ${document.getElementById('r-num').value} relativo all'intervento del ${data}.\n\nPer qualsiasi informazione non esiti a contattarci.\n\nCordiali saluti,\n${_op.nome} ${_op.cognome}\nROST 81 Srl\nTel. 06 97234064 · info@rost81.it`);
+  const corpo=encodeURIComponent(`Gentile ${c.referente?c.referente:'Cliente'},\n\nin allegato il rapporto di manutenzione ${document.getElementById('r-num').value} relativo all'intervento del ${data}.\n\nPer qualsiasi informazione non esiti a contattarci.\n\nCordiali saluti,\n${_op.nome}\nROST 81 Srl\nTel. 06 97234064 · info@rost81.it`);
   if(dest){
     window.location.href=`mailto:${dest}?subject=${sogg}&body=${corpo}`;
   }else{
@@ -917,7 +919,7 @@ function openDDT(id){
   if(!_clienteAtt) return;
   _ddtSalvato=false; _ddtHtml=''; _ddtData='';
   document.getElementById('d-data').value=new Date().toISOString().split('T')[0];
-  document.getElementById('d-cliente').value=_clienteAtt.nome;
+  document.getElementById('d-cliente').value=_clienteAtt.nome_cliente;
   document.getElementById('d-mag-rows').innerHTML='';
   document.getElementById('d-man-rows').innerHTML='';
   document.getElementById('d-note').value='';
@@ -973,7 +975,7 @@ async function saveDDT(){
   }).filter(Boolean);
   const articoli=[...magArr,...manArr];
   if(articoli.length===0){toast('Aggiungi almeno un articolo','error');return;}
-  const res=await fetch(`${SUPA_URL}/rest/v1/rost81_ddt`,{
+  const res=await fetch(`${SUPA_URL}/rest/v1/ddt`,{
     method:'POST',headers:{...H,'Prefer':'return=minimal'},
     body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('d-data').value,articoli})
   });
@@ -1024,11 +1026,11 @@ td{padding:7px 8px;border-bottom:1px solid #eee}
 </div>
 <div class="doc-title">Documento di Trasporto</div>
 <div class="sec"><div class="sec-t">Dati</div>
-<div class="r2"><div class="f"><div class="fl">Cliente destinatario</div><div class="fv">${c.nome}</div></div><div class="f"><div class="fl">Città</div><div class="fv">${c.citta||'—'}</div></div></div></div>
+<div class="r2"><div class="f"><div class="fl">Cliente destinatario</div><div class="fv">${c.nome_cliente}</div></div><div class="f"><div class="fl">Città</div><div class="fv">${c.citta||'—'}</div></div></div></div>
 <div class="sec"><div class="sec-t">Articoli</div>
 <table><thead><tr><th>Descrizione</th><th style="width:70px;text-align:center">Quantità</th><th style="width:60px">Unità</th></tr></thead><tbody>${righe}</tbody></table></div>
 ${document.getElementById('d-note').value?`<div class="sec"><div class="sec-t">Note</div><div style="font-size:11px;line-height:1.6">${document.getElementById('d-note').value}</div></div>`:''}
-<div style="font-size:10px;color:#888;margin-top:10px">Operatore: ${_op.nome} ${_op.cognome}</div>
+<div style="font-size:10px;color:#888;margin-top:10px">Operatore: ${_op.nome}</div>
 <div class="firma-row">
   <div class="firma-box">Firma mittente (ROST 81)<div class="firma-line">_____________________________</div></div>
   <div class="firma-box">Firma destinatario<div class="firma-line">_____________________________</div></div>
@@ -1046,27 +1048,28 @@ async function stampaDDT(){
   setTimeout(()=>w.print(),500);
   // Salva sul CRM
   const dataStr=(_ddtData||new Date().toISOString().split('T')[0]).replace(/-/g,'');
-  const nomeFile=`DDT-${dataStr}-${c.nome.replace(/\s+/g,'-').substring(0,20)}.html`;
-  const descr=`DDT — ${c.nome} — ${new Date(_ddtData||Date.now()).toLocaleDateString('it-IT')} — ${_op.nome} ${_op.cognome}`;
-  await uploadDocumento(html, nomeFile, descr, c.id);
+  const nomeFile=`DDT-${dataStr}-${c.nome_cliente.replace(/\s+/g,'-').substring(0,20)}.html`;
+  const descr=`DDT — ${c.nome_cliente} — ${new Date(_ddtData||Date.now()).toLocaleDateString('it-IT')} — ${_op.nome}`;
+  await uploadDocumento(html, nomeFile, descr, c.id, 'ddt');
 }
 
-// ── UPLOAD DOCUMENTO → CRM ──
-async function uploadDocumento(htmlContent, nomeFile, descrizione, clienteId){
+// ── UPLOAD DOCUMENTO → CRM (Storage bucket "allegati", privato → link firmato) ──
+async function uploadDocumento(htmlContent, nomeFile, descrizione, clienteId, cartella){
   try{
     const blob=new Blob([htmlContent],{type:'text/html;charset=utf-8'});
-    const path=`rapporti/${new Date().getFullYear()}/${nomeFile}`;
-    const upRes=await fetch(`${SUPA_URL}/storage/v1/object/rost81-docs/${path}`,{
-      method:'POST',
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'text/html','x-upsert':'true'},
-      body:blob
-    });
-    const url=upRes.ok?`${SUPA_URL}/storage/v1/object/public/rost81-docs/${path}`:null;
-    await fetch(`${SUPA_URL}/rest/v1/rost81_documenti`,{
+    const path=`${cartella}/${new Date().getFullYear()}/${nomeFile}`;
+    const {error:upErr}=await sb.storage.from('allegati').upload(path,blob,{contentType:'text/html',upsert:true});
+    let url=null;
+    if(!upErr){
+      const {data:signed}=await sb.storage.from('allegati').createSignedUrl(path,ALLEGATI_LINK_SECONDI);
+      url=signed?.signedUrl||null;
+    }
+    await fetch(`${SUPA_URL}/rest/v1/documenti_clienti`,{
       method:'POST',headers:{...H,'Prefer':'return=minimal'},
       body:JSON.stringify({cliente_id:clienteId,nome_file:nomeFile,descrizione,url})
     });
-    toast('📁 Documento salvato sul CRM','success');
+    toast(upErr?'⚠ Documento salvato ma upload allegato fallito':'📁 Documento salvato sul CRM',upErr?'error':'success');
+    if(upErr) console.error('uploadDocumento storage:',upErr);
   }catch(e){
     console.error('uploadDocumento:',e);
   }
@@ -1077,11 +1080,11 @@ async function loadDocumenti(){
   document.getElementById('doc-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
   // Carica tutti i clienti per nome lookup
   const [rD,rC]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/rost81_documenti?select=*&order=created_at.desc`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/rost81_clienti?select=id,nome`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/documenti_clienti?select=*&order=creato_il.desc`,{headers:H}),
+    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=id,nome_cliente`,{headers:H})
   ]);
   const docs=await rD.json()||[];
-  const clientiMap=Object.fromEntries((await rC.json()||[]).map(c=>[c.id,c.nome]));
+  const clientiMap=Object.fromEntries((await rC.json()||[]).map(c=>[c.id,c.nome_cliente]));
   // Per Junior/Senior: filtra solo clienti del mese corrente
   let clientiIds=null;
   if(_op.profilo!=='master'){
@@ -1118,7 +1121,7 @@ function renderDocumenti(){
     const isRap=d.nome_file?.startsWith('MAN-');
     const isDDT=d.nome_file?.startsWith('DDT-');
     const icon=isRap?'📋':isDDT?'📦':'📄';
-    const data=new Date(d.created_at).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
+    const data=new Date(d.creato_il).toLocaleDateString('it-IT',{day:'2-digit',month:'short',year:'numeric'});
     return `<div class="doc-card" onclick="openDoc('${d.url||''}','${d.nome_file||''}')">
       <div class="doc-icon">${icon}</div>
       <div class="doc-body">

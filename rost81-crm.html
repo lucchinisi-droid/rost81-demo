@@ -990,6 +990,14 @@ sb.auth.getSession().then(({ data }) => { onAuthReady(data.session); });
 const CALENDAR_API_URL = 'https://rost81-ecosystem.netlify.app/api/calendario';
 const MESI_LABEL_FULL = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 let calAnno, calMeseCorrente, _calEventi = [], _calGiornoSelezionato = null;
+// Data locale in formato YYYY-MM-DD, SENZA passare per toISOString() (che
+// converte in UTC e sfasa di un giorno la sera/notte per i fusi orari a est di UTC come l'Italia).
+function formatoDataLocale(d){
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const g = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${g}`;
+}
 
 function initCalendarioState(){
   const oggi = new Date();
@@ -1051,18 +1059,18 @@ function eventiDelGiorno(dataStr){
       // Google usa una data di fine esclusiva per gli eventi "tutto il giorno"
       const f = new Date(fineData+'T00:00:00');
       f.setDate(f.getDate()-1);
-      fineData = f.toISOString().slice(0,10);
+      fineData = formatoDataLocale(f);
     }
     return dataStr >= inizioData && dataStr <= fineData;
   });
 }
 function renderCalendarGrid(inizioGriglia){
   const grid = document.getElementById('cal-grid');
-  const oggiStr = new Date().toISOString().slice(0,10);
+  const oggiStr = formatoDataLocale(new Date());
   let html = '';
   const cursore = new Date(inizioGriglia);
   for(let i=0;i<42;i++){
-    const dataStr = cursore.toISOString().slice(0,10);
+    const dataStr = formatoDataLocale(cursore);
     const altroMese = cursore.getMonth() !== calMeseCorrente;
     const eventiGiorno = eventiDelGiorno(dataStr);
     const classi = ['cal-cell'];
@@ -1110,7 +1118,7 @@ function apriModalEvento(){
   document.getElementById('ce-descrizione').value = '';
   document.getElementById('ce-tutto-giorno').checked = false;
   toggleCeOrari();
-  const dataDefault = _calGiornoSelezionato || new Date().toISOString().slice(0,10);
+  const dataDefault = _calGiornoSelezionato || formatoDataLocale(new Date());
   document.getElementById('ce-data-inizio').value = dataDefault;
   document.getElementById('ce-data-fine').value = dataDefault;
   document.getElementById('cal-modal').classList.add('open');

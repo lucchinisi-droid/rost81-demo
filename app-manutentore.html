@@ -535,9 +535,15 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 // Stesso database del CRM (xolpmrbhpfouoovfeuvb): stesso login staff, stessi clienti.
 const SUPA_URL='https://xolpmrbhpfouoovfeuvb.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvbHBtcmJocGZvdW9vdmZldXZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM3MDEzNjcsImV4cCI6MjA5OTI3NzM2N30.toaMG3s62h6syZFbAObrGwsTKukzuTvgrIQzmhSMUBU';
-const H={'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'};
 const sb=supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{storageKey:'rost81_manut_auth'}});
 const ALLEGATI_LINK_SECONDI=60*60*24*365*5; // 5 anni, come lib/storage.js del backend
+// Le tabelle hanno RLS basata sull'utente loggato (is_staff()): le chiamate REST
+// devono portare il JWT della sessione, non solo la anon key, altrimenti il
+// database le tratta come richieste anonime e non restituisce nulla.
+async function authHeaders(){
+  const {data:{session}}=await sb.auth.getSession();
+  return {apikey:SUPA_KEY,'Authorization':'Bearer '+(session?.access_token||SUPA_KEY),'Content-Type':'application/json'};
+}
 const SENTINEL_REPO='lucchinisi-droid/sentinel-81';
 const SENTINEL_MODEL='claude-sonnet-4-20250514';
 
@@ -578,7 +584,7 @@ let _sentinelRecording=false, _sentinelRec=null;
 })();
 
 async function initOp(email){
-  const r=await fetch(`${SUPA_URL}/rest/v1/team_utenti?email=eq.${encodeURIComponent(email)}&select=*`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/team_utenti?email=eq.${encodeURIComponent(email)}&select=*`,{headers:await authHeaders()});
   const ops=await r.json();
   const op=Array.isArray(ops)?ops[0]:null;
   if(!op){toast('Operatore non trovato. Contatta l\'ufficio.','error');await sb.auth.signOut();showScreen('login');return;}
@@ -678,9 +684,10 @@ async function loadClienti(){
   document.getElementById('h-sub').textContent=`${MESI[_meseVis]} ${_annoVis}`;
   document.getElementById('m-count').textContent='Caricamento…';
   document.getElementById('client-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
+  const hAuth=await authHeaders();
   const [rC,rV]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=*`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/visite_mensili?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=*`,{headers:hAuth}),
+    fetch(`${SUPA_URL}/rest/v1/visite_mensili?mese=eq.${_meseVis}&anno=eq.${_annoVis}&select=cliente_id`,{headers:hAuth})
   ]);
   const allC=await rC.json();
   const visite=await rV.json();
@@ -715,11 +722,12 @@ function renderClienti(){
 
 // ── VISITA TOGGLE ──
 async function toggleVis(id,era){
+  const hAuth=await authHeaders();
   if(era){
-    await fetch(`${SUPA_URL}/rest/v1/visite_mensili?cliente_id=eq.${id}&mese=eq.${_meseVis}&anno=eq.${_annoVis}`,{method:'DELETE',headers:{...H,'Prefer':'return=minimal'}});
+    await fetch(`${SUPA_URL}/rest/v1/visite_mensili?cliente_id=eq.${id}&mese=eq.${_meseVis}&anno=eq.${_annoVis}`,{method:'DELETE',headers:{...hAuth,'Prefer':'return=minimal'}});
     _visitatiSet.delete(id);
   }else{
-    await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
+    await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...hAuth,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
     _visitatiSet.add(id);
   }
   const f=_clientiMese.filter(c=>_visitatiSet.has(c.id)).length;
@@ -729,7 +737,7 @@ async function toggleVis(id,era){
 
 // ── MAGAZZINO ──
 async function loadMag(){
-  const r=await fetch(`${SUPA_URL}/rest/v1/magazzino?select=*&order=nome`,{headers:H});
+  const r=await fetch(`${SUPA_URL}/rest/v1/magazzino?select=*&order=nome`,{headers:await authHeaders()});
   _magazzino=await r.json()||[];
 }
 
@@ -776,7 +784,7 @@ async function openRapporto(id){
   if(!_clienteAtt) return;
   const c=_clienteAtt;
   _rapSalvato=false; _rapHtml=''; _rapDocNum='';
-  const rr=await fetch(`${SUPA_URL}/rest/v1/rapporti_manutenzione?select=id`,{headers:H});
+  const rr=await fetch(`${SUPA_URL}/rest/v1/rapporti_manutenzione?select=id`,{headers:await authHeaders()});
   const rlist=await rr.json()||[];
   const num=String(rlist.length+1).padStart(3,'0');
   _rapDocNum=`MAN-${new Date().getFullYear()}-${num}`;
@@ -827,7 +835,7 @@ async function saveRapporto(){
     firma_cliente:document.getElementById('r-firma-cli').value
   };
   const res=await fetch(`${SUPA_URL}/rest/v1/rapporti_manutenzione`,{
-    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    method:'POST',headers:{...(await authHeaders()),'Prefer':'return=minimal'},
     body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('r-data').value,contenuto})
   });
   if(res.ok){
@@ -835,7 +843,7 @@ async function saveRapporto(){
     _rapSalvato=true;
     document.getElementById('btn-stampa-r').disabled=false;
     if(!_visitatiSet.has(c.id)){
-      await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...H,'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
+      await fetch(`${SUPA_URL}/rest/v1/visite_mensili`,{method:'POST',headers:{...(await authHeaders()),'Prefer':'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({cliente_id:c.id,mese:_meseVis,anno:_annoVis,operatore_id:_op.id})});
       _visitatiSet.add(c.id);
       renderClienti();
     }
@@ -989,7 +997,7 @@ async function saveDDT(){
   const articoli=[...magArr,...manArr];
   if(articoli.length===0){toast('Aggiungi almeno un articolo','error');return;}
   const res=await fetch(`${SUPA_URL}/rest/v1/ddt`,{
-    method:'POST',headers:{...H,'Prefer':'return=minimal'},
+    method:'POST',headers:{...(await authHeaders()),'Prefer':'return=minimal'},
     body:JSON.stringify({operatore_id:_op.id,cliente_id:c.id,data:document.getElementById('d-data').value,articoli})
   });
   if(res.ok){
@@ -1078,7 +1086,7 @@ async function uploadDocumento(htmlContent, nomeFile, descrizione, clienteId, ca
       url=signed?.signedUrl||null;
     }
     await fetch(`${SUPA_URL}/rest/v1/documenti_clienti`,{
-      method:'POST',headers:{...H,'Prefer':'return=minimal'},
+      method:'POST',headers:{...(await authHeaders()),'Prefer':'return=minimal'},
       body:JSON.stringify({cliente_id:clienteId,nome_file:nomeFile,descrizione,url})
     });
     toast(upErr?'⚠ Documento salvato ma upload allegato fallito':'📁 Documento salvato sul CRM',upErr?'error':'success');
@@ -1092,9 +1100,10 @@ async function uploadDocumento(htmlContent, nomeFile, descrizione, clienteId, ca
 async function loadDocumenti(){
   document.getElementById('doc-list').innerHTML='<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Caricamento…</div></div>';
   // Carica tutti i clienti per nome lookup
+  const hAuthDocs=await authHeaders();
   const [rD,rC]=await Promise.all([
-    fetch(`${SUPA_URL}/rest/v1/documenti_clienti?select=*&order=creato_il.desc`,{headers:H}),
-    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=id,nome_cliente`,{headers:H})
+    fetch(`${SUPA_URL}/rest/v1/documenti_clienti?select=*&order=creato_il.desc`,{headers:hAuthDocs}),
+    fetch(`${SUPA_URL}/rest/v1/clienti_contratti?select=id,nome_cliente`,{headers:hAuthDocs})
   ]);
   const docs=await rD.json()||[];
   const clientiMap=Object.fromEntries((await rC.json()||[]).map(c=>[c.id,c.nome_cliente]));

@@ -214,6 +214,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .cal-event-ora{font-size:11px;color:var(--text-muted);font-family:'DM Mono',monospace}
 .cal-event-del{background:none;border:none;color:var(--text-hint);cursor:pointer;font-size:14px;padding:0 2px;line-height:1}
 .cal-event-del:hover{color:var(--red)}
+.cal-dot.evcolor{background:var(--dot-color,#9ca3af)}
 .mag-cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
 .mag-cat-tab{background:var(--surface);border-radius:var(--radius);border:2px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px 8px;aspect-ratio:1;transition:all .15s;text-align:center;user-select:none}
 .mag-cat-tab:hover{border-color:var(--red);background:var(--red-light);transform:translateY(-1px)}
@@ -805,6 +806,16 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     <div class="form-group"><label class="form-label">Luogo</label><input type="text" class="form-input" id="ce-luogo" placeholder="Indirizzo cliente"></div>
     <div class="form-group"><label class="form-label">Descrizione</label><input type="text" class="form-input" id="ce-descrizione" placeholder="Note aggiuntive"></div>
 
+    <div class="form-group">
+      <label class="form-label">Tipo evento</label>
+      <select class="form-input" id="ce-colore-id">
+        <option value="7">🔵 Manutenzione ordinaria</option>
+        <option value="10">🟢 Manutenzione straordinaria</option>
+        <option value="6">🟠 Promemoria</option>
+        <option value="11">🔴 Comunicazioni</option>
+      </select>
+    </div>
+
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaEvento()">✓ Crea evento</button>
       <button class="btn" onclick="chiudiModalEvento()">Annulla</button>
@@ -989,6 +1000,23 @@ sb.auth.getSession().then(({ data }) => { onAuthReady(data.session); });
 // così la function può verificare che l'utente sia staff.
 const CALENDAR_API_URL = 'https://rost81-ecosystem.netlify.app/api/calendario';
 const MESI_LABEL_FULL = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
+// Colori standard evento di Google Calendar (colorId 1-11)
+const GOOGLE_COLORS = {
+  '1':  '#7986cb', // Lavanda
+  '2':  '#33b679', // Salvia
+  '3':  '#8e24aa', // Uva
+  '4':  '#e67c73', // Fenicottero
+  '5':  '#f6bf26', // Banana
+  '6':  '#f4511e', // Mandarino
+  '7':  '#039be5', // Pavone
+  '8':  '#616161', // Grafite
+  '9':  '#3f51b5', // Mirtillo
+  '10': '#0b8043', // Basilico
+  '11': '#d50000', // Pomodoro
+};
+function coloreEvento(ev){
+  return GOOGLE_COLORS[ev.colorId] || '#2980b9';
+}
 let calAnno, calMeseCorrente, _calEventi = [], _calGiornoSelezionato = null;
 // Data locale in formato YYYY-MM-DD, SENZA passare per toISOString() (che
 // converte in UTC e sfasa di un giorno la sera/notte per i fusi orari a est di UTC come l'Italia).
@@ -1078,7 +1106,7 @@ function renderCalendarGrid(inizioGriglia){
     if(dataStr === oggiStr) classi.push('today');
     html += `<div class="${classi.join(' ')}" onclick="apriDettaglioGiorno('${dataStr}')">
       <div class="cal-cell-num">${cursore.getDate()}</div>
-      <div class="cal-dots">${eventiGiorno.slice(0,4).map(()=>'<span class="cal-dot appuntamento"></span>').join('')}</div>
+      <div class="cal-dots">${eventiGiorno.slice(0,4).map(ev=>`<span class="cal-dot evcolor" style="background:${coloreEvento(ev)}"></span>`).join('')}</div>
     </div>`;
     cursore.setDate(cursore.getDate()+1);
   }
@@ -1094,7 +1122,7 @@ function apriDettaglioGiorno(dataStr){
     wrap.innerHTML = '<div style="color:var(--text-muted);font-size:12px;padding:8px 0">Nessun evento in questo giorno.</div>';
   } else {
     wrap.innerHTML = eventiGiorno.map(ev => `
-      <div class="cal-event-row appuntamento">
+      <div class="cal-event-row" style="border-left-color:${coloreEvento(ev)}">
         <div style="flex:1">
           <div class="cal-event-titolo">${ev.titolo}</div>
           ${ev.luogo ? `<div style="font-size:11px;color:var(--text-muted)">${ev.luogo}</div>` : ''}
@@ -1117,6 +1145,7 @@ function apriModalEvento(){
   document.getElementById('ce-luogo').value = '';
   document.getElementById('ce-descrizione').value = '';
   document.getElementById('ce-tutto-giorno').checked = false;
+  document.getElementById('ce-colore-id').value = '7';
   toggleCeOrari();
   const dataDefault = _calGiornoSelezionato || formatoDataLocale(new Date());
   document.getElementById('ce-data-inizio').value = dataDefault;
@@ -1154,7 +1183,8 @@ async function salvaEvento(){
     titolo,
     descrizione: document.getElementById('ce-descrizione').value.trim(),
     luogo: document.getElementById('ce-luogo').value.trim(),
-    inizio, fine, tuttoIlGiorno: tuttoGiorno
+    inizio, fine, tuttoIlGiorno: tuttoGiorno,
+    colorId: document.getElementById('ce-colore-id').value || undefined
   };
 
   try{

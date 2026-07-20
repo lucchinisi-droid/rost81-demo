@@ -41,7 +41,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min
 .nav-item:hover{color:var(--text);background:var(--bg)}
 .nav-item.active{color:var(--red);background:var(--red-light);border-left-color:var(--red)}
 .nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:2px 6px;border-radius:20px;min-width:18px;text-align:center}
-.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed}
+.nav-badge.amber{background:var(--amber)} .nav-badge.green{background:var(--green)} .nav-badge.blue{background:#1a6fcf} .nav-badge.purple{background:#7c3aed} .nav-badge.yellow{background:#d4a300}
 .sort-btn.active{background:var(--red);color:#fff;border-color:var(--red)}
 .mese-pill{display:flex;align-items:center;font-size:12px;cursor:pointer;padding:4px 12px;border:1px solid var(--border-med);border-radius:20px;user-select:none;transition:all .15s;color:var(--text)}
 .mese-pill.on{background:var(--red-light);border-color:var(--red);color:var(--red);font-weight:600}
@@ -375,7 +375,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('calendario',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1" fill="currentColor" stroke="none"/></svg><span>Calendario</span></div>
       <div class="nav-item" onclick="switchPanel('clienti',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
-      <div class="nav-item" onclick="switchPanel('postit',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/></svg><span>Post-it</span></div>
+      <div class="nav-item" onclick="switchPanel('postit',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/></svg><span>Post-it</span><span class="nav-badge yellow" id="badge-postit">0</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Magazzino</span><span class="nav-badge green" id="badge-scorte">0</span></div>
 
@@ -1552,7 +1552,7 @@ function renderDocumentiLavoro(){
     const dataFmt = d.data ? new Date(d.data).toLocaleDateString('it-IT') : '—';
     const dettaglio = `${d.dettaglio}${d.esito && esitoBadge[d.esito] ? ' · '+esitoBadge[d.esito] : ''}`;
     const azione = d.file
-      ? `<a href="${d.file.url}" target="_blank">Apri ↗</a>`
+      ? `<a href="javascript:void(0)" onclick="apriDocumentoHtml('${d.file.url}')">Apri ↗</a>`
       : `<button class="btn btn-sm btn-red" onclick="generaDocumento('${d.kind}','${d.id}',this)">Genera documento</button>`;
     return `<tr>
       <td>${d.cliente}</td>
@@ -1649,6 +1649,9 @@ async function refreshBadges(){
 
   const { count: totPrev } = await sb.from('preventivi').select('*', {count:'exact', head:true}).in('stato', ['bozza','in attesa','inviato al cliente']);
   document.getElementById('badge-preventivi').textContent = totPrev ?? 0;
+
+  const { count: totPostit } = await sb.from('post_it').select('*', {count:'exact', head:true}).is('fatto_da_id', null);
+  document.getElementById('badge-postit').textContent = totPostit ?? 0;
 }
 
 /* ---------- DASHBOARD ---------- */
@@ -1964,6 +1967,24 @@ async function loadPreventivi(){
       <td><span class="badge badge-blue">${p.stato||'—'}</span></td>
       <td>${p.doc_url ? `<a href="${p.doc_url}" target="_blank">Apri ↗</a>` : '—'}</td>
     </tr>`).join('');
+}
+
+/* ---------- APERTURA DOCUMENTI HTML (bucket privato) ----------
+   Supabase Storage serve i file .html forzando Content-Type non renderizzabile
+   (protezione anti-XSS lato bucket). Li scarichiamo e li riapriamo come blob
+   locale con il tipo corretto, così il browser li visualizza come pagina vera
+   invece che come codice sorgente. */
+async function apriDocumentoHtml(url){
+  if(!url){ toast('URL non disponibile', 'error'); return; }
+  try{
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const testo = await res.text();
+    const blob = new Blob([testo], { type: 'text/html;charset=utf-8' });
+    window.open(URL.createObjectURL(blob), '_blank');
+  }catch(e){
+    toast('Errore apertura documento: ' + e.message, 'error');
+  }
 }
 
 /* ---------- SENTINEL-81 ---------- */
@@ -2309,6 +2330,8 @@ async function loadPostit(){
   if(error){ grid.innerHTML = `<div class="postit-empty">Errore nel caricamento</div>`; return; }
   _postitList = data || [];
   renderPostit();
+  const badge = document.getElementById('badge-postit');
+  if(badge) badge.textContent = _postitList.filter(p => !p.fatto_da_id).length;
 }
 
 function renderPostit(){

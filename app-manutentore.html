@@ -1164,11 +1164,18 @@ function renderDocumenti(){
   }).join('');
 }
 
-function openDoc(url,nome){
-  if(url){
-    window.open(url,'_blank');
-  }else{
-    toast('⚠ URL non disponibile per questo documento','error');
+async function openDoc(url,nome){
+  if(!url){ toast('⚠ URL non disponibile per questo documento','error'); return; }
+  try{
+    // Supabase Storage forza un Content-Type non renderizzabile sui file .html
+    // (protezione anti-XSS del bucket): li riapriamo come blob locale corretto.
+    const res=await fetch(url);
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const testo=await res.text();
+    const blob=new Blob([testo],{type:'text/html;charset=utf-8'});
+    window.open(URL.createObjectURL(blob),'_blank');
+  }catch(e){
+    toast('Errore apertura documento','error');
   }
 }
 

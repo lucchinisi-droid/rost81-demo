@@ -266,6 +266,44 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .coming-soon-title{font-size:22px;font-weight:700;color:var(--text)}
 .coming-soon-sub{font-size:14px;color:var(--text-muted);max-width:360px;line-height:1.6}
 .coming-soon-badge{display:inline-block;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;background:var(--bg);color:var(--text-muted);border:1px solid var(--border-med)}
+/* ── SENTINEL-81 ── */
+.sent-wrap{display:flex;gap:16px;height:calc(100vh - 160px);min-height:520px}
+.sent-side{width:230px;flex-shrink:0;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
+.sent-side-head{padding:14px 14px 10px}
+.sent-new-btn{width:100%;background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer}
+.sent-new-btn:hover{opacity:.9}
+.sent-sessions{flex:1;overflow-y:auto;padding:4px 8px 8px}
+.sent-session-item{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;color:var(--text-muted);margin-bottom:2px;line-height:1.4}
+.sent-session-item:hover{background:var(--bg)}
+.sent-session-item.active{background:rgba(124,58,237,.08);color:#7c3aed;font-weight:600}
+.sent-session-date{font-size:10px;color:var(--text-hint);margin-top:2px}
+.sent-main{flex:1;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.sent-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sent-head-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.sent-kb-badge{font-size:10px;color:var(--text-muted);background:var(--bg);padding:3px 9px;border-radius:20px;cursor:pointer}
+.sent-chat{flex:1;overflow-y:auto;padding:20px}
+.sent-msg{max-width:75%;margin-bottom:14px;padding:11px 15px;border-radius:14px;font-size:13.5px;line-height:1.55}
+.sent-msg-user{margin-left:auto;background:#7c3aed;color:#fff;border-bottom-right-radius:4px}
+.sent-msg-ai{background:var(--bg);color:var(--text);border-bottom-left-radius:4px}
+.sent-msg img{max-width:100%;border-radius:8px;margin-bottom:6px;display:block}
+.sent-input-area{border-top:1px solid var(--border);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.sent-attach-preview{display:flex;gap:8px;flex-wrap:wrap}
+.sent-attach-chip{background:var(--bg);border:1px solid var(--border-med);border-radius:8px;padding:5px 9px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text-muted)}
+.sent-attach-chip img{width:26px;height:26px;border-radius:4px;object-fit:cover}
+.sent-attach-del{cursor:pointer;color:var(--text-hint)}
+.sent-input-row{display:flex;gap:8px;align-items:flex-end}
+.sent-attach-btn{background:var(--bg);border:1px solid var(--border-med);border-radius:50%;width:38px;height:38px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
+.sent-inp{flex:1;border:1px solid var(--border-med);border-radius:20px;padding:9px 15px;font-family:inherit;font-size:13.5px;resize:none;max-height:100px;outline:none;background:var(--surface);color:var(--text)}
+.sent-inp:focus{border-color:#7c3aed}
+.sent-send{background:#7c3aed;border:none;border-radius:50%;width:38px;height:38px;flex-shrink:0;color:#fff;cursor:pointer;font-size:15px}
+.sent-send:disabled{opacity:.4}
+.sent-empty{text-align:center;padding:60px 24px;color:var(--text-muted)}
+.sent-setup{max-width:420px;margin:60px auto;text-align:center;background:var(--bg);border-radius:16px;padding:30px}
+.sent-key-inp{width:100%;border:1px solid var(--border-med);border-radius:10px;padding:11px 14px;font-family:'DM Mono',monospace;font-size:12.5px;margin:14px 0;outline:none;background:var(--surface);color:var(--text)}
+.sent-typing{display:flex;gap:4px;padding:4px 0}
+.sent-typing span{width:6px;height:6px;border-radius:50%;background:var(--text-hint);animation:sent-blink 1.2s infinite}
+.sent-typing span:nth-child(2){animation-delay:.2s}.sent-typing span:nth-child(3){animation-delay:.4s}
+@keyframes sent-blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
 .ev-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ev-modal.open{display:flex}
 .ev-box{background:var(--surface);border-radius:var(--radius);padding:24px;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.22)}
@@ -844,11 +882,27 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
       <!-- SENTINEL-81 -->
       <div id="panel-sentinel" class="panel">
-        <div class="coming-soon">
-          <div class="coming-soon-icon" style="background:rgba(124,58,237,.08);color:#7c3aed"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-          <div class="coming-soon-badge" style="color:#7c3aed;border-color:rgba(124,58,237,.3);background:rgba(124,58,237,.06)">AI Tecnica</div>
-          <div class="coming-soon-title">Sentinel-81</div>
-          <div class="coming-soon-sub">Intelligenza artificiale specializzata in normativa HSE, antincendio e sicurezza sul lavoro. Consulta, analizza documenti tecnici e supporta le decisioni operative sul campo.</div>
+        <div class="sent-wrap">
+          <div class="sent-side">
+            <div class="sent-side-head"><button class="sent-new-btn" onclick="newSentinelChat()">+ Nuova conversazione</button></div>
+            <div class="sent-sessions" id="sent-sessions-list"></div>
+          </div>
+          <div class="sent-main">
+            <div class="sent-head">
+              <div class="sent-head-title">🛡️ Sentinel-81 <span style="font-size:11px;font-weight:400;color:var(--text-muted)">AI sicurezza &amp; antincendio</span></div>
+              <span class="sent-kb-badge" id="sent-kb-badge" onclick="reloadSentinelKB()">⏳ KB…</span>
+            </div>
+            <div class="sent-chat" id="sent-chat-area"></div>
+            <div class="sent-input-area" id="sent-input-area" style="display:none">
+              <div class="sent-attach-preview" id="sent-attach-preview" style="display:none"></div>
+              <div class="sent-input-row">
+                <button class="sent-attach-btn" onclick="document.getElementById('sent-attach-input').click()" title="Allega foto o PDF">📎</button>
+                <textarea class="sent-inp" id="sent-inp" placeholder="Chiedi normativa, procedure, checklist…" rows="1" onkeydown="sentinelCrmKeydown(event)" oninput="sentAutoResize(this)"></textarea>
+                <button class="sent-send" id="sent-send-btn" onclick="sendSentinelCrmMsg()">↑</button>
+              </div>
+              <input type="file" id="sent-attach-input" accept="image/*,application/pdf" multiple style="display:none" onchange="onSentAttachChange(event)">
+            </div>
+          </div>
         </div>
       </div>
 
@@ -1062,16 +1116,18 @@ async function logout(){
   showLogin();
 }
 
+let _meId = null;
 async function onAuthReady(session){
   if(!session){ showLogin(); return; }
   const email = session.user.email || '';
-  const { data: staffRow } = await sb.from('team_utenti').select('nome,ruolo').eq('email', email).maybeSingle();
+  const { data: staffRow } = await sb.from('team_utenti').select('id,nome,ruolo').eq('email', email).maybeSingle();
   if(!staffRow){
     loginError('Questo account non è autorizzato ad accedere al CRM.');
     await sb.auth.signOut();
     showLogin();
     return;
   }
+  _meId = staffRow.id;
   document.getElementById('sidebar-user').innerHTML = `${staffRow.nome} · ${staffRow.ruolo}<br>Via Giotto 2<br>Colleferro (RM)`;
   document.getElementById('dash-greeting').textContent = 'Bentornato, ' + staffRow.nome;
   hideLogin();
@@ -1323,6 +1379,7 @@ function switchPanel(id, el){
   if(id==='calendario') loadCalendario();
   if(id==='appmanut') loadOperatoriAppManut();
   if(id==='doclavoro') loadDocumentiLavoro();
+  if(id==='sentinel') initSentinelPanel();
 }
 
 /* ---------- APP MANUTENTORE: operatori abilitati ---------- */
@@ -1839,6 +1896,301 @@ async function loadPreventivi(){
       <td><span class="badge badge-blue">${p.stato||'—'}</span></td>
       <td>${p.doc_url ? `<a href="${p.doc_url}" target="_blank">Apri ↗</a>` : '—'}</td>
     </tr>`).join('');
+}
+
+/* ---------- SENTINEL-81 ---------- */
+const SENTINEL_REPO = 'lucchinisi-droid/sentinel-81';
+const SENTINEL_MODEL = 'claude-sonnet-4-20250514';
+let _stApiKey = localStorage.getItem('sentinel81_apikey') || '';
+let _stMsgs = [], _stKB = null, _stKbLoaded = false, _stLoading = false, _stAttachments = [];
+let _stSessions = [], _stActiveSessionId = null;
+
+async function initSentinelPanel(){
+  if(!_stKbLoaded){ loadSentinelKB(); _stKbLoaded = true; }
+  loadSentinelSessions();
+  if(!_stApiKey){ renderSentinelSetup(); return; }
+  document.getElementById('sent-input-area').style.display = 'flex';
+  if(_stMsgs.length === 0) renderSentinelEmpty();
+}
+
+async function loadSentinelKB(){
+  const badge = document.getElementById('sent-kb-badge');
+  if(badge) badge.textContent = '⏳ KB…';
+  let ghTxt = '', ghCount = 0, dbTxt = '', dbCount = 0;
+  try{
+    const r = await fetch(`https://api.github.com/repos/${SENTINEL_REPO}/contents/knowledge`);
+    if(!r.ok) throw new Error('GitHub API');
+    const files = await r.json();
+    const txts = files.filter(f => f.name.endsWith('.txt'));
+    const contents = await Promise.all(txts.map(async f => {
+      const r2 = await fetch(f.download_url);
+      return `=== ${f.name} ===\n${await r2.text()}`;
+    }));
+    ghTxt = contents.join('\n\n'); ghCount = txts.length;
+  }catch(e){ ghTxt = ''; }
+  try{
+    const { data } = await sb.from('sentinel_knowledge').select('titolo,contenuto').eq('attivo', true);
+    if(data){ dbTxt = data.map(k => `=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n'); dbCount = data.length; }
+  }catch(e){}
+  _stKB = [ghTxt, dbTxt].filter(Boolean).join('\n\n');
+  if(badge) badge.textContent = _stKB ? `✓ KB (${ghCount} file + ${dbCount} DB)` : '⚠ KB offline';
+}
+function reloadSentinelKB(){ _stKB = null; loadSentinelKB(); }
+
+async function loadSentinelSessions(){
+  if(!_meId) return;
+  const { data } = await sb.from('sentinel_sessioni').select('id,titolo,aggiornato_il').eq('operatore_id', _meId).order('aggiornato_il', {ascending:false}).limit(40);
+  _stSessions = data || [];
+  renderSentinelSessions();
+}
+function renderSentinelSessions(){
+  const el = document.getElementById('sent-sessions-list');
+  if(!el) return;
+  if(!_stSessions.length){ el.innerHTML = `<div style="padding:14px;font-size:11.5px;color:var(--text-hint)">Nessuna conversazione salvata</div>`; return; }
+  el.innerHTML = _stSessions.map(s => {
+    const d = s.aggiornato_il ? new Date(s.aggiornato_il).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+    return `<div class="sent-session-item ${s.id===_stActiveSessionId?'active':''}" onclick="openSentinelSession('${s.id}')">
+      ${escapeHtmlSent(s.titolo || 'Conversazione senza titolo')}
+      <div class="sent-session-date">${d}</div>
+    </div>`;
+  }).join('');
+}
+function escapeHtmlSent(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function newSentinelChat(){
+  _stActiveSessionId = null;
+  _stMsgs = [];
+  renderSentinelSessions();
+  if(!_stApiKey){ renderSentinelSetup(); return; }
+  document.getElementById('sent-input-area').style.display = 'flex';
+  renderSentinelEmpty();
+}
+
+async function openSentinelSession(id){
+  _stActiveSessionId = id;
+  renderSentinelSessions();
+  document.getElementById('sent-input-area').style.display = _stApiKey ? 'flex' : 'none';
+  const { data } = await sb.from('sentinel_messaggi').select('*').eq('sessione_id', id).order('created_at', {ascending:true});
+  _stMsgs = (data || []).map(m => ({ role: m.ruolo, content: m.contenuto, time: new Date(m.created_at).getTime() }));
+  renderSentinelChat();
+}
+
+function renderSentinelEmpty(){
+  const area = document.getElementById('sent-chat-area');
+  if(!area) return;
+  area.innerHTML = `<div class="sent-empty">
+    <div style="font-size:38px;margin-bottom:10px">🛡️</div>
+    <div style="font-weight:600;color:var(--text)">Sentinel-81 attivo</div>
+    <div style="font-size:12.5px;margin-top:6px;line-height:1.6">Assistente sicurezza sul lavoro e antincendio.<br>Chiedi normativa, procedure, checklist, emergenze.</div>
+  </div>`;
+}
+
+function renderSentinelSetup(){
+  const inputArea = document.getElementById('sent-input-area');
+  if(inputArea) inputArea.style.display = 'none';
+  document.getElementById('sent-chat-area').innerHTML = `<div class="sent-setup">
+    <div style="font-size:32px">🛡️</div>
+    <div style="font-weight:700;margin:10px 0 4px">Configurazione Sentinel-81</div>
+    <div style="font-size:12.5px;color:var(--text-muted)">Inserisci la tua Anthropic API Key per attivare l'assistente. La chiave resta solo su questo dispositivo/browser.</div>
+    <input class="sent-key-inp" id="sent-key-inp" type="password" placeholder="sk-ant-api03-…" autocomplete="off">
+    <button class="sent-new-btn" style="width:auto;padding:10px 22px" onclick="saveSentinelKeyCrm()">Attiva Sentinel-81</button>
+  </div>`;
+}
+function saveSentinelKeyCrm(){
+  const key = document.getElementById('sent-key-inp')?.value?.trim() || '';
+  if(!key.startsWith('sk-ant')){ toast('Chiave non valida — deve iniziare con sk-ant', 'error'); return; }
+  _stApiKey = key;
+  localStorage.setItem('sentinel81_apikey', key);
+  document.getElementById('sent-input-area').style.display = 'flex';
+  renderSentinelEmpty();
+}
+
+function renderSentinelChat(){
+  const area = document.getElementById('sent-chat-area');
+  if(!_stMsgs.length){ renderSentinelEmpty(); return; }
+  area.innerHTML = _stMsgs.map(m => {
+    const isUser = m.role === 'user';
+    const ora = m.time ? new Date(m.time).toLocaleTimeString('it-IT',{hour:'2-digit',minute:'2-digit'}) : '';
+    let attachHtml = '';
+    if(m.attachments?.length){
+      attachHtml = m.attachments.map(a => a.type === 'image' ? `<img src="${a.previewUrl}" alt="${a.name}">` : `<div style="font-size:11px">📄 ${a.name}</div>`).join('');
+    }
+    const rawText = m.displayText || (typeof m.content === 'string' ? m.content : '');
+    return `<div class="sent-msg ${isUser?'sent-msg-user':'sent-msg-ai'}">${attachHtml}${formatSentinelMsgCrm(rawText)}
+      <div style="font-size:10px;opacity:.6;margin-top:5px">${ora}</div>
+    </div>`;
+  }).join('');
+  area.scrollTop = area.scrollHeight;
+}
+function formatSentinelMsgCrm(txt){
+  return escapeHtmlSent(txt)
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    .replace(/\n/g,'<br>');
+}
+function sentAutoResize(el){ el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+function sentinelCrmKeydown(e){ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); sendSentinelCrmMsg(); } }
+
+async function ensureStSession(primoTesto){
+  if(_stActiveSessionId) return _stActiveSessionId;
+  const { data, error } = await sb.from('sentinel_sessioni').insert({ operatore_id: _meId, titolo: (primoTesto||'').slice(0,80) || null, stato:'aperta' }).select().single();
+  if(error || !data) return null;
+  _stActiveSessionId = data.id;
+  _stSessions.unshift({ id:data.id, titolo:data.titolo, aggiornato_il:data.creato_il });
+  renderSentinelSessions();
+  return _stActiveSessionId;
+}
+async function saveStMsg(ruolo, contenuto, tokensIn, tokensOut){
+  const sid = await ensureStSession(ruolo==='user' ? contenuto : null);
+  if(!sid) return;
+  await sb.from('sentinel_messaggi').insert({ sessione_id: sid, ruolo, contenuto: contenuto||'', tokens_input: tokensIn||null, tokens_output: tokensOut||null });
+}
+
+async function sendSentinelCrmMsg(){
+  if(_stLoading) return;
+  const inp = document.getElementById('sent-inp');
+  const txt = inp.value.trim();
+  if(!txt && !_stAttachments.length) return;
+  if(!_stApiKey){ renderSentinelSetup(); return; }
+  inp.value=''; inp.style.height='auto';
+  const now = Date.now();
+  const snap = [..._stAttachments];
+  _stAttachments = [];
+  renderStAttachPreview();
+  if(snap.length){
+    const apiContent = [];
+    snap.forEach(a => {
+      if(a.type==='image') apiContent.push({ type:'image', source:{ type:'base64', media_type:a.mediaType, data:a.base64 } });
+      else apiContent.push({ type:'document', source:{ type:'base64', media_type:'application/pdf', data:a.base64 } });
+    });
+    apiContent.push({ type:'text', text: txt || 'Analizza e descrivi.' });
+    _stMsgs.push({ role:'user', apiContent, displayText: txt || snap.map(a=>`[${a.name}]`).join(' '), attachments: snap.map(a=>({type:a.type,name:a.name,previewUrl:a.previewUrl})), time: now });
+  } else {
+    _stMsgs.push({ role:'user', content: txt, time: now });
+  }
+  saveStMsg('user', txt || snap.map(a=>`[${a.name}]`).join(' '));
+  renderSentinelChat();
+  const area = document.getElementById('sent-chat-area');
+  const typ = document.createElement('div');
+  typ.className = 'sent-msg sent-msg-ai'; typ.id = 'sent-typing-indicator';
+  typ.innerHTML = '<div class="sent-typing"><span></span><span></span><span></span></div>';
+  area.appendChild(typ);
+  area.scrollTop = area.scrollHeight;
+  _stLoading = true;
+  document.getElementById('sent-send-btn').disabled = true;
+  try{
+    const sysPrompt = buildSentinelSystemCrm();
+    const msgs = _stMsgs.map(m => ({ role:m.role, content:m.apiContent || m.content }));
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{ 'x-api-key':_stApiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true', 'content-type':'application/json' },
+      body: JSON.stringify({ model:SENTINEL_MODEL, max_tokens:1500, system:sysPrompt, messages:msgs })
+    });
+    const data = await res.json();
+    document.getElementById('sent-typing-indicator')?.remove();
+    if(data.error){
+      toast('Sentinel: ' + data.error.message, 'error');
+      _stMsgs.pop();
+    } else {
+      const reply = data.content?.[0]?.text || '';
+      _stMsgs.push({ role:'assistant', content:reply, time:Date.now() });
+      saveStMsg('assistant', reply, data.usage?.input_tokens, data.usage?.output_tokens);
+      renderSentinelChat();
+    }
+  }catch(e){
+    document.getElementById('sent-typing-indicator')?.remove();
+    toast('Errore connessione Sentinel', 'error');
+    _stMsgs.pop();
+    renderSentinelChat();
+  }finally{
+    _stLoading = false;
+    document.getElementById('sent-send-btn').disabled = false;
+  }
+}
+
+function buildSentinelSystemCrm(){
+  let sys = `Sei Sentinel-81, assistente operativo per la sicurezza sul lavoro e antincendio di ROST 81 Srl (P.IVA 10524751004).
+
+NORMATIVA CORE:
+- D.Lgs. 81/08 — Testo Unico Sicurezza sul Lavoro
+- DM 3 agosto 2015 — Codice di Prevenzione Incendi
+- DPR 151/2011 — Semplificazione prevenzione incendi
+- DM 1 settembre 2021 — Controlli e manutenzione sistemi antincendio
+- DM 2 settembre 2021 — Gestione sicurezza antincendio
+
+MODALITÀ CAMPO (problema attivo sul cantiere): risposte brevissime, step-by-step numerati, tono collega esperto.
+MODALITÀ CONSULENZA (normativa, analisi): risposta completa con riferimenti normativi precisi, tono consulente senior.
+
+REGOLE ASSOLUTE:
+- Mai inventare riferimenti normativi
+- In emergenza reale → prima risposta: "Chiama il 115"
+- Rispondi sempre in italiano
+- Gestisci italiano informale, errori di battitura`;
+  if(_stKB) sys += `\n\n=== KNOWLEDGE BASE ===\n${_stKB}`;
+  return sys;
+}
+
+async function onSentAttachChange(event){
+  const files = Array.from(event.target.files);
+  event.target.value = '';
+  for(const file of files){
+    if(file.size > 30*1024*1024){ toast('File troppo grande (max 30 MB)', 'error'); continue; }
+    if(file.type.startsWith('image/')){
+      try{
+        const { dataUrl, base64, mediaType } = await resizeImageSent(file, 1200, 0.82);
+        _stAttachments.push({ type:'image', name:file.name, base64, mediaType, previewUrl:dataUrl });
+      }catch(e){ toast('Errore lettura immagine', 'error'); }
+    } else if(file.type === 'application/pdf'){
+      try{
+        const base64 = await fileToBase64Sent(file);
+        _stAttachments.push({ type:'pdf', name:file.name, base64, mediaType:'application/pdf' });
+      }catch(e){ toast('Errore lettura PDF', 'error'); }
+    } else {
+      toast('Formato non supportato — usa immagini o PDF', 'error');
+    }
+  }
+  renderStAttachPreview();
+}
+function renderStAttachPreview(){
+  const area = document.getElementById('sent-attach-preview');
+  if(!area) return;
+  if(!_stAttachments.length){ area.style.display='none'; area.innerHTML=''; return; }
+  area.style.display = 'flex';
+  area.innerHTML = _stAttachments.map((a,i) => {
+    if(a.type==='image') return `<div class="sent-attach-chip"><img src="${a.previewUrl}"><span>${a.name}</span><span class="sent-attach-del" onclick="removeStAttach(${i})">×</span></div>`;
+    return `<div class="sent-attach-chip"><span>📄</span><span>${a.name}</span><span class="sent-attach-del" onclick="removeStAttach(${i})">×</span></div>`;
+  }).join('');
+}
+function removeStAttach(i){ _stAttachments.splice(i,1); renderStAttachPreview(); }
+function fileToBase64Sent(file){
+  return new Promise((res,rej) => {
+    const reader = new FileReader();
+    reader.onload = e => res(e.target.result.split(',')[1]);
+    reader.onerror = rej;
+    reader.readAsDataURL(file);
+  });
+}
+function resizeImageSent(file, maxPx=1200, quality=0.82){
+  return new Promise((res,rej) => {
+    const reader = new FileReader();
+    reader.onerror = rej;
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = rej;
+      img.onload = () => {
+        const scale = Math.min(1, maxPx/Math.max(img.width, img.height));
+        const w = Math.round(img.width*scale), h = Math.round(img.height*scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+        res({ dataUrl, base64: dataUrl.split(',')[1], mediaType:'image/jpeg' });
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 </script>
 </body>

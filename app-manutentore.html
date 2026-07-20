@@ -574,6 +574,7 @@ let _sentinelMsgs=[], _sentinelKB=null, _sentinelLoading=false;
 let _sentinelApiKey=localStorage.getItem('sentinel81_apikey')||'';
 let _sentinelAttachments=[];
 let _sentinelRecording=false, _sentinelRec=null;
+let _sentinelSessionId=null;
 
 // ── BOOT ──
 (async()=>{
@@ -641,7 +642,7 @@ async function doLoginGoogle(){
 async function doLogout(){
   await sb.auth.signOut();
   _op=null; _clientiMese=[]; _visitatiSet=new Set();
-  _docs=[]; _sentinelMsgs=[]; _sentinelKB=null; _sentinelAttachments=[];
+  _docs=[]; _sentinelMsgs=[]; _sentinelKB=null; _sentinelAttachments=[]; _sentinelSessionId=null;
   if(_sentinelRec){_sentinelRec.abort();_sentinelRec=null;} _sentinelRecording=false;
   document.getElementById('bottom-nav').classList.remove('vis');
   showScreen('login');
@@ -1174,6 +1175,7 @@ function openDoc(url,nome){
 // ── SENTINEL ──
 async function loadSentinelKB(){
   document.getElementById('s-kb-badge').textContent='⏳ KB…';
+  let ghTxt='',ghCount=0,dbTxt='',dbCount=0;
   try{
     const r=await fetch(`https://api.github.com/repos/${SENTINEL_REPO}/contents/knowledge`);
     if(!r.ok) throw new Error('GitHub API');
@@ -1183,12 +1185,44 @@ async function loadSentinelKB(){
       const r2=await fetch(f.download_url);
       return `=== ${f.name} ===\n${await r2.text()}`;
     }));
-    _sentinelKB=contents.join('\n\n');
-    document.getElementById('s-kb-badge').textContent=`✓ KB (${txts.length} file)`;
-  }catch(e){
-    _sentinelKB='';
-    document.getElementById('s-kb-badge').textContent='⚠ KB offline';
-  }
+    ghTxt=contents.join('\n\n');
+    ghCount=txts.length;
+  }catch(e){ghTxt='';}
+  try{
+    const r3=await fetch(`${SUPA_URL}/rest/v1/sentinel_knowledge?select=titolo,contenuto&attivo=eq.true`,{headers:await authHeaders()});
+    if(r3.ok){
+      const rows=await r3.json();
+      dbTxt=rows.map(k=>`=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n');
+      dbCount=rows.length;
+    }
+  }catch(e){}
+  _sentinelKB=[ghTxt,dbTxt].filter(Boolean).join('\n\n');
+  document.getElementById('s-kb-badge').textContent=_sentinelKB?`✓ KB (${ghCount} file + ${dbCount} DB)`:'⚠ KB offline';
+}
+
+// ── SENTINEL PERSISTENZA (sessioni/messaggi condivisi CRM) ──
+async function ensureSentinelSession(primoTesto){
+  if(_sentinelSessionId) return _sentinelSessionId;
+  try{
+    const r=await fetch(`${SUPA_URL}/rest/v1/sentinel_sessioni`,{
+      method:'POST',headers:{...(await authHeaders()),'Prefer':'return=representation'},
+      body:JSON.stringify({operatore_id:_op.id,titolo:(primoTesto||'').slice(0,80)||null,stato:'aperta'})
+    });
+    const rows=await r.json();
+    _sentinelSessionId=rows?.[0]?.id||null;
+  }catch(e){}
+  return _sentinelSessionId;
+}
+
+async function saveSentinelMsg(ruolo,contenuto,tokensIn,tokensOut){
+  const sid=await ensureSentinelSession(ruolo==='user'?contenuto:null);
+  if(!sid) return;
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/sentinel_messaggi`,{
+      method:'POST',headers:{...(await authHeaders()),'Prefer':'return=minimal'},
+      body:JSON.stringify({sessione_id:sid,ruolo,contenuto:contenuto||'',tokens_input:tokensIn||null,tokens_output:tokensOut||null})
+    });
+  }catch(e){}
 }
 
 async function reloadKB(){
@@ -1299,6 +1333,7 @@ async function sendSentinelMsg(){
   }else{
     _sentinelMsgs.push({role:'user',content:txt,time:now});
   }
+  saveSentinelMsg('user',txt||snap.map(a=>`[${a.name}]`).join(' '));
   renderChat();
   // Typing indicator
   const area=document.getElementById('chat-area');
@@ -1330,6 +1365,7 @@ async function sendSentinelMsg(){
     }else{
       const reply=data.content?.[0]?.text||'';
       _sentinelMsgs.push({role:'assistant',content:reply,time:Date.now()});
+      saveSentinelMsg('assistant',reply,data.usage?.input_tokens,data.usage?.output_tokens);
       renderChat();
     }
   }catch(e){

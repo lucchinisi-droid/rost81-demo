@@ -270,12 +270,12 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .sent-wrap{display:flex;gap:16px;height:calc(100vh - 160px);min-height:520px}
 .sent-side{width:230px;flex-shrink:0;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden}
 .sent-side-head{padding:14px 14px 10px}
-.sent-new-btn{width:100%;background:#7c3aed;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer}
+.sent-new-btn{width:100%;background:#b5453a;color:#fff;border:none;border-radius:8px;padding:9px;font-size:12.5px;font-weight:600;cursor:pointer}
 .sent-new-btn:hover{opacity:.9}
 .sent-sessions{flex:1;overflow-y:auto;padding:4px 8px 8px}
 .sent-session-item{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:11.5px;color:var(--text-muted);margin-bottom:2px;line-height:1.4}
 .sent-session-item:hover{background:var(--bg)}
-.sent-session-item.active{background:rgba(124,58,237,.08);color:#7c3aed;font-weight:600}
+.sent-session-item.active{background:rgba(181,69,58,.08);color:#b5453a;font-weight:600}
 .sent-session-date{font-size:10px;color:var(--text-hint);margin-top:2px}
 .sent-main{flex:1;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;overflow:hidden;min-width:0}
 .sent-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -283,7 +283,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .sent-kb-badge{font-size:10px;color:var(--text-muted);background:var(--bg);padding:3px 9px;border-radius:20px;cursor:pointer}
 .sent-chat{flex:1;overflow-y:auto;padding:20px}
 .sent-msg{max-width:75%;margin-bottom:14px;padding:11px 15px;border-radius:14px;font-size:13.5px;line-height:1.55}
-.sent-msg-user{margin-left:auto;background:#7c3aed;color:#fff;border-bottom-right-radius:4px}
+.sent-msg-user{margin-left:auto;background:#b5453a;color:#fff;border-bottom-right-radius:4px}
 .sent-msg-ai{background:var(--bg);color:var(--text);border-bottom-left-radius:4px}
 .sent-msg img{max-width:100%;border-radius:8px;margin-bottom:6px;display:block}
 .sent-input-area{border-top:1px solid var(--border);padding:12px 16px;display:flex;flex-direction:column;gap:8px}
@@ -294,8 +294,8 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .sent-input-row{display:flex;gap:8px;align-items:flex-end}
 .sent-attach-btn{background:var(--bg);border:1px solid var(--border-med);border-radius:50%;width:38px;height:38px;flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px}
 .sent-inp{flex:1;border:1px solid var(--border-med);border-radius:20px;padding:9px 15px;font-family:inherit;font-size:13.5px;resize:none;max-height:100px;outline:none;background:var(--surface);color:var(--text)}
-.sent-inp:focus{border-color:#7c3aed}
-.sent-send{background:#7c3aed;border:none;border-radius:50%;width:38px;height:38px;flex-shrink:0;color:#fff;cursor:pointer;font-size:15px}
+.sent-inp:focus{border-color:#b5453a}
+.sent-send{background:#b5453a;border:none;border-radius:50%;width:38px;height:38px;flex-shrink:0;color:#fff;cursor:pointer;font-size:15px}
 .sent-send:disabled{opacity:.4}
 .sent-empty{text-align:center;padding:60px 24px;color:var(--text-muted)}
 .sent-setup{max-width:420px;margin:60px auto;text-align:center;background:var(--bg);border-radius:16px;padding:30px}
@@ -304,6 +304,26 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 .sent-typing span{width:6px;height:6px;border-radius:50%;background:var(--text-hint);animation:sent-blink 1.2s infinite}
 .sent-typing span:nth-child(2){animation-delay:.2s}.sent-typing span:nth-child(3){animation-delay:.4s}
 @keyframes sent-blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+/* ── POST-IT ── */
+.postit-legend{display:flex;gap:20px;align-items:center;background:var(--surface);border-radius:var(--radius);box-shadow:var(--shadow);padding:12px 20px;margin-bottom:16px;flex-wrap:wrap}
+.postit-legend-item{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--text-muted)}
+.postit-legend-dot{width:13px;height:13px;border-radius:4px;flex-shrink:0}
+.postit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.postit-card{border-radius:10px;padding:15px;min-height:165px;display:flex;flex-direction:column;box-shadow:0 3px 10px rgba(0,0,0,.09);position:relative}
+.postit-giallo{background:#fff3b0}
+.postit-verde{background:#c9ecc0}
+.postit-blu{background:#c3ddf5}
+.postit-meta{font-size:10px;color:rgba(0,0,0,.55);margin-bottom:9px;line-height:1.5}
+.postit-dest{font-weight:700}
+.postit-msg{font-size:12.5px;color:#262626;flex:1;white-space:pre-wrap;line-height:1.5;overflow-y:auto}
+.postit-footer{margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.postit-done-btn{background:rgba(0,0,0,.08);border:none;border-radius:6px;padding:6px 9px;font-size:10.5px;cursor:pointer;color:#262626;font-weight:600}
+.postit-done-btn:hover{background:rgba(0,0,0,.15)}
+.postit-done-badge{font-size:10.5px;color:#1f6b2e;font-weight:700}
+.postit-del{cursor:pointer;color:rgba(0,0,0,.3);font-size:16px;line-height:1;flex-shrink:0}
+.postit-del:hover{color:rgba(0,0,0,.6)}
+.postit-empty{grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--text-muted)}
+@media (max-width:1100px){.postit-grid{grid-template-columns:repeat(2,1fr)}}
 .ev-modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:center;justify-content:center}
 .ev-modal.open{display:flex}
 .ev-box{background:var(--surface);border-radius:var(--radius);padding:24px;width:420px;max-width:92vw;box-shadow:0 8px 32px rgba(0,0,0,0.22)}
@@ -355,6 +375,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
       <div class="nav-item" onclick="switchPanel('calendario',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="8" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="12" cy="15" r="1" fill="currentColor" stroke="none"/><circle cx="16" cy="15" r="1" fill="currentColor" stroke="none"/></svg><span>Calendario</span></div>
       <div class="nav-item" onclick="switchPanel('clienti',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Clienti</span><span class="nav-badge amber" id="badge-clienti">0</span></div>
       <div class="nav-item" onclick="switchPanel('scadenze',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>Scadenze</span><span class="nav-badge" id="badge-scadenze">0</span></div>
+      <div class="nav-item" onclick="switchPanel('postit',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M4 4h11l5 5v11H4z"/><path d="M15 4v5h5"/></svg><span>Post-it</span></div>
       <div class="nav-item" onclick="switchPanel('preventivi',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg><span>Preventivi</span><span class="nav-badge blue" id="badge-preventivi">0</span></div>
       <div class="nav-item" onclick="switchPanel('magazzino',this)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg><span>Magazzino</span><span class="nav-badge green" id="badge-scorte">0</span></div>
 
@@ -672,6 +693,22 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
       </div>
 
+      <!-- POST-IT -->
+      <div id="panel-postit" class="panel">
+        <div class="section-head">
+          <div class="section-title">Post-it — Bacheca del team</div>
+          <button class="btn btn-red btn-sm" onclick="apriModalPostit()">+ Scrivi un Post-it</button>
+        </div>
+        <div class="postit-legend">
+          <div class="postit-legend-item"><span class="postit-legend-dot" style="background:#fff3b0"></span>Giallo — messaggio standard</div>
+          <div class="postit-legend-item"><span class="postit-legend-dot" style="background:#c9ecc0"></span>Verde — urgente</div>
+          <div class="postit-legend-item"><span class="postit-legend-dot" style="background:#c3ddf5"></span>Blu — da svolgere entro 24 ore</div>
+        </div>
+        <div class="postit-grid" id="postit-grid">
+          <div class="postit-empty">Caricamento…</div>
+        </div>
+      </div>
+
       <!-- PREVENTIVI -->
       <div id="panel-preventivi" class="panel">
         <div class="section-head">
@@ -960,6 +997,36 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaEvento()">✓ Crea evento</button>
       <button class="btn" onclick="chiudiModalEvento()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SCRIVI POST-IT -->
+<div class="nuovo-modal" id="postit-modal">
+  <div class="uscita-box" style="width:400px">
+    <div class="uscita-title">Scrivi un Post-it</div>
+    <div class="uscita-sub">Visibile a tutto il team</div>
+
+    <div class="form-group"><label class="form-label">Mittente</label>
+      <select class="form-input" id="pi-mittente"></select>
+    </div>
+    <div class="form-group"><label class="form-label">Destinatario</label>
+      <select class="form-input" id="pi-destinatario"><option value="">Tutti</option></select>
+    </div>
+    <div class="form-group"><label class="form-label">Colore</label>
+      <select class="form-input" id="pi-colore">
+        <option value="giallo">🟡 Giallo — messaggio standard</option>
+        <option value="verde">🟢 Verde — urgente</option>
+        <option value="blu">🔵 Blu — da svolgere entro 24 ore</option>
+      </select>
+    </div>
+    <div class="form-group"><label class="form-label">Messaggio</label>
+      <textarea class="form-input" id="pi-messaggio" rows="4" placeholder="Scrivi il messaggio…" style="resize:vertical"></textarea>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:6px">
+      <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaPostit()">✓ Pubblica</button>
+      <button class="btn" onclick="chiudiModalPostit()">Annulla</button>
     </div>
   </div>
 </div>
@@ -1371,10 +1438,11 @@ function switchPanel(id, el){
   document.getElementById('panel-'+id).classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
   if(el) el.classList.add('active');
-  const titles = {dashboard:'Dashboard',calendario:'Calendario',clienti:'Clienti',scadenze:'Scadenze',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore',appclient:'App Client',statistiche:'Statistiche',marketing:'Marketing',sentinel:'Sentinel-81',pepper:'Pepper'};
+  const titles = {dashboard:'Dashboard',calendario:'Calendario',clienti:'Clienti',scadenze:'Scadenze',postit:'Post-it',preventivi:'Preventivi',magazzino:'Magazzino',doclavoro:'Documenti di Lavoro',appmanut:'App Manutentore',appclient:'App Client',statistiche:'Statistiche',marketing:'Marketing',sentinel:'Sentinel-81',pepper:'Pepper'};
   document.getElementById('page-title').textContent = titles[id] || id;
   if(id==='clienti') loadClienti();
   if(id==='scadenze') loadAgendaMese();
+  if(id==='postit') loadPostit();
   if(id==='preventivi') loadPreventivi();
   if(id==='calendario') loadCalendario();
   if(id==='appmanut') loadOperatoriAppManut();
@@ -1900,7 +1968,7 @@ async function loadPreventivi(){
 
 /* ---------- SENTINEL-81 ---------- */
 const SENTINEL_REPO = 'lucchinisi-droid/sentinel-81';
-const SENTINEL_MODEL = 'claude-sonnet-4-20250514';
+const SENTINEL_MODEL = 'claude-sonnet-5';
 let _stApiKey = localStorage.getItem('sentinel81_apikey') || '';
 let _stMsgs = [], _stKB = null, _stKbLoaded = false, _stLoading = false, _stAttachments = [];
 let _stSessions = [], _stActiveSessionId = null;
@@ -2191,6 +2259,91 @@ function resizeImageSent(file, maxPx=1200, quality=0.82){
     };
     reader.readAsDataURL(file);
   });
+}
+
+/* ---------- POST-IT (bacheca team) ---------- */
+let _postitTeam = [];
+let _postitList = [];
+
+async function loadPostitTeam(){
+  if(_postitTeam.length) return _postitTeam;
+  const { data } = await sb.from('team_utenti').select('id,nome').order('creato_il', {ascending:true});
+  _postitTeam = data || [];
+  return _postitTeam;
+}
+
+async function apriModalPostit(){
+  await loadPostitTeam();
+  const mSel = document.getElementById('pi-mittente');
+  const dSel = document.getElementById('pi-destinatario');
+  mSel.innerHTML = _postitTeam.map(u => `<option value="${u.id}">${u.nome}</option>`).join('');
+  dSel.innerHTML = '<option value="">Tutti</option>' + _postitTeam.map(u => `<option value="${u.id}">${u.nome}</option>`).join('');
+  if(_meId) mSel.value = _meId;
+  document.getElementById('pi-messaggio').value = '';
+  document.getElementById('pi-colore').value = 'giallo';
+  document.getElementById('postit-modal').classList.add('open');
+}
+function chiudiModalPostit(){
+  document.getElementById('postit-modal').classList.remove('open');
+}
+
+async function salvaPostit(){
+  const mittente_id = document.getElementById('pi-mittente').value;
+  const destinatario_id = document.getElementById('pi-destinatario').value || null;
+  const colore = document.getElementById('pi-colore').value;
+  const messaggio = document.getElementById('pi-messaggio').value.trim();
+  if(!mittente_id){ toast('Seleziona un mittente', 'error'); return; }
+  if(!messaggio){ toast('Scrivi un messaggio', 'error'); return; }
+  const { error } = await sb.from('post_it').insert({ mittente_id, destinatario_id, colore, messaggio });
+  if(error){ toast('Errore: ' + error.message, 'error'); return; }
+  toast('Post-it pubblicato');
+  chiudiModalPostit();
+  loadPostit();
+}
+
+async function loadPostit(){
+  const grid = document.getElementById('postit-grid');
+  const { data, error } = await sb.from('post_it')
+    .select('*, mittente:mittente_id(nome), destinatario:destinatario_id(nome), fatto_da:fatto_da_id(nome)')
+    .order('creato_il', {ascending:false});
+  if(error){ grid.innerHTML = `<div class="postit-empty">Errore nel caricamento</div>`; return; }
+  _postitList = data || [];
+  renderPostit();
+}
+
+function renderPostit(){
+  const grid = document.getElementById('postit-grid');
+  if(!_postitList.length){ grid.innerHTML = `<div class="postit-empty">Nessun post-it al momento. Scrivine uno per il team.</div>`; return; }
+  grid.innerHTML = _postitList.map(p => {
+    const data = new Date(p.creato_il).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const destLabel = p.destinatario?.nome || 'Tutti';
+    const canDelete = p.mittente_id === _meId;
+    const footer = p.fatto_da_id
+      ? `<span class="postit-done-badge">✓ Fatto da ${p.fatto_da?.nome || '—'}</span>`
+      : `<button class="postit-done-btn" onclick="segnaFattoPostit('${p.id}')">FATTO</button>`;
+    return `<div class="postit-card postit-${p.colore}">
+      <div class="postit-meta">${escapeHtmlSent(p.mittente?.nome || '—')} → <span class="postit-dest">${escapeHtmlSent(destLabel)}</span><br>${data}</div>
+      <div class="postit-msg">${escapeHtmlSent(p.messaggio)}</div>
+      <div class="postit-footer">
+        ${footer}
+        ${canDelete ? `<span class="postit-del" onclick="cancellaPostit('${p.id}')" title="Cancella">🗑</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function segnaFattoPostit(id){
+  const { error } = await sb.from('post_it').update({ fatto_da_id: _meId, fatto_il: new Date().toISOString() }).eq('id', id);
+  if(error){ toast('Errore: ' + error.message, 'error'); return; }
+  loadPostit();
+}
+
+async function cancellaPostit(id){
+  if(!confirm('Cancellare questo post-it?')) return;
+  const { error } = await sb.from('post_it').delete().eq('id', id);
+  if(error){ toast('Errore: ' + error.message, 'error'); return; }
+  toast('Post-it cancellato');
+  loadPostit();
 }
 </script>
 </body>

@@ -2161,7 +2161,7 @@ async function sendSentinelCrmMsg(){
       toast('Sentinel: ' + data.error.message, 'error');
       _stMsgs.pop();
     } else {
-      const reply = data.content?.[0]?.text || '';
+      const reply = (data.content||[]).find(b=>b.type==='text')?.text || '';
       _stMsgs.push({ role:'assistant', content:reply, time:Date.now() });
       saveStMsg('assistant', reply, data.usage?.input_tokens, data.usage?.output_tokens);
       renderSentinelChat();

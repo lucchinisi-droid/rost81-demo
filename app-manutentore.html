@@ -1363,7 +1363,7 @@ async function sendSentinelMsg(){
       toast('Sentinel: '+data.error.message,'error');
       _sentinelMsgs.pop();
     }else{
-      const reply=data.content?.[0]?.text||'';
+      const reply=(data.content||[]).find(b=>b.type==='text')?.text||'';
       _sentinelMsgs.push({role:'assistant',content:reply,time:Date.now()});
       saveSentinelMsg('assistant',reply,data.usage?.input_tokens,data.usage?.output_tokens);
       renderChat();

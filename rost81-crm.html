@@ -686,7 +686,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
               <span class="badge badge-green">Attivo</span>
             </div>
             <div style="font-size:13px;color:var(--text-muted);line-height:1.6;max-width:640px">
-              Ogni rapporto di manutenzione e ogni DDT stampato dai tecnici dall'App Manutentore viene salvato qui automaticamente — nessun caricamento manuale. I file sono conservati in modo sicuro e restano consultabili con un link diretto.
+              Ogni rapporto di manutenzione e ogni DDT compilato (dall'App Manutentore o inserito direttamente) è visibile qui non appena salvato. Se manca ancora il file stampabile, un pulsante "Genera documento" lo crea e lo archivia in modo sicuro con un link diretto.
             </div>
           </div>
         </div>
@@ -700,7 +700,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
 
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Cliente</th><th>Tipo</th><th>Nome file</th><th>Descrizione</th><th>Data</th><th>File</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Sede</th><th>Tipo</th><th>Dettaglio</th><th>Data</th><th>File</th></tr></thead>
             <tbody id="doclavoro-tbody">
               <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>
             </tbody>
@@ -1354,18 +1354,46 @@ async function loadOperatoriAppManut(){
 }
 
 /* ---------- DOCUMENTI DI LAVORO (rapporti + DDT dall'App Manutentore) ---------- */
+// La fonte di verità è rapporti_manutenzione/ddt (i dati esistono dal momento
+// del salvataggio, anche se inseriti fuori dall'app). Il file stampabile in
+// documenti_clienti è opzionale: se manca, si può generare on-demand con
+// "Genera documento" (Netlify Function genera-documento.js).
+const GENERA_DOC_API_URL = 'https://rost81-ecosystem.netlify.app/api/genera-documento';
 let _docLavoroAll = [], _docLavoroFilter = 'tutti';
 
 async function loadDocumentiLavoro(){
   const tbody = document.getElementById('doclavoro-tbody');
   tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento…</td></tr>`;
-  const { data, error } = await sb.from('documenti_clienti').select('*, clienti_contratti(nome_cliente)').order('creato_il', {ascending:false});
-  if(error){
+
+  const [rRap, rDdt] = await Promise.all([
+    sb.from('rapporti_manutenzione').select('id, data, contenuto, cliente_id, clienti_contratti(nome_cliente), sedi_cliente(nome_sede), documenti_clienti(id,url,nome_file,descrizione)').order('data', {ascending:false}),
+    sb.from('ddt').select('id, data, articoli, cliente_id, clienti_contratti(nome_cliente), sedi_cliente(nome_sede), documenti_clienti(id,url,nome_file,descrizione)').order('data', {ascending:false}),
+  ]);
+
+  if(rRap.error || rDdt.error){
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Errore nel caricamento</td></tr>`;
     return;
   }
-  _docLavoroAll = data || [];
-  document.getElementById('doclavoro-count').textContent = `${_docLavoroAll.length} documenti`;
+
+  const rapporti = (rRap.data || []).map(r => ({
+    kind: 'rapporto', id: r.id, data: r.data,
+    cliente: r.clienti_contratti?.nome_cliente || '—',
+    sede: r.sedi_cliente?.nome_sede || '',
+    dettaglio: r.contenuto?.tipo || 'Rapporto di manutenzione',
+    esito: r.contenuto?.esito_complessivo,
+    file: r.documenti_clienti?.[0] || null,
+  }));
+  const ddts = (rDdt.data || []).map(d => ({
+    kind: 'ddt', id: d.id, data: d.data,
+    cliente: d.clienti_contratti?.nome_cliente || '—',
+    sede: d.sedi_cliente?.nome_sede || '',
+    dettaglio: `${(d.articoli||[]).length} articoli`,
+    esito: null,
+    file: d.documenti_clienti?.[0] || null,
+  }));
+
+  _docLavoroAll = [...rapporti, ...ddts].sort((a,b) => (b.data||'').localeCompare(a.data||''));
+  document.getElementById('doclavoro-count').textContent = `${_docLavoroAll.length} interventi`;
   renderDocumentiLavoro();
 }
 
@@ -1380,34 +1408,60 @@ function renderDocumentiLavoro(){
   const tbody = document.getElementById('doclavoro-tbody');
   const search = (document.getElementById('doclavoro-search')?.value || '').toLowerCase().trim();
   let list = _docLavoroAll;
-  if(_docLavoroFilter==='rapporto') list = list.filter(d => d.nome_file?.startsWith('MAN-'));
-  else if(_docLavoroFilter==='ddt') list = list.filter(d => d.nome_file?.startsWith('DDT-'));
+  if(_docLavoroFilter==='rapporto') list = list.filter(d => d.kind==='rapporto');
+  else if(_docLavoroFilter==='ddt') list = list.filter(d => d.kind==='ddt');
   if(search){
     list = list.filter(d =>
-      (d.clienti_contratti?.nome_cliente || '').toLowerCase().includes(search) ||
-      (d.nome_file || '').toLowerCase().includes(search) ||
-      (d.descrizione || '').toLowerCase().includes(search)
+      d.cliente.toLowerCase().includes(search) ||
+      d.sede.toLowerCase().includes(search) ||
+      d.dettaglio.toLowerCase().includes(search)
     );
   }
   if(list.length===0){
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun documento trovato</td></tr>`;
     return;
   }
+  const esitoBadge = {ok:'<span class="badge badge-green">Conforme</span>', parz:'<span class="badge badge-amber">Parziale</span>', ko:'<span class="badge badge-red">Non conforme</span>'};
   tbody.innerHTML = list.map(d => {
-    const isRap = d.nome_file?.startsWith('MAN-');
-    const isDDT = d.nome_file?.startsWith('DDT-');
-    const tipoBadge = isRap ? '<span class="badge badge-blue">📋 Rapporto</span>' : isDDT ? '<span class="badge badge-amber">📦 DDT</span>' : '<span class="badge badge-gray">Documento</span>';
-    const dataFmt = d.creato_il ? new Date(d.creato_il).toLocaleDateString('it-IT') : '—';
-    const link = d.url ? `<a href="${d.url}" target="_blank">Apri ↗</a>` : '—';
+    const tipoBadge = d.kind==='rapporto' ? '<span class="badge badge-blue">📋 Rapporto</span>' : '<span class="badge badge-amber">📦 DDT</span>';
+    const dataFmt = d.data ? new Date(d.data).toLocaleDateString('it-IT') : '—';
+    const dettaglio = `${d.dettaglio}${d.esito && esitoBadge[d.esito] ? ' · '+esitoBadge[d.esito] : ''}`;
+    const azione = d.file
+      ? `<a href="${d.file.url}" target="_blank">Apri ↗</a>`
+      : `<button class="btn btn-sm btn-red" onclick="generaDocumento('${d.kind}','${d.id}',this)">Genera documento</button>`;
     return `<tr>
-      <td>${d.clienti_contratti?.nome_cliente || '—'}</td>
+      <td>${d.cliente}</td>
+      <td>${d.sede || '—'}</td>
       <td>${tipoBadge}</td>
-      <td>${d.nome_file || '—'}</td>
-      <td style="max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${d.descrizione || '—'}</td>
+      <td style="max-width:260px">${dettaglio}</td>
       <td>${dataFmt}</td>
-      <td>${link}</td>
+      <td>${azione}</td>
     </tr>`;
   }).join('');
+}
+
+async function generaDocumento(tipo, id, btnEl){
+  const originalText = btnEl.textContent;
+  btnEl.disabled = true; btnEl.textContent = 'Generazione…';
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch(GENERA_DOC_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
+      body: JSON.stringify({ tipo, id })
+    });
+    const out = await res.json().catch(() => ({}));
+    if(!res.ok){
+      toast('Errore: ' + (out.error || 'generazione fallita'), 'error');
+      btnEl.disabled = false; btnEl.textContent = originalText;
+      return;
+    }
+    toast('✓ Documento generato', 'success');
+    loadDocumentiLavoro();
+  }catch(e){
+    toast('Errore di connessione', 'error');
+    btnEl.disabled = false; btnEl.textContent = originalText;
+  }
 }
 
 function toggleTheme(){

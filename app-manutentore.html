@@ -634,6 +634,8 @@ let _rapId=null, _ddtId=null; // id riga appena salvata, per collegare il docume
 let _docs=[], _docsFiltered=[], _docFilter='tutti';
 // sentinel
 let _sentinelMsgs=[], _sentinelKB=null, _sentinelLoading=false;
+let _sentinelKbReserved='';
+const SENTINEL_RESERVED_TRIGGER=/fire\s*isolator|veicol[oi]\s*elettric|auto\s*elettric|macchina\s*elettric|batter(?:ia|ie)\s*(?:a|al|agli\s*ioni\s*di)?\s*litio|\bev\b.*(?:incendio|fiamm|litio|batteria)|incendio.*\bev\b/i;
 let _sentinelApiKey=localStorage.getItem('sentinel81_apikey')||'';
 let _sentinelAttachments=[];
 let _sentinelRecording=false, _sentinelRec=null;
@@ -1386,11 +1388,20 @@ async function loadSentinelKB(){
     ghCount=txts.length;
   }catch(e){ghTxt='';}
   try{
-    const r3=await fetch(`${SUPA_URL}/rest/v1/sentinel_knowledge?select=titolo,contenuto&attivo=eq.true`,{headers:await authHeaders()});
+    const r3=await fetch(`${SUPA_URL}/rest/v1/sentinel_knowledge?select=titolo,contenuto&attivo=eq.true&categoria=neq.riservato`,{headers:await authHeaders()});
     if(r3.ok){
       const rows=await r3.json();
       dbTxt=rows.map(k=>`=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n');
       dbCount=rows.length;
+    }
+  }catch(e){}
+  // Conoscenza "riservata": caricata a parte, NON entra nel contesto di default.
+  // Viene aggiunta al prompt solo se il messaggio dell'utente tocca l'argomento (vedi buildSentinelSystem).
+  try{
+    const r4=await fetch(`${SUPA_URL}/rest/v1/sentinel_knowledge?select=titolo,contenuto&attivo=eq.true&categoria=eq.riservato`,{headers:await authHeaders()});
+    if(r4.ok){
+      const rowsR=await r4.json();
+      _sentinelKbReserved=rowsR.map(k=>`=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n');
     }
   }catch(e){}
   _sentinelKB=[ghTxt,dbTxt].filter(Boolean).join('\n\n');
@@ -1542,7 +1553,7 @@ async function sendSentinelMsg(){
   _sentinelLoading=true;
   document.getElementById('s-send').disabled=true;
   try{
-    const sysPrompt=buildSentinelSystem();
+    const sysPrompt=buildSentinelSystem(txt);
     const msgs=_sentinelMsgs.filter(m=>m.role!=='typing').map(m=>({role:m.role,content:m.apiContent||m.content}));
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
@@ -1576,7 +1587,7 @@ async function sendSentinelMsg(){
   }
 }
 
-function buildSentinelSystem(){
+function buildSentinelSystem(userTxt){
   let sys=`Sei Sentinel-81, assistente operativo per la sicurezza sul lavoro e antincendio di ROST 81 Srl (P.IVA 10524751004).
 
 NORMATIVA CORE:
@@ -1596,6 +1607,9 @@ REGOLE ASSOLUTE:
 - Gestisci italiano informale, errori di battitura, trascrizioni vocali`;
   if(_sentinelKB){
     sys+=`\n\n=== KNOWLEDGE BASE ===\n${_sentinelKB}`;
+  }
+  if(_sentinelKbReserved && SENTINEL_RESERVED_TRIGGER.test(userTxt||'')){
+    sys+=`\n\n=== KNOWLEDGE BASE RISERVATA (richiesta espressamente dall'utente) ===\n${_sentinelKbReserved}`;
   }
   return sys;
 }

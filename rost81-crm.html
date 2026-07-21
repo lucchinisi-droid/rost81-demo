@@ -715,6 +715,7 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
           <div class="section-title">Archivio Preventivi</div>
           <div style="display:flex;gap:8px;align-items:center">
             <button class="btn btn-sm" onclick="loadPreventivi()">↻ Aggiorna</button>
+            <button class="btn btn-red btn-sm" onclick="apriModalPreventivo()">+ Nuovo Preventivo</button>
           </div>
         </div>
         <div id="prev-stats" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px">
@@ -724,9 +725,9 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
         </div>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Cliente</th><th>Categoria</th><th>Data</th><th>Importo stimato</th><th>Stato</th><th>Documento</th></tr></thead>
+            <thead><tr><th>N°</th><th>Cliente</th><th>Categoria</th><th>Data</th><th>Importo</th><th>Stato</th><th>Documento</th></tr></thead>
             <tbody id="preventivi-tbody">
-              <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
+              <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>
             </tbody>
           </table>
         </div>
@@ -1027,6 +1028,71 @@ tr:last-child td{border-bottom:none} tr:hover td{background:#fafaf8}
     <div style="display:flex;gap:8px;margin-top:6px">
       <button class="btn btn-red" style="flex:1;justify-content:center" onclick="salvaPostit()">✓ Pubblica</button>
       <button class="btn" onclick="chiudiModalPostit()">Annulla</button>
+    </div>
+  </div>
+</div>
+
+<!-- NUOVO PREVENTIVO -->
+<div class="nuovo-modal" id="preventivo-modal">
+  <div class="uscita-box" style="width:640px;max-width:94vw">
+    <div class="uscita-title">Nuovo Preventivo</div>
+    <div class="uscita-sub">Compila le voci: il documento viene generato automaticamente al salvataggio</div>
+
+    <div class="r2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <div class="form-group"><label class="form-label">Cliente</label>
+        <select class="form-input" id="prv-cliente"><option value="">Seleziona…</option></select>
+      </div>
+      <div class="form-group"><label class="form-label">Categoria</label>
+        <input class="form-input" id="prv-categoria" list="prv-categoria-list" placeholder="es. Manutenzione, Formazione…">
+        <datalist id="prv-categoria-list">
+          <option value="Manutenzione">
+          <option value="Formazione">
+          <option value="Consulenza HSE">
+          <option value="Progettazione antincendio">
+          <option value="Fornitura attrezzature">
+        </datalist>
+      </div>
+    </div>
+
+    <div class="form-group"><label class="form-label">Stile documento</label>
+      <select class="form-input" id="prv-template">
+        <option value="classico">Classico — documento aziendale</option>
+        <option value="canva">Colorato — stile Canva/slide</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" style="display:flex;justify-content:space-between;align-items:center">
+        <span>Voci di preventivo</span>
+        <button class="btn btn-sm" type="button" onclick="aggiungiRigaPrv()">+ Aggiungi voce</button>
+      </label>
+      <div style="overflow-x:auto">
+        <table style="width:100%;font-size:12.5px" id="prv-righe-table">
+          <thead><tr>
+            <th style="text-align:left;padding:4px 6px">Descrizione</th>
+            <th style="width:70px;padding:4px 6px">Qtà</th>
+            <th style="width:100px;padding:4px 6px">Prezzo unit. €</th>
+            <th style="width:30px"></th>
+          </tr></thead>
+          <tbody id="prv-righe-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="r2" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:end">
+      <div class="form-group" style="margin-bottom:0"><label class="form-label">IVA %</label>
+        <input class="form-input" id="prv-iva" type="number" value="22" min="0" max="100" step="1" oninput="ricalcolaTotaliPrv()">
+      </div>
+      <div style="text-align:right;font-size:13px;line-height:1.7">
+        <div>Imponibile: <strong id="prv-tot-imponibile">€ 0</strong></div>
+        <div>IVA: <strong id="prv-tot-iva">€ 0</strong></div>
+        <div style="font-size:16px;color:var(--red)">Totale: <strong id="prv-tot-totale">€ 0</strong></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn btn-red" style="flex:1;justify-content:center" id="prv-salva-btn" onclick="salvaPreventivo()">✓ Salva e genera documento</button>
+      <button class="btn" onclick="chiudiModalPreventivo()">Annulla</button>
     </div>
   </div>
 </div>
@@ -1950,24 +2016,138 @@ async function loadRinnoviContratto(){
 
 async function loadPreventivi(){
   const tbody = document.getElementById('preventivi-tbody');
-  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
+  tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Caricamento...</td></tr>';
   const { data, error } = await sb.from('preventivi').select('*, clienti_contratti(nome_cliente)').order('creato_il',{ascending:false});
-  if(error){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--red)">Errore caricamento preventivi.</td></tr>'; return; }
+  if(error){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--red)">Errore caricamento preventivi.</td></tr>'; return; }
   const rows = data || [];
   document.getElementById('prev-count').textContent = rows.length;
   const totale = rows.reduce((s,p)=>s+(Number(p.prezzo_stimato)||0),0);
   document.getElementById('prev-totale').textContent = '€ ' + totale.toLocaleString('it-IT');
   document.getElementById('prev-ultimo').textContent = rows[0] ? new Date(rows[0].creato_il).toLocaleDateString('it-IT') : '—';
-  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun preventivo in archivio.</td></tr>'; return; }
-  tbody.innerHTML = rows.map(p => `
-    <tr>
+  if(!rows.length){ tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-muted)">Nessun preventivo in archivio.</td></tr>'; return; }
+  tbody.innerHTML = rows.map(p => {
+    const azione = p.doc_url
+      ? `<a href="javascript:void(0)" onclick="apriDocumentoHtml('${p.doc_url}')">Apri ↗</a>`
+      : `<button class="btn btn-sm btn-red" onclick="generaDocumentoPreventivo('${p.id}',this)">Genera documento</button>`;
+    return `<tr>
+      <td style="font-family:monospace;font-size:11.5px">${p.numero||'—'}</td>
       <td>${(p.clienti_contratti&&p.clienti_contratti.nome_cliente)||'—'}</td>
       <td>${p.categoria||'—'}</td>
       <td>${p.creato_il ? new Date(p.creato_il).toLocaleDateString('it-IT') : '—'}</td>
       <td>€ ${Number(p.prezzo_stimato||0).toLocaleString('it-IT')}</td>
       <td><span class="badge badge-blue">${p.stato||'—'}</span></td>
-      <td>${p.doc_url ? `<a href="${p.doc_url}" target="_blank">Apri ↗</a>` : '—'}</td>
-    </tr>`).join('');
+      <td>${azione}</td>
+    </tr>`;
+  }).join('');
+}
+
+let _prvClienti = [];
+
+async function apriModalPreventivo(){
+  if(!_prvClienti.length){
+    const { data } = await sb.from('clienti_contratti').select('id,nome_cliente').order('nome_cliente');
+    _prvClienti = data || [];
+  }
+  const sel = document.getElementById('prv-cliente');
+  sel.innerHTML = '<option value="">Seleziona…</option>' + _prvClienti.map(c => `<option value="${c.id}">${escapeHtmlSent(c.nome_cliente||'—')}</option>`).join('');
+  document.getElementById('prv-categoria').value = '';
+  document.getElementById('prv-template').value = 'classico';
+  document.getElementById('prv-iva').value = '22';
+  document.getElementById('prv-righe-tbody').innerHTML = '';
+  aggiungiRigaPrv();
+  document.getElementById('preventivo-modal').classList.add('open');
+}
+function chiudiModalPreventivo(){
+  document.getElementById('preventivo-modal').classList.remove('open');
+}
+
+function aggiungiRigaPrv(){
+  const tbody = document.getElementById('prv-righe-tbody');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td style="padding:3px"><input class="form-input" style="padding:6px 8px" placeholder="Descrizione voce…" oninput="ricalcolaTotaliPrv()"></td>
+    <td style="padding:3px"><input class="form-input" style="padding:6px 8px;text-align:center" type="number" value="1" min="0" step="1" oninput="ricalcolaTotaliPrv()"></td>
+    <td style="padding:3px"><input class="form-input" style="padding:6px 8px;text-align:right" type="number" value="0" min="0" step="0.01" oninput="ricalcolaTotaliPrv()"></td>
+    <td style="text-align:center"><button class="btn btn-sm" type="button" style="padding:4px 8px" onclick="this.closest('tr').remove();ricalcolaTotaliPrv()">✕</button></td>`;
+  tbody.appendChild(tr);
+  ricalcolaTotaliPrv();
+}
+
+function leggiRighePrv(){
+  return [...document.querySelectorAll('#prv-righe-tbody tr')].map(tr => {
+    const inp = tr.querySelectorAll('input');
+    return { descrizione: (inp[0]?.value||'').trim(), quantita: Number(inp[1]?.value)||0, prezzo_unitario: Number(inp[2]?.value)||0 };
+  }).filter(r => r.descrizione || r.quantita || r.prezzo_unitario);
+}
+
+function ricalcolaTotaliPrv(){
+  const righe = leggiRighePrv();
+  const imponibile = righe.reduce((s,r) => s + r.quantita*r.prezzo_unitario, 0);
+  const ivaPerc = Number(document.getElementById('prv-iva')?.value) || 0;
+  const iva = imponibile * ivaPerc/100;
+  document.getElementById('prv-tot-imponibile').textContent = '€ ' + imponibile.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('prv-tot-iva').textContent = '€ ' + iva.toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('prv-tot-totale').textContent = '€ ' + (imponibile+iva).toLocaleString('it-IT',{minimumFractionDigits:2,maximumFractionDigits:2});
+  return { imponibile, iva, totale: imponibile+iva };
+}
+
+async function generaNumeroPreventivo(){
+  const anno = new Date().getFullYear();
+  const { count } = await sb.from('preventivi').select('*', {count:'exact', head:true}).like('numero', `PRV-${anno}-%`);
+  return `PRV-${anno}-${String((count||0)+1).padStart(3,'0')}`;
+}
+
+async function salvaPreventivo(){
+  const cliente_id = document.getElementById('prv-cliente').value;
+  const categoria = document.getElementById('prv-categoria').value.trim();
+  const template = document.getElementById('prv-template').value;
+  const iva_percentuale = Number(document.getElementById('prv-iva').value) || 0;
+  const righe = leggiRighePrv();
+  if(!cliente_id){ toast('Seleziona un cliente', 'error'); return; }
+  if(!categoria){ toast('Indica una categoria', 'error'); return; }
+  if(!righe.length){ toast('Aggiungi almeno una voce', 'error'); return; }
+
+  const { totale } = ricalcolaTotaliPrv();
+  const numero = await generaNumeroPreventivo();
+  const btn = document.getElementById('prv-salva-btn');
+  btn.disabled = true; btn.textContent = 'Salvataggio…';
+
+  const { data, error } = await sb.from('preventivi').insert({
+    cliente_id, categoria, numero, template, iva_percentuale,
+    descrizione: righe.map(r => r.descrizione).filter(Boolean).join(', ').slice(0,500) || categoria,
+    prezzo_stimato: totale, voci: righe, stato: 'in attesa', creato_da: _meId
+  }).select().single();
+
+  btn.disabled = false; btn.textContent = '✓ Salva e genera documento';
+
+  if(error){ toast('Errore: ' + error.message, 'error'); return; }
+  toast('Preventivo salvato, genero il documento…');
+  chiudiModalPreventivo();
+  loadPreventivi();
+  if(data?.id) generaDocumentoPreventivo(data.id, null);
+}
+
+async function generaDocumentoPreventivo(id, btnEl){
+  if(btnEl){ btnEl.disabled = true; btnEl.textContent = 'Generazione…'; }
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch(GENERA_DOC_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
+      body: JSON.stringify({ tipo: 'preventivo', id })
+    });
+    const out = await res.json().catch(() => ({}));
+    if(!res.ok){
+      toast('Errore: ' + (out.error || 'generazione fallita'), 'error');
+      if(btnEl){ btnEl.disabled = false; btnEl.textContent = 'Genera documento'; }
+      return;
+    }
+    toast('✓ Documento generato', 'success');
+    loadPreventivi();
+  }catch(e){
+    toast('Errore di connessione', 'error');
+    if(btnEl){ btnEl.disabled = false; btnEl.textContent = 'Genera documento'; }
+  }
 }
 
 /* ---------- APERTURA DOCUMENTI HTML (bucket privato) ----------
@@ -1998,6 +2178,8 @@ const SENTINEL_REPO = 'lucchinisi-droid/sentinel-81';
 const SENTINEL_MODEL = 'claude-sonnet-5';
 let _stApiKey = localStorage.getItem('sentinel81_apikey') || '';
 let _stMsgs = [], _stKB = null, _stKbLoaded = false, _stLoading = false, _stAttachments = [];
+let _stKbReserved = '';
+const SENTINEL_RESERVED_TRIGGER = /fire\s*isolator|veicol[oi]\s*elettric|auto\s*elettric|macchina\s*elettric|batter(?:ia|ie)\s*(?:a|al|agli\s*ioni\s*di)?\s*litio|\bev\b.*(?:incendio|fiamm|litio|batteria)|incendio.*\bev\b/i;
 let _stSessions = [], _stActiveSessionId = null;
 
 async function initSentinelPanel(){
@@ -2024,8 +2206,14 @@ async function loadSentinelKB(){
     ghTxt = contents.join('\n\n'); ghCount = txts.length;
   }catch(e){ ghTxt = ''; }
   try{
-    const { data } = await sb.from('sentinel_knowledge').select('titolo,contenuto').eq('attivo', true);
+    const { data } = await sb.from('sentinel_knowledge').select('titolo,contenuto').eq('attivo', true).neq('categoria', 'riservato');
     if(data){ dbTxt = data.map(k => `=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n'); dbCount = data.length; }
+  }catch(e){}
+  // Conoscenza "riservata": caricata a parte, entra nel prompt solo se il messaggio dell'utente
+  // tocca l'argomento (vedi buildSentinelSystemCrm / SENTINEL_RESERVED_TRIGGER).
+  try{
+    const { data: dataR } = await sb.from('sentinel_knowledge').select('titolo,contenuto').eq('attivo', true).eq('categoria', 'riservato');
+    if(dataR){ _stKbReserved = dataR.map(k => `=== ${k.titolo} ===\n${k.contenuto}`).join('\n\n'); }
   }catch(e){}
   _stKB = [ghTxt, dbTxt].filter(Boolean).join('\n\n');
   if(badge) badge.textContent = _stKB ? `✓ KB (${ghCount} file + ${dbCount} DB)` : '⚠ KB offline';
@@ -2175,7 +2363,7 @@ async function sendSentinelCrmMsg(){
   _stLoading = true;
   document.getElementById('sent-send-btn').disabled = true;
   try{
-    const sysPrompt = buildSentinelSystemCrm();
+    const sysPrompt = buildSentinelSystemCrm(txt);
     const msgs = _stMsgs.map(m => ({ role:m.role, content:m.apiContent || m.content }));
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST',
@@ -2204,7 +2392,7 @@ async function sendSentinelCrmMsg(){
   }
 }
 
-function buildSentinelSystemCrm(){
+function buildSentinelSystemCrm(userTxt){
   let sys = `Sei Sentinel-81, assistente operativo per la sicurezza sul lavoro e antincendio di ROST 81 Srl (P.IVA 10524751004).
 
 NORMATIVA CORE:
@@ -2223,6 +2411,9 @@ REGOLE ASSOLUTE:
 - Rispondi sempre in italiano
 - Gestisci italiano informale, errori di battitura`;
   if(_stKB) sys += `\n\n=== KNOWLEDGE BASE ===\n${_stKB}`;
+  if(_stKbReserved && SENTINEL_RESERVED_TRIGGER.test(userTxt||'')){
+    sys += `\n\n=== KNOWLEDGE BASE RISERVATA (richiesta espressamente dall'utente) ===\n${_stKbReserved}`;
+  }
   return sys;
 }
 

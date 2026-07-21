@@ -174,6 +174,22 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 .doc-desc{font-size:12px;color:var(--muted);line-height:1.4}
 .doc-meta{font-size:11px;color:var(--muted);margin-top:5px;display:flex;justify-content:space-between;align-items:center}
 .doc-cliente{font-size:11px;font-weight:700;color:var(--red)}
+
+/* ── POST-IT ── */
+.postit-legend-m{display:flex;gap:10px;padding:10px 16px;font-size:11px;color:var(--muted);flex-wrap:wrap;border-bottom:1px solid var(--border);background:var(--surface)}
+.postit-list-m{padding:12px;display:flex;flex-direction:column;gap:10px}
+.postit-card-m{border-radius:14px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.postit-card-m.giallo{background:#fff3b0}
+.postit-card-m.verde{background:#c9ecc0}
+.postit-card-m.blu{background:#c3ddf5}
+.postit-meta-m{font-size:11px;color:rgba(0,0,0,.55);margin-bottom:8px;line-height:1.5}
+.postit-dest-m{font-weight:700}
+.postit-msg-m{font-size:14px;color:#262626;white-space:pre-wrap;line-height:1.5}
+.postit-footer-m{margin-top:10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.postit-done-btn-m{background:rgba(0,0,0,.08);border:none;border-radius:8px;padding:7px 12px;font-size:11px;cursor:pointer;color:#262626;font-weight:700;font-family:inherit}
+.postit-done-badge-m{font-size:11px;color:#1f6b2e;font-weight:700}
+.postit-del-m{cursor:pointer;color:rgba(0,0,0,.35);font-size:19px;line-height:1;padding:2px 4px}
+.nav-tab-badge{position:absolute;top:-4px;right:-9px;background:#d4a300;color:#fff;font-size:9px;font-weight:700;min-width:15px;height:15px;line-height:15px;border-radius:8px;text-align:center;padding:0 2px}
 .doc-filter-bar{background:var(--surface);border-bottom:1px solid var(--border);padding:10px 14px;display:flex;gap:8px;flex-shrink:0;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .doc-filter-btn{background:var(--bg);border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;color:var(--dark);transition:all .15s}
 .doc-filter-btn.act{background:var(--dark);color:#fff;border-color:var(--dark)}
@@ -427,6 +443,49 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
 </div>
 
 <!-- ══ DOCUMENTI ══ -->
+<!-- ══ POST-IT ══ -->
+<div id="screen-postit" class="screen">
+  <div class="app-header">
+    <div>
+      <div class="header-logo">ROST 81</div>
+      <div class="header-sub">Post-it — Bacheca del team</div>
+    </div>
+    <button class="save-btn" style="background:var(--orange)" onclick="apriSheetPostit()">+ Scrivi</button>
+  </div>
+  <div class="postit-legend-m">
+    <span>🟡 Standard</span><span>🟢 Urgente</span><span>🔵 Entro 24h</span>
+  </div>
+  <div class="scroll-area">
+    <div class="scroll-pad">
+      <div id="postit-list-m" class="postit-list-m"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SHEET SCRIVI POST-IT ══ -->
+<div class="sheet-overlay" id="pi-sheet-overlay" onclick="chiudiSheetPostit()"></div>
+<div class="bottom-sheet" id="pi-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-hdr">
+    <div class="sheet-title">Scrivi un Post-it</div>
+    <div class="sheet-sub">Visibile a tutto il team</div>
+  </div>
+  <div class="form-pad">
+    <div class="f-field"><label class="f-lbl">Mittente</label><select class="f-sel" id="pim-mittente"></select></div>
+    <div class="f-field"><label class="f-lbl">Destinatario</label><select class="f-sel" id="pim-destinatario"><option value="">Tutti</option></select></div>
+    <div class="f-field">
+      <label class="f-lbl">Colore</label>
+      <select class="f-sel" id="pim-colore">
+        <option value="giallo">🟡 Giallo — messaggio standard</option>
+        <option value="verde">🟢 Verde — urgente</option>
+        <option value="blu">🔵 Blu — da svolgere entro 24 ore</option>
+      </select>
+    </div>
+    <div class="f-field"><label class="f-lbl">Messaggio</label><textarea class="f-ta" id="pim-messaggio" placeholder="Scrivi il messaggio…"></textarea></div>
+    <button class="btn" style="width:100%;margin-top:6px;background:var(--orange);color:#fff;border:none;border-radius:12px;padding:13px;font-family:inherit;font-size:15px;font-weight:700" onclick="salvaPostitMobile()">✓ Pubblica</button>
+  </div>
+</div>
+
 <div id="screen-documenti" class="screen">
   <div class="app-header">
     <div>
@@ -501,6 +560,9 @@ html,body{height:100%;overflow:hidden;font-family:'DM Sans',sans-serif;font-size
     <div class="nav-tab act" id="nav-home" onclick="switchTab('home')">
       <span class="ni">🏠</span><span>Clienti</span>
     </div>
+    <div class="nav-tab" id="nav-postit" onclick="switchTab('postit')">
+      <span class="ni" style="position:relative">📌<span class="nav-tab-badge" id="pi-badge-nav" style="display:none">0</span></span><span>Post-it</span>
+    </div>
     <div class="nav-tab" id="nav-documenti" onclick="switchTab('documenti')">
       <span class="ni">📁</span><span>Documenti</span>
     </div>
@@ -546,6 +608,7 @@ async function authHeaders(){
 }
 const SENTINEL_REPO='lucchinisi-droid/sentinel-81';
 const SENTINEL_MODEL='claude-sonnet-5';
+const NOTIFICA_POSTIT_API_URL='https://rost81-ecosystem.netlify.app/api/notifica-postit';
 
 const MESI={1:'Gennaio',2:'Febbraio',3:'Marzo',4:'Aprile',5:'Maggio',6:'Giugno',7:'Luglio',8:'Agosto',9:'Settembre',10:'Ottobre',11:'Novembre',12:'Dicembre'};
 
@@ -665,6 +728,7 @@ function switchTab(tab){
   showScreen(tab);
   if(tab==='documenti') loadDocumenti();
   if(tab==='sentinel') initSentinelScreen();
+  if(tab==='postit') loadPostitMobile();
 }
 
 function goHome(){
@@ -1166,6 +1230,9 @@ function renderDocumenti(){
 
 async function openDoc(url,nome){
   if(!url){ toast('⚠ URL non disponibile per questo documento','error'); return; }
+  // Apriamo subito la finestra (nello stesso tick del click, altrimenti Safari/
+  // Chrome bloccano il popup dopo un'attesa async) e la riempiamo dopo il fetch.
+  const win=window.open('','_blank');
   try{
     // Supabase Storage forza un Content-Type non renderizzabile sui file .html
     // (protezione anti-XSS del bucket): li riapriamo come blob locale corretto.
@@ -1173,10 +1240,133 @@ async function openDoc(url,nome){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const testo=await res.text();
     const blob=new Blob([testo],{type:'text/html;charset=utf-8'});
-    window.open(URL.createObjectURL(blob),'_blank');
+    if(win) win.location.href=URL.createObjectURL(blob);
+    else toast('Popup bloccato dal browser: consenti i popup per questo sito','error');
   }catch(e){
+    if(win) win.close();
     toast('Errore apertura documento','error');
   }
+}
+
+// ── POST-IT (bacheca team) ──
+let _postitTeamM=[], _postitListM=[];
+
+async function loadPostitTeamM(){
+  if(_postitTeamM.length) return _postitTeamM;
+  const r=await fetch(`${SUPA_URL}/rest/v1/team_utenti?select=id,nome&order=creato_il`,{headers:await authHeaders()});
+  _postitTeamM=await r.json()||[];
+  return _postitTeamM;
+}
+
+function apriSheetPostit(){
+  loadPostitTeamM().then(team=>{
+    const mSel=document.getElementById('pim-mittente');
+    const dSel=document.getElementById('pim-destinatario');
+    mSel.innerHTML=team.map(u=>`<option value="${u.id}">${u.nome}</option>`).join('');
+    dSel.innerHTML='<option value="">Tutti</option>'+team.map(u=>`<option value="${u.id}">${u.nome}</option>`).join('');
+    if(_op?.id) mSel.value=_op.id;
+    document.getElementById('pim-messaggio').value='';
+    document.getElementById('pim-colore').value='giallo';
+    document.getElementById('pi-sheet-overlay').classList.add('open');
+    document.getElementById('pi-sheet').classList.add('open');
+  });
+}
+function chiudiSheetPostit(){
+  document.getElementById('pi-sheet-overlay').classList.remove('open');
+  document.getElementById('pi-sheet').classList.remove('open');
+}
+
+async function salvaPostitMobile(){
+  const mittente_id=document.getElementById('pim-mittente').value;
+  const destinatario_id=document.getElementById('pim-destinatario').value||null;
+  const colore=document.getElementById('pim-colore').value;
+  const messaggio=document.getElementById('pim-messaggio').value.trim();
+  if(!mittente_id){ toast('Seleziona un mittente','error'); return; }
+  if(!messaggio){ toast('Scrivi un messaggio','error'); return; }
+  try{
+    const r=await fetch(`${SUPA_URL}/rest/v1/post_it`,{
+      method:'POST',headers:{...(await authHeaders()),'Prefer':'return=representation'},
+      body:JSON.stringify({mittente_id,destinatario_id,colore,messaggio})
+    });
+    const rows=await r.json();
+    if(!r.ok) throw new Error(rows?.message||'Errore salvataggio');
+    toast('Post-it pubblicato');
+    chiudiSheetPostit();
+    const nuovoId=rows?.[0]?.id;
+    if(nuovoId) notificaPostitTelegram(nuovoId);
+    loadPostitMobile();
+  }catch(e){
+    toast('Errore: '+e.message,'error');
+  }
+}
+
+async function notificaPostitTelegram(postItId){
+  try{
+    const {data:{session}}=await sb.auth.getSession();
+    await fetch(NOTIFICA_POSTIT_API_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+(session?.access_token||'')},
+      body:JSON.stringify({postItId})
+    });
+  }catch(e){ /* non blocca: il post-it è comunque salvato */ }
+}
+
+async function loadPostitMobile(){
+  const list=document.getElementById('postit-list-m');
+  try{
+    const r=await fetch(`${SUPA_URL}/rest/v1/post_it?select=*,mittente:mittente_id(nome),destinatario:destinatario_id(nome),fatto_da:fatto_da_id(nome)&order=creato_il.desc`,{headers:await authHeaders()});
+    _postitListM=await r.json()||[];
+  }catch(e){
+    list.innerHTML='<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Errore nel caricamento</div></div>';
+    return;
+  }
+  renderPostitMobile();
+  const nonFatti=_postitListM.filter(p=>!p.fatto_da_id).length;
+  const badge=document.getElementById('pi-badge-nav');
+  if(badge){ badge.style.display=nonFatti>0?'flex':'none'; badge.textContent=nonFatti; }
+}
+
+function renderPostitMobile(){
+  const list=document.getElementById('postit-list-m');
+  if(!_postitListM.length){
+    list.innerHTML='<div class="empty"><div class="empty-icon">📌</div><div class="empty-title">Nessun post-it</div><div class="empty-sub">Scrivine uno per il team</div></div>';
+    return;
+  }
+  list.innerHTML=_postitListM.map(p=>{
+    const data=new Date(p.creato_il).toLocaleDateString('it-IT',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'});
+    const destLabel=p.destinatario?.nome||'Tutti';
+    const canDelete=p.mittente_id===_op?.id;
+    const footer=p.fatto_da_id
+      ? `<span class="postit-done-badge-m">✓ Fatto da ${p.fatto_da?.nome||'—'}</span>`
+      : `<button class="postit-done-btn-m" onclick="segnaFattoPostitM('${p.id}')">FATTO</button>`;
+    return `<div class="postit-card-m ${p.colore}">
+      <div class="postit-meta-m">${p.mittente?.nome||'—'} → <span class="postit-dest-m">${destLabel}</span><br>${data}</div>
+      <div class="postit-msg-m">${(p.messaggio||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="postit-footer-m">
+        ${footer}
+        ${canDelete?`<span class="postit-del-m" onclick="cancellaPostitM('${p.id}')">🗑</span>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function segnaFattoPostitM(id){
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/post_it?id=eq.${id}`,{
+      method:'PATCH',headers:{...(await authHeaders()),'Prefer':'return=minimal'},
+      body:JSON.stringify({fatto_da_id:_op.id,fatto_il:new Date().toISOString()})
+    });
+    loadPostitMobile();
+  }catch(e){ toast('Errore','error'); }
+}
+
+async function cancellaPostitM(id){
+  if(!confirm('Cancellare questo post-it?')) return;
+  try{
+    await fetch(`${SUPA_URL}/rest/v1/post_it?id=eq.${id}`,{method:'DELETE',headers:await authHeaders()});
+    toast('Post-it cancellato');
+    loadPostitMobile();
+  }catch(e){ toast('Errore','error'); }
 }
 
 // ── SENTINEL ──

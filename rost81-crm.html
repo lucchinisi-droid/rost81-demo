@@ -1484,6 +1484,7 @@ async function loadOperatoriAppManut(){
 // documenti_clienti è opzionale: se manca, si può generare on-demand con
 // "Genera documento" (Netlify Function genera-documento.js).
 const GENERA_DOC_API_URL = 'https://rost81-ecosystem.netlify.app/api/genera-documento';
+const NOTIFICA_POSTIT_API_URL = 'https://rost81-ecosystem.netlify.app/api/notifica-postit';
 let _docLavoroAll = [], _docLavoroFilter = 'tutti';
 
 async function loadDocumentiLavoro(){
@@ -1976,13 +1977,18 @@ async function loadPreventivi(){
    invece che come codice sorgente. */
 async function apriDocumentoHtml(url){
   if(!url){ toast('URL non disponibile', 'error'); return; }
+  // Apriamo subito la finestra (nello stesso tick del click, altrimenti il
+  // browser blocca il popup dopo un'attesa async) e la riempiamo dopo il fetch.
+  const win = window.open('', '_blank');
   try{
     const res = await fetch(url);
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const testo = await res.text();
     const blob = new Blob([testo], { type: 'text/html;charset=utf-8' });
-    window.open(URL.createObjectURL(blob), '_blank');
+    if(win) win.location.href = URL.createObjectURL(blob);
+    else toast('Popup bloccato dal browser: consenti i popup per questo sito', 'error');
   }catch(e){
+    if(win) win.close();
     toast('Errore apertura documento: ' + e.message, 'error');
   }
 }
@@ -2315,11 +2321,23 @@ async function salvaPostit(){
   const messaggio = document.getElementById('pi-messaggio').value.trim();
   if(!mittente_id){ toast('Seleziona un mittente', 'error'); return; }
   if(!messaggio){ toast('Scrivi un messaggio', 'error'); return; }
-  const { error } = await sb.from('post_it').insert({ mittente_id, destinatario_id, colore, messaggio });
+  const { data, error } = await sb.from('post_it').insert({ mittente_id, destinatario_id, colore, messaggio }).select().single();
   if(error){ toast('Errore: ' + error.message, 'error'); return; }
   toast('Post-it pubblicato');
   chiudiModalPostit();
+  if(data?.id) notificaPostitTelegram(data.id);
   loadPostit();
+}
+
+async function notificaPostitTelegram(postItId){
+  try{
+    const { data: { session } } = await sb.auth.getSession();
+    await fetch(NOTIFICA_POSTIT_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + (session?.access_token || '') },
+      body: JSON.stringify({ postItId })
+    });
+  }catch(e){ /* non blocca: il post-it è comunque salvato */ }
 }
 
 async function loadPostit(){
